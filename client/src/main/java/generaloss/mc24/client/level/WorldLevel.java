@@ -14,7 +14,7 @@ public class WorldLevel {
         this.tesselator = new ChunkTesselator();
         chunk = new LevelChunk(this);
         chunk.forEachBlock((x, y, z) -> {
-            if(Maths.randomBoolean(0.3F))
+            if(Maths.randomBoolean(0.1F))
                 chunk.setBlock(x, y, z, 1);
         });
         tesselator.tesselate(chunk, chunkMesh -> {

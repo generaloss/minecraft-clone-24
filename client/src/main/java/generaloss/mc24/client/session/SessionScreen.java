@@ -5,8 +5,10 @@ import generaloss.mc24.client.level.WorldLevel;
 import generaloss.mc24.client.render.SessionRenderers;
 import generaloss.mc24.client.resource.ResourceDispatcher;
 import generaloss.mc24.client.screen.IScreen;
+import jpize.app.Jpize;
 import jpize.audio.util.AlMusic;
 import jpize.gl.texture.Skybox;
+import jpize.glfw.input.Key;
 
 public class SessionScreen extends IScreen {
 
@@ -48,8 +50,6 @@ public class SessionScreen extends IScreen {
         return renderers;
     }
 
-    @Override
-    public void init() { }
 
     @Override
     public void show() {
@@ -70,11 +70,15 @@ public class SessionScreen extends IScreen {
         music.update();
         // player
         player.update();
+        // exit
+        if(Key.ESCAPE.down())
+            Jpize.exit();
     }
 
     @Override
     public void render() {
         skybox.render(player.camera());
+        renderers.render();
     }
 
     @Override

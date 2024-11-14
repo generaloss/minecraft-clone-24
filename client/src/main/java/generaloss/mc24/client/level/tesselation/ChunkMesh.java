@@ -3,11 +3,10 @@ package generaloss.mc24.client.level.tesselation;
 import jpize.gl.tesselation.GlPrimitive;
 import jpize.gl.type.GlType;
 import jpize.gl.vertex.GlVertAttr;
-import jpize.util.array.FloatList;
-import jpize.util.mesh.IndexedMesh;
+import jpize.util.Disposable;
 import jpize.util.mesh.Mesh;
 
-public class ChunkMesh {
+public class ChunkMesh implements Disposable {
 
     private final ChunkMeshCache cache;
     private final Mesh mesh;
@@ -20,8 +19,8 @@ public class ChunkMesh {
         this.mesh.setMode(GlPrimitive.QUADS);
     }
 
-    public void setData(FloatList floats) {
-        mesh.vertices().setData(floats.arrayTrimmed());
+    public void setData(float[] floats) {
+        mesh.vertices().setData(floats);
     }
 
     public void render() {
@@ -30,6 +29,11 @@ public class ChunkMesh {
 
     public void free() {
         cache.free(this);
+    }
+
+    @Override
+    public void dispose() {
+        mesh.dispose();
     }
 
 }

@@ -21,7 +21,7 @@ public class LevelRenderer {
 
     public void render() {
         shader.bind();
-        shader.uniform("U_combined",  session.player().camera().getCombined());
+        shader.uniform("u_combined",  session.player().camera().getCombined());
 
         final ChunkMesh mesh = level.getChunkMesh();
         mesh.render();

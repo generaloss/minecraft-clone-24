@@ -28,6 +28,7 @@ public class ClientPlayer {
 
     public void update() {
         camera.rotation().setRotation(rotationInput.getTarget());
+        motionInput.update(rotationInput.getTarget().getYaw());
         camera.position().add(motionInput.getMotionDirected().mul(Jpize.getDeltaTime() * 10));
         camera.update();
     }

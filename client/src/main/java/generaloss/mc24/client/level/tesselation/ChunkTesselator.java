@@ -68,17 +68,26 @@ public class ChunkTesselator {
 
             final int neighborNxID = this.getMatrixBlock(x - 1, y, z);
             if(neighborNxID == 0){
-                vertexDataList.add(
-                    x - 1, y + 1, z    ,
-                    x - 1, y    , z    ,
-                    x - 1, y    , z + 1,
-                    x - 1, y + 1, z + 1
+                vertexDataList.add((float)
+                    x    , y + 1, z + 1,
+                    x    , y    , z + 1,
+                    x    , y    , z    ,
+                    x    , y + 1, z
+                );
+            }
+            final int neighborPxID = this.getMatrixBlock(x + 1, y, z);
+            if(neighborPxID == 0){
+                vertexDataList.add((float)
+                    x + 1, y + 1, z,
+                    x + 1, y    , z,
+                    x + 1, y    , z + 1,
+                    x + 1, y + 1, z + 1
                 );
             }
         });
 
         final ChunkMesh mesh = meshCache.getFreeOrCreate();
-        mesh.setData(vertexDataList);
+        mesh.setData(vertexDataList.arrayTrimmed());
         vertexDataList.clear();
 
         onComlete.accept(mesh);

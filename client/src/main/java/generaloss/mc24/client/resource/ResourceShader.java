@@ -5,10 +5,11 @@ import jpize.util.res.Resource;
 
 public class ResourceShader extends ResourceHandle<Shader> {
 
-    private Shader shader;
+    private final Shader shader;
 
     public ResourceShader(ResourceDispatcher dispatcher, String identifier, String path) {
         super(dispatcher, identifier, path);
+        this.shader = new Shader();
     }
 
     @Override
@@ -28,9 +29,7 @@ public class ResourceShader extends ResourceHandle<Shader> {
         if(!fragmentRes.exists())
             fragmentRes = Resource.external(ResourceDispatcher.DEFAULT_ROOT_DIR + fragmentName);
 
-        if(shader != null)
-            shader.dispose();
-        shader = new Shader(vertexRes, fragmentRes);
+        shader.load(vertexRes, fragmentRes);
     }
 
     @Override
