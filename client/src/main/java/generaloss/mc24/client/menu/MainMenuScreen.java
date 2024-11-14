@@ -63,7 +63,7 @@ public class MainMenuScreen extends IScreen {
         // music
         music.update();
         // camera
-        yaw -= Jpize.getDT() * 3F;
+        yaw -= Jpize.getDeltaTime() * 3F;
         camera.rotation().setRotation(yaw, -15F, 0F);
         camera.update();
         // start session

@@ -43,6 +43,10 @@ public class ResourceDispatcher implements Disposable {
         return (ResourceMusic) this.register(new ResourceMusic(this, identifier, path));
     }
 
+    public ResourceShader registerShader(String identifier, String path) {
+        return (ResourceShader) this.register(new ResourceShader(this, identifier, path));
+    }
+
 
     public <T extends Disposable> T get(String identifier) {
         //noinspection unchecked

@@ -22,12 +22,12 @@
         <dependency>
             <groupId>io.github.generaloss</groupId>
             <artifactId>jpize-core</artifactId>
-            <version>24.11.1-dev0110</version>
+            <version>24.11.1.0201</version>
         </dependency>
         <dependency>
             <groupId>io.github.generaloss</groupId>
             <artifactId>jpize-audio</artifactId>
-            <version>24.11.1-dev0101</version>
+            <version>24.11.1.0201</version>
         </dependency>
         <!-- server -->
         <dependency>
