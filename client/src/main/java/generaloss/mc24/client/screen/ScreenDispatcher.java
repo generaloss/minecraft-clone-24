@@ -1,6 +1,5 @@
 package generaloss.mc24.client.screen;
 
-import generaloss.mc24.client.Main;
 import jpize.app.Jpize;
 import jpize.util.Disposable;
 
@@ -28,6 +27,10 @@ public class ScreenDispatcher implements Disposable {
         return map;
     }
 
+    public IScreen getScreen(String ID) {
+        return map.get(ID);
+    }
+
     public IScreen getCurrent() {
         return current;
     }
@@ -37,7 +40,7 @@ public class ScreenDispatcher implements Disposable {
     }
 
     public boolean isCurrent(String ID) {
-        final IScreen screen = map.get(ID);
+        final IScreen screen = this.getScreen(ID);
         return (screen != null && isCurrent(screen));
     }
 
@@ -54,7 +57,7 @@ public class ScreenDispatcher implements Disposable {
 
 
     public ScreenDispatcher show(String ID) {
-        final IScreen screen = map.get(ID);
+        final IScreen screen = this.getScreen(ID);
         if(screen == null)
             return this;
 
@@ -64,8 +67,10 @@ public class ScreenDispatcher implements Disposable {
 
         if(!screen.isInitialized()){
             screen.setInitialized();
+            System.out.println("Initialize " + ID + " screen");
             screen.init();
         }
+        System.out.println("Show " + ID + " screen");
         screen.show();
         screen.resize(Jpize.getWidth(), Jpize.getHeight());
         return this;

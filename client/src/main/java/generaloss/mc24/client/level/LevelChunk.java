@@ -1,26 +1,49 @@
 package generaloss.mc24.client.level;
 
-public class LevelChunk {
+import generaloss.mc24.client.level.mesh.ChunkMesh;
+import generaloss.mc24.server.chunk.Chunk;
+import generaloss.mc24.server.chunk.ChunkPos;
 
-    public static final int WIDTH = 16;
-    public static final int AREA = WIDTH * WIDTH;
-    public static final int HEIGHT = 256;
+public class LevelChunk extends Chunk {
 
     private final WorldLevel level;
+    private final ChunkPos position;
     private final int[] blocks;
+    private ChunkMesh mesh;
 
-    public LevelChunk(WorldLevel level) {
+    public LevelChunk(WorldLevel level, ChunkPos position) {
         this.level = level;
-        this.blocks = new int[AREA * HEIGHT];
+        this.position = position;
+        this.blocks = new int[VOLUME];
     }
 
     public WorldLevel level() {
         return level;
     }
 
+    public ChunkPos getPosition() {
+        return position;
+    }
+
+    public ChunkMesh mesh() {
+        return mesh;
+    }
+
+
+    public void setMesh(ChunkMesh mesh) {
+        this.mesh = mesh;
+    }
+
+    public void freeMesh() {
+        if(mesh == null)
+            return;
+        mesh.free();
+        mesh = null;
+    }
+
 
     private int indexBy(int x, int y, int z) {
-        return (x * WIDTH * HEIGHT + y * WIDTH + z);
+        return (x * AREA + y * SIZE + z);
     }
 
     public void setBlock(int x, int y, int z, int block) {
@@ -28,6 +51,8 @@ public class LevelChunk {
     }
 
     public int getBlock(int x, int y, int z) {
+        if(y > SIZE - 1)
+            return 0;
         return blocks[this.indexBy(x, y, z)];
     }
 
@@ -37,9 +62,9 @@ public class LevelChunk {
     }
 
     public void forEachBlock(BlockConsumer consumer) {
-        for (int y = 0; y < HEIGHT; y++)
-            for (int x = 0; x < WIDTH; x++)
-                for (int z = 0; z < WIDTH; z++)
+        for (int y = 0; y < SIZE; y++)
+            for (int x = 0; x < SIZE; x++)
+                for (int z = 0; z < SIZE; z++)
                     consumer.accept(x, y, z);
     }
 

@@ -1,6 +1,6 @@
 package generaloss.mc24.client;
 
-import generaloss.mc24.client.menu.MainMenuScreen;
+import generaloss.mc24.client.screen.TitleScreen;
 import generaloss.mc24.client.resource.ResourceDispatcher;
 import generaloss.mc24.client.screen.ScreenDispatcher;
 import generaloss.mc24.client.session.SessionScreen;
@@ -12,15 +12,19 @@ import jpize.gl.Gl;
 import jpize.glfw.Glfw;
 import jpize.glfw.init.GlfwPlatform;
 import jpize.glfw.input.Key;
+import jpize.util.font.Font;
+import jpize.util.font.FontLoader;
 
 public class Main extends JpizeApplication {
 
     private final ScreenDispatcher screens;
     private final ResourceDispatcher resources;
+    private final Font font;
 
     public Main() {
         this.screens = new ScreenDispatcher();
         this.resources = new ResourceDispatcher();
+        this.font = FontLoader.loadDefault();
     }
 
     public ScreenDispatcher screens() {
@@ -32,11 +36,6 @@ public class Main extends JpizeApplication {
     }
 
 
-    public void startSession() {
-        screens.show("session");
-    }
-
-
     @Override
     public void init() {
         System.out.println("Initializing");
@@ -44,34 +43,49 @@ public class Main extends JpizeApplication {
         Audio.init();
         Audio.openDevice();
         // screens
-        screens.register(new MainMenuScreen(this));
+        screens.register(new TitleScreen(this));
         screens.register(new SessionScreen(this));
         // resources
         resources.reloadAll();
         // set menu screen
-        screens.show("main_menu");
+        screens.show("title");
+    }
+
+
+    public void startSession() {
+        screens.show("session");
+    }
+
+
+    @Override
+    public void update() {
+        // --- reload resources test --- //
+        if(Key.NUM_0.up()){
+            resources.setDefaultRootDirectory();
+            resources.reloadAll();
+        }
+        if(Key.NUM_1.up()){
+            resources.setRootDirectory("resource-packs/test-pack-1");
+            resources.reloadAll();
+        }
+        if(Key.NUM_2.up()){
+            resources.setRootDirectory("resource-packs/test-pack-2");
+            resources.reloadAll();
+        }
+
+        // fullscreen
+        if(Key.F11.down())
+            Jpize.window().toggleFullscreen();
+
+        // secreens
+        screens.update();
     }
 
     @Override
     public void render() {
         Gl.clearColorBuffer();
         screens.render();
-    }
-
-    @Override
-    public void update() {
-        // --- reload resources test --- //
-        if(Key.NUM_9.up()){
-            resources.setRootDirectory("resource-packs/test-pack");
-            resources.reloadAll();
-        }
-        if(Key.NUM_8.up()){
-            resources.setRootDirectory("assets/default-resources");
-            resources.reloadAll();
-        }
-        // --- end --- //
-
-        screens.update();
+        font.drawText("FPS: " + Jpize.getFPS(), 10, Jpize.getHeight() - 10 - font.getLineAdvanceScaled());
     }
 
     @Override
@@ -83,6 +97,7 @@ public class Main extends JpizeApplication {
     public void dispose() {
         screens.dispose();
         resources.dispose();
+        font.dispose();
     }
 
 

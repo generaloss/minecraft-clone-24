@@ -1,20 +1,21 @@
 package generaloss.mc24.client.resource;
 
 import jpize.util.Disposable;
+import jpize.util.time.Stopwatch;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class ResourceDispatcher implements Disposable {
 
-    public static final String DEFAULT_ROOT_DIR = "assets/default-resources";
+    public static final String DEFAULT_ROOT_DIR = "assets/vanilla-pack";
 
     private final Map<String, ResourceHandle<?>> resources;
     private String rootDirectory;
 
     public ResourceDispatcher() {
         this.resources = new HashMap<>();
-        this.rootDirectory = DEFAULT_ROOT_DIR;
+        this.setDefaultRootDirectory();
     }
 
     public String getRootDirectory() {
@@ -23,6 +24,10 @@ public class ResourceDispatcher implements Disposable {
 
     public void setRootDirectory(String rootDirectory) {
         this.rootDirectory = rootDirectory;
+    }
+
+    public void setDefaultRootDirectory() {
+        this.rootDirectory = DEFAULT_ROOT_DIR;
     }
 
 
@@ -47,15 +52,21 @@ public class ResourceDispatcher implements Disposable {
         return (ResourceShader) this.register(new ResourceShader(this, identifier, path));
     }
 
+    public ResourceAtlas registerAtlas(String identifier, String path, int width, int height) {
+        return (ResourceAtlas) this.register(new ResourceAtlas(this, identifier, path, width, height));
+    }
+
 
     public <T extends Disposable> T get(String identifier) {
-        //noinspection unchecked
-        return (T) resources.get(identifier).resource();
+        // noinspection unchecked
+        return (T) resources.get(identifier);
     }
 
     public void reloadAll() {
+        final Stopwatch stopwatch = new Stopwatch().start();
         for(ResourceHandle<?> resource: resources.values())
             resource.reload();
+        System.out.println("Reloaded " + resources.size() + " resources (" + stopwatch.getMillis() + " ms)");
     }
 
 

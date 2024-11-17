@@ -8,7 +8,7 @@ import jpize.util.res.Resource;
 
 public class ResourceSkybox extends ResourceHandle<Skybox> {
 
-    private static final String[] POSTFIX_ARRAY = { "positive_x", "negative_x", "positive_y", "negative_y", "positive_z", "negative_z" };
+    private static final String[] POSTFIX_ARRAY = { "1", "3", "4", "5", "0", "2" };
 
     private final Skybox skybox;
 
