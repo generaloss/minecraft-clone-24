@@ -6,10 +6,7 @@ import generaloss.mc24.client.resource.ResourceDispatcher;
 import jpize.audio.util.AlMusic;
 import jpize.gl.Gl;
 import jpize.gl.glenum.GlTarget;
-import jpize.gl.texture.Texture2D;
 import jpize.glfw.input.Key;
-import jpize.util.mesh.TextureBatch;
-import jpize.util.res.Resource;
 
 public class ClientSession {
 
@@ -19,9 +16,6 @@ public class ClientSession {
 
     private final WorldLevel level;
     private final ClientPlayer player;
-
-    private final TextureBatch batch = new TextureBatch();
-    private final Texture2D texture = new Texture2D(Resource.external("assets/vanilla-pack/textures/blocks/torch.png"));
 
     public ClientSession(Main context) {
         this.context = context;

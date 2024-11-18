@@ -8,8 +8,6 @@ import jpize.gl.shader.Shader;
 import jpize.gl.texture.Texture2D;
 import jpize.util.camera.PerspectiveCamera;
 import jpize.util.math.matrix.Matrix4f;
-import jpize.util.postprocess.ScreenQuadMesh;
-import jpize.util.postprocess.ScreenQuadShader;
 
 import java.util.Collection;
 
@@ -55,9 +53,6 @@ public class LevelRenderer {
             shader.uniform("u_combined", matrix);
             mesh.render();
         }
-
-        ScreenQuadShader.bind(blockAtlas);
-        ScreenQuadMesh.render();
     }
 
 }

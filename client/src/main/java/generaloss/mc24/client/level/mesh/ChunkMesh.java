@@ -19,7 +19,6 @@ public class ChunkMesh implements Disposable {
             new GlVertAttr(4, GlType.FLOAT)  // color
         );
         this.mesh.setMode(GlPrimitive.QUADS);
-        System.out.println("Create Mesh @" + mesh.vertices().getID());
     }
 
     public void setData(float[] floats) {
@@ -36,7 +35,6 @@ public class ChunkMesh implements Disposable {
 
     @Override
     public void dispose() {
-        System.out.println("Remove Mesh @" + mesh.vertices().getID());
         mesh.dispose();
     }
 

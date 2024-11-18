@@ -25,12 +25,13 @@ public class ChunkTesselator implements Disposable {
 
     private final Main context;
     private final WorldLevel level;
-    private final ChunkMeshCache meshCache;
     private final Queue<LevelChunk> taskQueue;
+
+    private final ChunkMeshCache meshCache;
     private final FloatList verticesCache;
     private final LevelChunk[][][] chunkCache;
-    private int blockCacheCenter, blockCacheWest, blockCacheEast,
-        blockCacheDown, blockCacheUp, blockCacheSouth, blockCacheNorth;
+    private final int[][][] blockCache;
+    private final float[][][] ambientOcclusionCache;
 
     public ChunkTesselator(Main context, WorldLevel level) {
         this.context = context;
@@ -39,6 +40,8 @@ public class ChunkTesselator implements Disposable {
         this.meshCache = new ChunkMeshCache();
         this.verticesCache = new FloatList();
         this.chunkCache = new LevelChunk[3][3][3];
+        this.blockCache = new int[3][3][3];
+        this.ambientOcclusionCache = new float[6][3][3];
     }
 
     public void tesselate(LevelChunk chunk) {
@@ -52,13 +55,21 @@ public class ChunkTesselator implements Disposable {
         while(!taskQueue.isEmpty()) {
             this.processTesselate(taskQueue.poll());
 
-            if(timer.getMillis() > Jpize.getDeltaTime() * 700)
+            if(timer.getMillis() > Jpize.getDeltaTime() * 900)
                 break;
         }
     }
 
-    private LevelChunk getCachedChunk(int chunkX, int chunkY, int chunkZ) {
-        return chunkCache[chunkX + 1][chunkY + 1][chunkZ + 1];
+    private LevelChunk getCachedChunk(int i, int j, int k) {
+        return chunkCache[i + 1][j + 1][k + 1];
+    }
+
+    private int getCachedBlockID(int i, int j, int k) {
+        return blockCache[i + 1][j + 1][k + 1];
+    }
+
+    private int getCachedBlockID(Directory dir) {
+        return this.getCachedBlockID(dir.getX(), dir.getY(), dir.getZ());
     }
 
     private int getBlockID(int x, int y, int z) {
@@ -77,17 +88,33 @@ public class ChunkTesselator implements Disposable {
 
 
     private void addFaces(int x, int y, int z, BlockModel model, Directory directory) {
+        // cache ambient occlusion
+        // [...]
+
         for(BlockFace face: model.getFacesGroup(directory)){
             // add face
             final int beginDataIndex = verticesCache.size();
             verticesCache.add(face.getVertexDataArray());
+
             // correct position
             for(int beginVertexIndex: face.getIndices()){
                 final int index = (beginDataIndex + beginVertexIndex);
-                // position
-                verticesCache.valAdd(index + 0, x);
-                verticesCache.valAdd(index + 1, y);
-                verticesCache.valAdd(index + 2, z);
+
+                // color
+                final float vx = verticesCache.get(index + 0);
+                final float vx1 = 1F - vx;
+                final float vy = verticesCache.get(index + 1);
+                final float vz = verticesCache.get(index + 2);
+                final float vz1 = 1F - vz;
+
+                float grayscale = 1F;
+                // [...]
+
+                verticesCache.valMul(index + BlockVertex.COLOR_OFFSET + 0, grayscale);
+                verticesCache.valMul(index + BlockVertex.COLOR_OFFSET + 1, grayscale);
+                verticesCache.valMul(index + BlockVertex.COLOR_OFFSET + 2, grayscale);
+                verticesCache.valMul(index + BlockVertex.COLOR_OFFSET + 3, 1);
+
                 // texcoord
                 final ResourceAtlas atlas = context.resources().get("block_atlas");
                 final TextureRegion region = atlas.getRegion(face.getTextureID());
@@ -97,107 +124,118 @@ public class ChunkTesselator implements Disposable {
                     verticesCache.set(index + BlockVertex.TEXCOORD_OFFSET + 0, u);
                     verticesCache.set(index + BlockVertex.TEXCOORD_OFFSET + 1, v);
                 }
-                // color
-                final float grayscale = 1F;
-                verticesCache.valMul(index + BlockVertex.COLOR_OFFSET + 0, grayscale);
-                verticesCache.valMul(index + BlockVertex.COLOR_OFFSET + 1, grayscale);
-                verticesCache.valMul(index + BlockVertex.COLOR_OFFSET + 2, grayscale);
-                verticesCache.valMul(index + BlockVertex.COLOR_OFFSET + 3, 1);
+
+                // position
+                verticesCache.valAdd(index + 0, x);
+                verticesCache.valAdd(index + 1, y);
+                verticesCache.valAdd(index + 2, z);
             }
         }
     }
 
     private void processTesselate(LevelChunk chunk) {
         // cache neighbor chunks
+        final ChunkPos chunkPosition = chunk.getPosition();
 
-        final ChunkPos chunkPos = chunk.getPosition();
-        chunkCache[1][1][1] = chunk;
-
-        for(int x = 0; x < 3; x++){
-            for(int z = 0; z < 3; z++){
-                for(int y = 0; y < 3; y++){
-                    if(x == 1 && y == 1 && z == 1)
+        for(int i = 0; i < 3; i++){
+            for(int j = 0; j < 3; j++){
+                for(int k = 0; k < 3; k++){
+                    if(i == 1 && j == 1 && k == 1){
+                        chunkCache[1][1][1] = chunk;
                         continue;
-
-                    chunkCache[x][y][z] = level.getChunk(chunkPos.getNeighbor(x - 1, y - 1, z - 1));
+                    }
+                    chunkCache[i][j][k] = level.getChunk(chunkPosition.getNeighbor(i - 1, j - 1, k - 1));
                 }
             }
         }
 
 
         chunk.forEachBlock((x, y, z) -> {
-            blockCacheCenter = chunk.getBlock(x, y, z);
-            if(blockCacheCenter == 0)
+            // cache neighbor blocks
+            final int blockID = chunk.getBlock(x, y, z);
+            if(blockID == 0)
                 return;
 
-            // cache neighbor blocks
-            blockCacheWest  = this.getBlockID(x - 1, y, z);
-            blockCacheEast  = this.getBlockID(x + 1, y, z);
-            blockCacheDown  = this.getBlockID(x, y - 1, z);
-            blockCacheUp    = this.getBlockID(x, y + 1, z);
-            blockCacheSouth = this.getBlockID(x, y, z - 1);
-            blockCacheNorth = this.getBlockID(x, y, z + 1);
+            for(int i = 0; i < 3; i++){
+                for(int j = 0; j < 3; j++){
+                    for(int k = 0; k < 3; k++){
+                        if(i == 1 && j == 1 && k == 1){
+                            blockCache[1][1][1] = blockID;
+                            continue;
+                        }
+                        blockCache[i][j][k] = this.getBlockID((x + i - 1), (y + j - 1), (z + k - 1));
+                    }
+                }
+            }
 
-            final BlockModel blockModel = BlockModelRegistry.getModel(blockCacheCenter);
 
-            // NONE
+            // add faces
+            final BlockModel blockModel = BlockModelRegistry.getModel(blockID);
+
+            // none faces
             this.addFaces(x, y, z, blockModel, Directory.NONE);
 
-            // EAST
+            // east faces
+            final int blockCacheEast = this.getCachedBlockID(Directory.EAST);
             if(blockCacheEast == 0){
                 this.addFaces(x, y, z, blockModel, Directory.EAST);
 
-            }else if(blockCacheEast == blockCacheCenter){
+            }else if(blockCacheEast == blockID){
                 final BlockModel eastBlockModel = BlockModelRegistry.getModel(blockCacheEast);
                 if(eastBlockModel.isDontOccludeSameBlock() && eastBlockModel.isOcclude(Directory.EAST))
                     this.addFaces(x, y, z, blockModel, Directory.EAST);
             }
 
-            // WEST
+            // west faces
+            final int blockCacheWest = this.getCachedBlockID(Directory.WEST);
             if(blockCacheWest == 0){
                 this.addFaces(x, y, z, blockModel, Directory.WEST);
 
-            }else if(blockCacheWest == blockCacheCenter){
+            }else if(blockCacheWest == blockID){
                 final BlockModel westBlockModel = BlockModelRegistry.getModel(blockCacheWest);
                 if(westBlockModel.isDontOccludeSameBlock() && westBlockModel.isOcclude(Directory.WEST))
                     this.addFaces(x, y, z, blockModel, Directory.WEST);
             }
 
-            // UP
+            // up faces
+            final int blockCacheUp = this.getCachedBlockID(Directory.UP);
             if(blockCacheUp == 0){
                 this.addFaces(x, y, z, blockModel, Directory.UP);
 
-            }else if(blockCacheUp == blockCacheCenter){
+            }else if(blockCacheUp == blockID){
                 final BlockModel upBlockModel = BlockModelRegistry.getModel(blockCacheUp);
                 if(upBlockModel.isDontOccludeSameBlock() && upBlockModel.isOcclude(Directory.UP))
                     this.addFaces(x, y, z, blockModel, Directory.UP);
             }
 
-            // DOWN
+            // down faces
+            final int blockCacheDown = this.getCachedBlockID(Directory.DOWN);
             if(blockCacheDown == 0){
                 this.addFaces(x, y, z, blockModel, Directory.DOWN);
 
-            }else if(blockCacheDown == blockCacheCenter){
+            }else if(blockCacheDown == blockID){
                 final BlockModel downBlockModel = BlockModelRegistry.getModel(blockCacheDown);
                 if(downBlockModel.isDontOccludeSameBlock() && downBlockModel.isOcclude(Directory.DOWN))
                     this.addFaces(x, y, z, blockModel, Directory.DOWN);
             }
 
-            // NORTH
+            // north faces
+            final int blockCacheNorth = this.getCachedBlockID(Directory.NORTH);
             if(blockCacheNorth == 0){
                 this.addFaces(x, y, z, blockModel, Directory.NORTH);
 
-            }else if(blockCacheNorth == blockCacheCenter){
+            }else if(blockCacheNorth == blockID){
                 final BlockModel northBlockModel = BlockModelRegistry.getModel(blockCacheNorth);
                 if(northBlockModel.isDontOccludeSameBlock() && northBlockModel.isOcclude(Directory.NORTH))
                     this.addFaces(x, y, z, blockModel, Directory.NORTH);
             }
 
-            // SOUTH
+            // south faces
+            final int blockCacheSouth = this.getCachedBlockID(Directory.SOUTH);
             if(blockCacheSouth == 0){
                 this.addFaces(x, y, z, blockModel, Directory.SOUTH);
 
-            }else if(blockCacheSouth == blockCacheCenter){
+            }else if(blockCacheSouth == blockID){
                 final BlockModel southBlockModel = BlockModelRegistry.getModel(blockCacheSouth);
                 if(southBlockModel.isDontOccludeSameBlock() && southBlockModel.isOcclude(Directory.SOUTH))
                     this.addFaces(x, y, z, blockModel, Directory.SOUTH);
