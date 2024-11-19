@@ -1,6 +1,6 @@
 package generaloss.mc24.client.level;
 
-import generaloss.mc24.client.level.mesh.ChunkMesh;
+import generaloss.mc24.client.level.renderer.ChunkMesh;
 import generaloss.mc24.server.chunk.Chunk;
 import generaloss.mc24.server.chunk.ChunkPos;
 

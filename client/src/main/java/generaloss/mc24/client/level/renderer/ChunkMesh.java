@@ -1,5 +1,6 @@
-package generaloss.mc24.client.level.mesh;
+package generaloss.mc24.client.level.renderer;
 
+import generaloss.mc24.client.level.renderer.block.BlockVertex;
 import jpize.gl.tesselation.GlPrimitive;
 import jpize.gl.type.GlType;
 import jpize.gl.vertex.GlVertAttr;
@@ -13,11 +14,12 @@ public class ChunkMesh implements Disposable {
 
     protected ChunkMesh(ChunkMeshCache cache) {
         this.cache = cache;
-        this.mesh = new Mesh(
-            new GlVertAttr(3, GlType.FLOAT), // position
-            new GlVertAttr(2, GlType.FLOAT), // texcoord
-            new GlVertAttr(4, GlType.FLOAT)  // color
-        );
+        // attributes
+        final GlVertAttr[] attributes = new GlVertAttr[BlockVertex.ATTRIBUTE_SIZE_ARRAY.length];
+        for(int i = 0; i < attributes.length; i++)
+            attributes[i] = new GlVertAttr(BlockVertex.ATTRIBUTE_SIZE_ARRAY[i], GlType.FLOAT);
+        // mesh
+        this.mesh = new Mesh(attributes);
         this.mesh.setMode(GlPrimitive.QUADS);
     }
 

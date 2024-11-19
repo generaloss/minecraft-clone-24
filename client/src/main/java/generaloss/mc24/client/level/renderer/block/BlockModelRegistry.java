@@ -1,4 +1,4 @@
-package generaloss.mc24.client.block;
+package generaloss.mc24.client.level.renderer.block;
 
 import java.util.HashMap;
 import java.util.Map;

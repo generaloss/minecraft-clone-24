@@ -1,10 +1,10 @@
-package generaloss.mc24.client.level.mesh;
+package generaloss.mc24.client.level.renderer;
 
 import generaloss.mc24.client.Main;
-import generaloss.mc24.client.block.BlockFace;
-import generaloss.mc24.client.block.BlockModel;
-import generaloss.mc24.client.block.BlockModelRegistry;
-import generaloss.mc24.client.block.BlockVertex;
+import generaloss.mc24.client.level.renderer.block.BlockFace;
+import generaloss.mc24.client.level.renderer.block.BlockModel;
+import generaloss.mc24.client.level.renderer.block.BlockModelRegistry;
+import generaloss.mc24.client.level.renderer.block.BlockVertex;
 import generaloss.mc24.client.level.LevelChunk;
 import generaloss.mc24.client.level.WorldLevel;
 import generaloss.mc24.client.resource.ResourceAtlas;
@@ -31,7 +31,8 @@ public class ChunkTesselator implements Disposable {
     private final FloatList verticesCache;
     private final LevelChunk[][][] chunkCache;
     private final int[][][] blockCache;
-    private final float[][][] ambientOcclusionCache;
+    private final int[][][] lightLevelCache;
+    private final float[] aoCache;
 
     public ChunkTesselator(Main context, WorldLevel level) {
         this.context = context;
@@ -41,7 +42,8 @@ public class ChunkTesselator implements Disposable {
         this.verticesCache = new FloatList();
         this.chunkCache = new LevelChunk[3][3][3];
         this.blockCache = new int[3][3][3];
-        this.ambientOcclusionCache = new float[6][3][3];
+        this.lightLevelCache = new int[3][3][3];
+        this.aoCache = new float[BlockFace.VERTICES_NUMBER];
     }
 
     public void tesselate(LevelChunk chunk) {
@@ -72,6 +74,10 @@ public class ChunkTesselator implements Disposable {
         return this.getCachedBlockID(dir.getX(), dir.getY(), dir.getZ());
     }
 
+    public int getCachedLightLevel(int i, int j, int k) {
+        return this.lightLevelCache[i + 1][j + 1][k + 1];
+    }
+
     private int getBlockID(int x, int y, int z) {
         final int chunkY = Mathc.signum(Maths.floor((float) y / LevelChunk.SIZE));
         final int chunkX = Mathc.signum(Maths.floor((float) x / LevelChunk.SIZE));
@@ -87,48 +93,98 @@ public class ChunkTesselator implements Disposable {
     }
 
 
-    private void addFaces(int x, int y, int z, BlockModel model, Directory directory) {
-        // cache ambient occlusion
-        // [...]
+    private float evaluateAmbientOcclusion(float vertexX, float vertexY, float vertexZ, Directory dir) {
+        final int x = Maths.round(vertexX);
+        final int y = Maths.round(vertexY);
+        final int z = Maths.round(vertexZ);
+        return switch(dir) {
+            case WEST ->  (
+                this.getCachedLightLevel(-1, -1 + y, -1 + z) +
+                this.getCachedLightLevel(-1,  0 + y, -1 + z) +
+                this.getCachedLightLevel(-1, -1 + y,  0 + z) +
+                this.getCachedLightLevel(-1,  0 + y,  0 + z)
+            );
+            case EAST -> (
+                this.getCachedLightLevel( 1, -1 + y, -1 + z) +
+                this.getCachedLightLevel( 1,  0 + y, -1 + z) +
+                this.getCachedLightLevel( 1, -1 + y,  0 + z) +
+                this.getCachedLightLevel( 1,  0 + y,  0 + z)
+            );
+            case DOWN -> (
+                this.getCachedLightLevel(-1 + x, -1, -1 + z) +
+                this.getCachedLightLevel( 0 + x, -1, -1 + z) +
+                this.getCachedLightLevel(-1 + x, -1,  0 + z) +
+                this.getCachedLightLevel( 0 + x, -1,  0 + z)
+            );
+            case UP -> (
+                this.getCachedLightLevel(-1 + x,  1, -1 + z) +
+                this.getCachedLightLevel( 0 + x,  1, -1 + z) +
+                this.getCachedLightLevel(-1 + x,  1,  0 + z) +
+                this.getCachedLightLevel( 0 + x,  1,  0 + z)
+            );
+            case SOUTH -> (
+                this.getCachedLightLevel(-1 + x, -1 + y, -1) +
+                this.getCachedLightLevel( 0 + x, -1 + y, -1) +
+                this.getCachedLightLevel(-1 + x,  0 + y, -1) +
+                this.getCachedLightLevel( 0 + x,  0 + y, -1)
+            );
+            case NORTH -> (
+                this.getCachedLightLevel(-1 + x, -1 + y, 1) +
+                this.getCachedLightLevel( 0 + x, -1 + y, 1) +
+                this.getCachedLightLevel(-1 + x,  0 + y, 1) +
+                this.getCachedLightLevel( 0 + x,  0 + y, 1)
+            );
+            default -> 60F;
+        } / 60F;
+    }
 
+    private void addFaces(int x, int y, int z, BlockModel model, Directory directory) {
         for(BlockFace face: model.getFacesGroup(directory)){
+
+            // cache ambient occlusion
+            final BlockVertex[] vertices = face.getVertices();
+            for(int vertexIndex = 0; vertexIndex < vertices.length; vertexIndex++){
+                final BlockVertex vertex = vertices[vertexIndex];
+                aoCache[vertexIndex] = this.evaluateAmbientOcclusion(vertex.getX(), vertex.getY(), vertex.getZ(), directory);
+            }
+
             // add face
             final int beginDataIndex = verticesCache.size();
-            verticesCache.add(face.getVertexDataArray());
+            verticesCache.add(face.getVertexArray());
 
-            // correct position
-            for(int beginVertexIndex: face.getIndices()){
-                final int index = (beginDataIndex + beginVertexIndex);
+            // correct face rotation for a right ao/light smoothing
+            final boolean rotateFace = (aoCache[0] + aoCache[2]) > (aoCache[1] + aoCache[3]);
+            final int[] rotatedIndices = BlockFace.VERTEX_INDEX_PERMUTATIONS[rotateFace ? 1 : 0];
 
-                // color
-                final float vx = verticesCache.get(index + 0);
-                final float vx1 = 1F - vx;
-                final float vy = verticesCache.get(index + 1);
-                final float vz = verticesCache.get(index + 2);
-                final float vz1 = 1F - vz;
+            // correct vertices
+            for(int vertexIndex = 0; vertexIndex < vertices.length; vertexIndex++){
+                // offsets
+                final int cachePosIndex = (vertexIndex * BlockVertex.SIZE + beginDataIndex);
+                final int cacheTexcoordIndex = (cachePosIndex + BlockVertex.TEXCOORD_OFFSET);
+                final int cacheColorIndex = (cachePosIndex + BlockVertex.COLOR_OFFSET);
 
-                float grayscale = 1F;
-                // [...]
+                // rotated
+                final int rotatedVertexIndex = rotatedIndices[vertexIndex];
+                final BlockVertex rotatedVertex = vertices[rotatedVertexIndex];
 
-                verticesCache.valMul(index + BlockVertex.COLOR_OFFSET + 0, grayscale);
-                verticesCache.valMul(index + BlockVertex.COLOR_OFFSET + 1, grayscale);
-                verticesCache.valMul(index + BlockVertex.COLOR_OFFSET + 2, grayscale);
-                verticesCache.valMul(index + BlockVertex.COLOR_OFFSET + 3, 1);
+                // position
+                verticesCache.set(cachePosIndex + 0, rotatedVertex.getX() + x);
+                verticesCache.set(cachePosIndex + 1, rotatedVertex.getY() + y);
+                verticesCache.set(cachePosIndex + 2, rotatedVertex.getZ() + z);
 
                 // texcoord
                 final ResourceAtlas atlas = context.resources().get("block_atlas");
                 final TextureRegion region = atlas.getRegion(face.getTextureID());
-                if(region != null){
-                    final float u = (region.u1() + region.getWidth()  * verticesCache.get(index + BlockVertex.TEXCOORD_OFFSET + 0));
-                    final float v = (region.v1() + region.getHeight() * verticesCache.get(index + BlockVertex.TEXCOORD_OFFSET + 1));
-                    verticesCache.set(index + BlockVertex.TEXCOORD_OFFSET + 0, u);
-                    verticesCache.set(index + BlockVertex.TEXCOORD_OFFSET + 1, v);
-                }
 
-                // position
-                verticesCache.valAdd(index + 0, x);
-                verticesCache.valAdd(index + 1, y);
-                verticesCache.valAdd(index + 2, z);
+                verticesCache.set(cacheTexcoordIndex + 0, (region.u1() + region.getWidth()  * rotatedVertex.getU()));
+                verticesCache.set(cacheTexcoordIndex + 1, (region.v1() + region.getHeight() * rotatedVertex.getV()));
+
+                // color
+                final float ambientOcclusion = aoCache[rotatedVertexIndex];
+                verticesCache.valMul(cacheColorIndex + 0, ambientOcclusion);
+                verticesCache.valMul(cacheColorIndex + 1, ambientOcclusion);
+                verticesCache.valMul(cacheColorIndex + 2, ambientOcclusion);
+                verticesCache.valMul(cacheColorIndex + 3, 1);
             }
         }
     }
@@ -144,7 +200,8 @@ public class ChunkTesselator implements Disposable {
                         chunkCache[1][1][1] = chunk;
                         continue;
                     }
-                    chunkCache[i][j][k] = level.getChunk(chunkPosition.getNeighbor(i - 1, j - 1, k - 1));
+                    final LevelChunk neighborChunk = level.getChunk(chunkPosition.getNeighbor(i - 1, j - 1, k - 1));
+                    chunkCache[i][j][k] = neighborChunk;
                 }
             }
         }
@@ -163,7 +220,9 @@ public class ChunkTesselator implements Disposable {
                             blockCache[1][1][1] = blockID;
                             continue;
                         }
-                        blockCache[i][j][k] = this.getBlockID((x + i - 1), (y + j - 1), (z + k - 1));
+                        final int neighborBlockID = this.getBlockID((x + i - 1), (y + j - 1), (z + k - 1));
+                        blockCache[i][j][k] = neighborBlockID;
+                        lightLevelCache[i][j][k] = (neighborBlockID == 0 ? 15 : 0);
                     }
                 }
             }

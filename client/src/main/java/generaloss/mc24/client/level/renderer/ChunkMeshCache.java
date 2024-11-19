@@ -1,4 +1,4 @@
-package generaloss.mc24.client.level.mesh;
+package generaloss.mc24.client.level.renderer;
 
 import jpize.util.Disposable;
 

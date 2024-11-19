@@ -1,7 +1,8 @@
 package generaloss.mc24.client.level;
 
 import generaloss.mc24.client.Main;
-import generaloss.mc24.client.level.mesh.ChunkTesselator;
+import generaloss.mc24.client.level.renderer.ChunkTesselator;
+import generaloss.mc24.client.level.renderer.LevelRenderer;
 import generaloss.mc24.server.chunk.Chunk;
 import generaloss.mc24.server.chunk.ChunkPos;
 import jpize.util.Disposable;
@@ -72,7 +73,7 @@ public class WorldLevel implements Disposable {
         System.out.println("Loading chunks...");
         for(int y = -8; y < 0; y++){
             this.load(0, y, 0);
-            for(int r = 0; r < 16; r++){
+            for(int r = 0; r < 12; r++){
                 for(int i = -r; i <= r; i++)
                     this.load(i, y, r);
                 for(int i = -r + 1; i <= r; i++)

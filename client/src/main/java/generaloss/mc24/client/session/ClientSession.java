@@ -23,9 +23,10 @@ public class ClientSession {
         // resources
         final ResourceDispatcher resources = context.resources();
 
-        this.music = resources
+        this.music = (AlMusic) resources
             .registerMusic("game_music", "/music/subwoofer_lullaby.ogg")
-            .resource();
+            .resource()
+            .setGain(0.5F);
 
         // camera
         this.level = new WorldLevel(context);
