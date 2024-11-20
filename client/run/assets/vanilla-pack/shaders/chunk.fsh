@@ -11,6 +11,6 @@ void main() {
     vec4 color = texture(u_texture, f_texcoord) * f_color;
     if(color.a <= 0)
         discard;
-    color.rgb *= dot(f_normal, u_lightDirection) * 0.3 + 0.7;
+    color.rgb *= dot(f_normal, u_lightDirection) * 0.25 + 0.75;
     gl_FragColor = color;
 }

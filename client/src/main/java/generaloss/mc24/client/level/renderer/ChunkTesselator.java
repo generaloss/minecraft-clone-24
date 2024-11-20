@@ -57,7 +57,7 @@ public class ChunkTesselator implements Disposable {
         while(!taskQueue.isEmpty()) {
             this.processTesselate(taskQueue.poll());
 
-            if(timer.getMillis() > Jpize.getDeltaTime() * 900)
+            if(timer.getMillis() > Jpize.getDeltaTime() * 500)
                 break;
         }
     }
@@ -303,11 +303,9 @@ public class ChunkTesselator implements Disposable {
         });
 
         chunk.freeMesh();
-
         final ChunkMesh mesh = meshCache.getFreeOrCreate();
         mesh.setData(verticesCache.arrayTrimmed());
         verticesCache.clear();
-
         chunk.setMesh(mesh);
     }
 
