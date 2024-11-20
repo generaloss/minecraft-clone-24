@@ -157,14 +157,14 @@ public class ChunkTesselator implements Disposable {
             final int[] rotatedIndices = BlockFace.VERTEX_INDEX_PERMUTATIONS[rotateFace ? 1 : 0];
 
             // correct vertices
-            for(int vertexIndex = 0; vertexIndex < vertices.length; vertexIndex++){
+            for(int i = 0; i < vertices.length; i++){
                 // offsets
-                final int cachePosIndex = (vertexIndex * BlockVertex.SIZE + beginDataIndex);
+                final int cachePosIndex = (i * BlockVertex.SIZE + beginDataIndex);
                 final int cacheTexcoordIndex = (cachePosIndex + BlockVertex.TEXCOORD_OFFSET);
                 final int cacheColorIndex = (cachePosIndex + BlockVertex.COLOR_OFFSET);
 
                 // rotated
-                final int rotatedVertexIndex = rotatedIndices[vertexIndex];
+                final int rotatedVertexIndex = rotatedIndices[i];
                 final BlockVertex rotatedVertex = vertices[rotatedVertexIndex];
 
                 // position
@@ -181,10 +181,10 @@ public class ChunkTesselator implements Disposable {
 
                 // color
                 final float ambientOcclusion = aoCache[rotatedVertexIndex];
-                verticesCache.valMul(cacheColorIndex + 0, ambientOcclusion);
-                verticesCache.valMul(cacheColorIndex + 1, ambientOcclusion);
-                verticesCache.valMul(cacheColorIndex + 2, ambientOcclusion);
-                verticesCache.valMul(cacheColorIndex + 3, 1);
+                verticesCache.elementMul(cacheColorIndex + 0, ambientOcclusion);
+                verticesCache.elementMul(cacheColorIndex + 1, ambientOcclusion);
+                verticesCache.elementMul(cacheColorIndex + 2, ambientOcclusion);
+                verticesCache.elementMul(cacheColorIndex + 3, 1F);
             }
         }
     }
