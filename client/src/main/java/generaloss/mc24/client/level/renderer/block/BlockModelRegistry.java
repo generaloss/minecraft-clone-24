@@ -1,5 +1,7 @@
 package generaloss.mc24.client.level.renderer.block;
 
+import generaloss.mc24.server.common.Directory;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -92,42 +94,42 @@ public class BlockModelRegistry {
 
         registerModel(2, new BlockModel(true)
             // east
-            .addFace(new BlockFace("oak_leaves", new BlockVertex[] {
+            .addFace(new BlockFace(Directory.NONE, Directory.NONE, "oak_leaves", new BlockVertex[] {
                 new BlockVertex(1F, 1, 0,  0, 0,  0.4F, 0.7F, 0.3F, 1F),
                 new BlockVertex(1F, 0, 0,  0, 1,  0.4F, 0.7F, 0.3F, 1F),
                 new BlockVertex(1F, 0, 1,  1, 1,  0.4F, 0.7F, 0.3F, 1F),
                 new BlockVertex(1F, 1, 1,  1, 0,  0.4F, 0.7F, 0.3F, 1F)
             }))
             // west
-            .addFace(new BlockFace("oak_leaves", new BlockVertex[] {
+            .addFace(new BlockFace(Directory.NONE, Directory.NONE, "oak_leaves", new BlockVertex[] {
                 new BlockVertex(0F, 1, 1,  0, 0,  0.4F, 0.7F, 0.3F, 1F),
                 new BlockVertex(0F, 0, 1,  0, 1,  0.4F, 0.7F, 0.3F, 1F),
                 new BlockVertex(0F, 0, 0,  1, 1,  0.4F, 0.7F, 0.3F, 1F),
                 new BlockVertex(0F, 1, 0,  1, 0,  0.4F, 0.7F, 0.3F, 1F)
             }))
             // up
-            .addFace(new BlockFace("oak_leaves", new BlockVertex[] {
+            .addFace(new BlockFace(Directory.NONE, Directory.NONE, "oak_leaves", new BlockVertex[] {
                 new BlockVertex(0, 1F, 1,  0, 0,  0.4F, 0.7F, 0.3F, 1F),
                 new BlockVertex(0, 1F, 0,  0, 1,  0.4F, 0.7F, 0.3F, 1F),
                 new BlockVertex(1, 1F, 0,  1, 1,  0.4F, 0.7F, 0.3F, 1F),
                 new BlockVertex(1, 1F, 1,  1, 0,  0.4F, 0.7F, 0.3F, 1F)
             }))
             // down
-            .addFace(new BlockFace("oak_leaves", new BlockVertex[] {
+            .addFace(new BlockFace(Directory.NONE, Directory.NONE, "oak_leaves", new BlockVertex[] {
                 new BlockVertex(0, 0F, 0,  0, 0,  0.4F, 0.7F, 0.3F, 1F),
                 new BlockVertex(0, 0F, 1,  0, 1,  0.4F, 0.7F, 0.3F, 1F),
                 new BlockVertex(1, 0F, 1,  1, 1,  0.4F, 0.7F, 0.3F, 1F),
                 new BlockVertex(1, 0F, 0,  1, 0,  0.4F, 0.7F, 0.3F, 1F)
             }))
             // north
-            .addFace(new BlockFace("oak_leaves", new BlockVertex[] {
+            .addFace(new BlockFace(Directory.NONE, Directory.NONE, "oak_leaves", new BlockVertex[] {
                 new BlockVertex(1, 1, 1F,  0, 0,  0.4F, 0.7F, 0.3F, 1F),
                 new BlockVertex(1, 0, 1F,  0, 1,  0.4F, 0.7F, 0.3F, 1F),
                 new BlockVertex(0, 0, 1F,  1, 1,  0.4F, 0.7F, 0.3F, 1F),
                 new BlockVertex(0, 1, 1F,  1, 0,  0.4F, 0.7F, 0.3F, 1F)
             }))
             // south
-            .addFace(new BlockFace("oak_leaves", new BlockVertex[] {
+            .addFace(new BlockFace(Directory.NONE, Directory.NONE, "oak_leaves", new BlockVertex[] {
                 new BlockVertex(0, 1, 0F,  0, 0,  0.4F, 0.7F, 0.3F, 1F),
                 new BlockVertex(0, 0, 0F,  0, 1,  0.4F, 0.7F, 0.3F, 1F),
                 new BlockVertex(1, 0, 0F,  1, 1,  0.4F, 0.7F, 0.3F, 1F),

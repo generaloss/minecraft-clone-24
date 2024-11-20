@@ -62,7 +62,7 @@ public class WorldLevel implements Disposable {
         });
         chunk.forEachBlock((x, y, z) -> {
             if(chunk.getBlock(x, y, z) != 0 && chunk.getBlock(x, y + 1, z) == 0)
-                chunk.setBlock(x, y, z, 1);
+                chunk.setBlock(x, y, z, 2);
         });
 
         this.loadChunk(chunk);
@@ -71,7 +71,7 @@ public class WorldLevel implements Disposable {
 
     private void loadChunks() {
         System.out.println("Loading chunks...");
-        for(int y = -8; y < 0; y++){
+        for(int y = -4; y < 4; y++){
             this.load(0, y, 0);
             for(int r = 0; r < 12; r++){
                 for(int i = -r; i <= r; i++)

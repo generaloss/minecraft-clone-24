@@ -37,6 +37,10 @@ public class BlockFace {
         this.vertexArray = vertexDataList.arrayTrimmed();
     }
 
+    public BlockFace(Directory occlude, String textureID, BlockVertex[] vertices) {
+        this(calculateOccludesTo(vertices), occlude, textureID, vertices);
+    }
+
     public BlockFace(String textureID, BlockVertex[] vertices) {
         this(calculateOccludesTo(vertices), calculateOcclude(vertices), textureID, vertices);
     }
