@@ -26,9 +26,9 @@ public class ResourceAtlas extends ResourceHandle<Texture2D> {
         this.atlas.setPadding(4);
         this.atlas.setFillPaddings(true);
         this.atlas.getTexture()
-            .setFilters(GlFilter.LINEAR, GlFilter.NEAREST)
-            .generateMipmap(0, 4)
-            .setMaxAnisotropy(8);
+            ;//.setFilters(GlFilter.LINEAR, GlFilter.NEAREST)
+            ;//.generateMipmap(0, 4)
+            ;//.setMaxAnisotropy(8);
     }
 
     @Override
