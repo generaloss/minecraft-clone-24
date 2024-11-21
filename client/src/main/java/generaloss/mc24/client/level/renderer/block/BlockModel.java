@@ -1,6 +1,7 @@
 package generaloss.mc24.client.level.renderer.block;
 
 import generaloss.mc24.server.common.Directory;
+import jpize.util.res.Resource;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,14 +10,18 @@ import java.util.Map;
 
 public class BlockModel {
 
-    private final boolean dontOccludeSameBlock;
+    private boolean dontOccludeSameBlock;
     private final Map<Directory, List<BlockFace>> faceGroups;
     private final Map<Directory, Boolean> occludeMap;
 
-    public BlockModel(boolean dontOccludeSameBlock) {
-        this.dontOccludeSameBlock = dontOccludeSameBlock;
+    public BlockModel() {
         this.faceGroups = new HashMap<>();
         this.occludeMap = new HashMap<>();
+    }
+
+    public BlockModel(boolean dontOccludeSameBlock) {
+        this();
+        this.dontOccludeSameBlock = dontOccludeSameBlock;
     }
 
     public BlockModel addFace(BlockFace face) {
@@ -30,6 +35,12 @@ public class BlockModel {
         if(occlude != Directory.NONE)
             occludeMap.put(occlude, true);
         return this;
+    }
+
+    public void load(Resource resource) {
+        faceGroups.clear();
+        occludeMap.clear();
+
     }
 
     public List<BlockFace> getFacesGroup(Directory dir) {

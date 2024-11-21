@@ -2,7 +2,7 @@ package generaloss.mc24.client.resource;
 
 import jpize.util.Disposable;
 
-public abstract class ResourceHandle<T extends Disposable> implements Disposable {
+public abstract class ResourceHandle<T> implements Disposable {
 
     private final ResourceDispatcher dispatcher;
     private final String identifier;
