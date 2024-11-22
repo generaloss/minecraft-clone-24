@@ -18,7 +18,7 @@ public class SessionScreen extends IScreen {
 
     @Override
     public void show() {
-        session.connect(null, 0);
+
     }
 
     @Override

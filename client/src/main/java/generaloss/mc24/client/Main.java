@@ -59,7 +59,7 @@ public class Main extends JpizeApplication {
         // resources
         this.loadResources();
         // set menu screen
-        screens.show("title");
+        screens.show("session");
     }
 
 
@@ -72,6 +72,7 @@ public class Main extends JpizeApplication {
     public void startLocalSession() {
         System.out.println("Starting local session..");
         localServer.run(Maths.random(64000, 64999));
+        session.connect("localhost", localServer.getPort());
         screens.show("session");
     }
 
