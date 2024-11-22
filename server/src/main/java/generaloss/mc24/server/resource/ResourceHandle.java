@@ -1,4 +1,4 @@
-package generaloss.mc24.client.resource;
+package generaloss.mc24.server.resource;
 
 import jpize.util.Disposable;
 

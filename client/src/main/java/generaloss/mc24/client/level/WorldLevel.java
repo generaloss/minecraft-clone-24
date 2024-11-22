@@ -62,7 +62,7 @@ public class WorldLevel implements Disposable {
         });
         chunk.forEachBlock((x, y, z) -> {
             if(chunk.getBlock(x, y, z) != 0 && chunk.getBlock(x, y + 1, z) == 0)
-                chunk.setBlock(x, y, z, 2);
+                chunk.setBlock(x, y, z, 1);
         });
 
         this.loadChunk(chunk);

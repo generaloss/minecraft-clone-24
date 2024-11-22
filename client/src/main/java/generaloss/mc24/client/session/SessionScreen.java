@@ -7,9 +7,13 @@ public class SessionScreen extends IScreen {
 
     private final ClientSession session;
 
-    public SessionScreen(Main context) {
+    public SessionScreen(Main context, ClientSession session) {
         super(context, "session");
-        this.session = new ClientSession(context);
+        this.session = session;
+    }
+
+    public ClientSession session() {
+        return session;
     }
 
     @Override

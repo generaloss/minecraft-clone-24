@@ -35,6 +35,7 @@
             <artifactId>mc24-server</artifactId>
             <version>24.11.2</version>
         </dependency>
+
     </dependencies>
 
 </project>

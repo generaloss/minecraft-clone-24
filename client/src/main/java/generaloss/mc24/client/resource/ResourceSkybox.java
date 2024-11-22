@@ -1,5 +1,7 @@
 package generaloss.mc24.client.resource;
 
+import generaloss.mc24.server.resource.ResourceDispatcher;
+import generaloss.mc24.server.resource.ResourceHandle;
 import jpize.gl.texture.GlCubemapTarget;
 import jpize.gl.texture.Skybox;
 import jpize.util.pixmap.Pixmap;
@@ -27,9 +29,9 @@ public class ResourceSkybox extends ResourceHandle<Skybox> {
         for(GlCubemapTarget target: GlCubemapTarget.values()) {
             final String name = (super.getPath().replace("%s", POSTFIX_ARRAY[target.ordinal()]));
 
-            Resource resource = Resource.external(super.dispatcher().getRootDirectory() + name);
+            Resource resource = Resource.external(super.dispatcher().getDirectory() + name);
             if(!resource.exists())
-                resource = Resource.external(ResourceDispatcher.DEFAULT_ROOT_DIR + name);
+                resource = Resource.external(super.dispatcher().getDefaultDirectory() + name);
 
             final Pixmap pixmap = PixmapIO.load(resource);
             skybox.setImage(target, pixmap);

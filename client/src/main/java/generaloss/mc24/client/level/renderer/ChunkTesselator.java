@@ -1,10 +1,7 @@
 package generaloss.mc24.client.level.renderer;
 
 import generaloss.mc24.client.Main;
-import generaloss.mc24.client.level.renderer.block.BlockFace;
-import generaloss.mc24.client.level.renderer.block.BlockModel;
-import generaloss.mc24.client.level.renderer.block.BlockModelRegistry;
-import generaloss.mc24.client.level.renderer.block.BlockVertex;
+import generaloss.mc24.server.block.*;
 import generaloss.mc24.client.level.LevelChunk;
 import generaloss.mc24.client.level.WorldLevel;
 import generaloss.mc24.client.resource.ResourceAtlas;
@@ -90,6 +87,16 @@ public class ChunkTesselator implements Disposable {
         final int norY = (y - chunkY * LevelChunk.SIZE);
         final int norZ = (z - chunkZ * LevelChunk.SIZE);
         return chunk.getBlock(norX, norY, norZ);
+    }
+
+    private static final String[] BLOCK_BY_ID = { "air", "grass_block", "dirt", "stone" }; //! hardcoded shufashaua
+
+    private Block getBlock(int blockID) {
+        return (Block) context.localServer().resources().get(BLOCK_BY_ID[blockID]).resource();
+    }
+
+    private BlockModel getBlockModel(int blockID) {
+        return this.getBlock(blockID).model();
     }
 
 
@@ -229,75 +236,75 @@ public class ChunkTesselator implements Disposable {
 
 
             // add faces
-            final BlockModel blockModel = BlockModelRegistry.getModel(blockID);
+            final BlockModel model = this.getBlockModel(blockID);
 
             // none faces
-            this.addFaces(x, y, z, blockModel, Directory.NONE);
+            this.addFaces(x, y, z, model, Directory.NONE);
 
             // east faces
             final int blockCacheEast = this.getCachedBlockID(Directory.EAST);
             if(blockCacheEast == 0){
-                this.addFaces(x, y, z, blockModel, Directory.EAST);
+                this.addFaces(x, y, z, model, Directory.EAST);
 
             }else{
-                final BlockModel eastBlockModel = BlockModelRegistry.getModel(blockCacheEast);
-                if((blockCacheEast == blockID && eastBlockModel.isDontOccludeSameBlock()) || !eastBlockModel.isOcclude(Directory.EAST))
-                    this.addFaces(x, y, z, blockModel, Directory.EAST);
+                //final BlockModel eastBlock = this.getBlockModel(blockCacheEast);
+                //if((blockCacheEast == blockID && eastBlock.isDontHideSameBlockFaces()) || !eastBlock.isOcclude(Directory.EAST))
+                //    this.addFaces(x, y, z, model, Directory.EAST);
             }
 
             // west faces
             final int blockCacheWest = this.getCachedBlockID(Directory.WEST);
             if(blockCacheWest == 0){
-                this.addFaces(x, y, z, blockModel, Directory.WEST);
+                this.addFaces(x, y, z, model, Directory.WEST);
 
             }else{
-                final BlockModel westBlockModel = BlockModelRegistry.getModel(blockCacheWest);
-                if((blockCacheWest == blockID && westBlockModel.isDontOccludeSameBlock()) || !westBlockModel.isOcclude(Directory.WEST))
-                    this.addFaces(x, y, z, blockModel, Directory.WEST);
+                //final BlockModel westBlock = this.getBlockModel(blockCacheWest);
+                //if((blockCacheWest == blockID && westBlock.isDontHideSameBlockFaces()) || !westBlock.isOcclude(Directory.WEST))
+                //    this.addFaces(x, y, z, model, Directory.WEST);
             }
 
             // up faces
             final int blockCacheUp = this.getCachedBlockID(Directory.UP);
             if(blockCacheUp == 0){
-                this.addFaces(x, y, z, blockModel, Directory.UP);
+                this.addFaces(x, y, z, model, Directory.UP);
 
             }else{
-                final BlockModel upBlockModel = BlockModelRegistry.getModel(blockCacheUp);
-                if((blockCacheUp == blockID && upBlockModel.isDontOccludeSameBlock()) || !upBlockModel.isOcclude(Directory.UP))
-                    this.addFaces(x, y, z, blockModel, Directory.UP);
+                //final BlockModel upBlock = this.getBlockModel(blockCacheUp);
+                //if((blockCacheUp == blockID && upBlock.isDontHideSameBlockFaces()) || !upBlock.isOcclude(Directory.UP))
+                //    this.addFaces(x, y, z, model, Directory.UP);
             }
 
             // down faces
             final int blockCacheDown = this.getCachedBlockID(Directory.DOWN);
             if(blockCacheDown == 0){
-                this.addFaces(x, y, z, blockModel, Directory.DOWN);
+                this.addFaces(x, y, z, model, Directory.DOWN);
 
             }else{
-                final BlockModel downBlockModel = BlockModelRegistry.getModel(blockCacheDown);
-                if((blockCacheDown == blockID && downBlockModel.isDontOccludeSameBlock()) || !downBlockModel.isOcclude(Directory.DOWN))
-                    this.addFaces(x, y, z, blockModel, Directory.DOWN);
+                //final BlockModel downBlock = this.getBlockModel(blockCacheDown);
+                //if((blockCacheDown == blockID && downBlock.isDontHideSameBlockFaces()) || !downBlock.isOcclude(Directory.DOWN))
+                //    this.addFaces(x, y, z, model, Directory.DOWN);
             }
 
             // north faces
             final int blockCacheNorth = this.getCachedBlockID(Directory.NORTH);
             if(blockCacheNorth == 0){
-                this.addFaces(x, y, z, blockModel, Directory.NORTH);
+                this.addFaces(x, y, z, model, Directory.NORTH);
 
             }else{
-                final BlockModel northBlockModel = BlockModelRegistry.getModel(blockCacheNorth);
-                if((blockCacheNorth == blockID && northBlockModel.isDontOccludeSameBlock()) || !northBlockModel.isOcclude(Directory.NORTH))
-                    this.addFaces(x, y, z, blockModel, Directory.NORTH);
+                //final BlockModel northBlock = this.getBlockModel(blockCacheNorth);
+                //if((blockCacheNorth == blockID && northBlock.isDontHideSameBlockFaces()) || !northBlock.isOcclude(Directory.NORTH))
+                //    this.addFaces(x, y, z, model, Directory.NORTH);
             }
 
             // south faces
             final int blockCacheSouth = this.getCachedBlockID(Directory.SOUTH);
             if(blockCacheSouth == 0){
-                this.addFaces(x, y, z, blockModel, Directory.SOUTH);
+                this.addFaces(x, y, z, model, Directory.SOUTH);
 
             }else{
-                final BlockModel southBlockModel = BlockModelRegistry.getModel(blockCacheSouth);
-                if((blockCacheSouth == blockID && southBlockModel.isDontOccludeSameBlock()) || !southBlockModel.isOcclude(Directory.SOUTH))
-                    this.addFaces(x, y, z, blockModel, Directory.SOUTH);
+                //final BlockModel southBlock = this.getBlockModel(blockCacheSouth);
+                //if((blockCacheSouth == blockID && southBlock.isDontHideSameBlockFaces()) || !southBlock.isOcclude(Directory.SOUTH))
+                //    this.addFaces(x, y, z, model, Directory.SOUTH);
             }
 
         });

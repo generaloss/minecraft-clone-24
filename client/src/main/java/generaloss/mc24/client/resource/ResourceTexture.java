@@ -1,5 +1,7 @@
 package generaloss.mc24.client.resource;
 
+import generaloss.mc24.server.resource.ResourceDispatcher;
+import generaloss.mc24.server.resource.ResourceHandle;
 import jpize.gl.texture.Texture2D;
 import jpize.util.pixmap.Pixmap;
 import jpize.util.pixmap.PixmapIO;
@@ -21,9 +23,9 @@ public class ResourceTexture extends ResourceHandle<Texture2D> {
 
     @Override
     public void reload() {
-        Resource resource = Resource.external(super.dispatcher().getRootDirectory() + super.getPath());
+        Resource resource = Resource.external(super.dispatcher().getDirectory() + super.getPath());
         if(!resource.exists())
-            resource = Resource.external(ResourceDispatcher.DEFAULT_ROOT_DIR + super.getPath());
+            resource = Resource.external(super.dispatcher().getDefaultDirectory() + super.getPath());
 
         final Pixmap pixmap = PixmapIO.load(resource);
         texture.setImage(pixmap);

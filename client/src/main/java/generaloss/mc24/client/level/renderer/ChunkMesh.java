@@ -1,6 +1,6 @@
 package generaloss.mc24.client.level.renderer;
 
-import generaloss.mc24.client.level.renderer.block.BlockVertex;
+import generaloss.mc24.server.block.BlockVertex;
 import jpize.gl.tesselation.GlPrimitive;
 import jpize.gl.type.GlType;
 import jpize.gl.vertex.GlVertAttr;

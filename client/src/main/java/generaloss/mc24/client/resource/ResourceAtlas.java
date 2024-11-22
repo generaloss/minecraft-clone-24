@@ -1,5 +1,7 @@
 package generaloss.mc24.client.resource;
 
+import generaloss.mc24.server.resource.ResourceDispatcher;
+import generaloss.mc24.server.resource.ResourceHandle;
 import jpize.gl.texture.GlFilter;
 import jpize.gl.texture.Texture2D;
 import jpize.util.atlas.TextureAtlas;
@@ -42,7 +44,7 @@ public class ResourceAtlas extends ResourceHandle<Texture2D> {
     }
 
     public ResourceAtlas registerAllInDirectory() {
-        final ExternalResource directoryRes = Resource.external(super.dispatcher().getRootDirectory() + super.getPath());
+        final ExternalResource directoryRes = Resource.external(super.dispatcher().getDirectory() + super.getPath());
         for(ExternalResource resource: directoryRes.listRes())
             register(resource.simpleName(), "/" + resource.name());
         return this;
@@ -57,9 +59,9 @@ public class ResourceAtlas extends ResourceHandle<Texture2D> {
         for(Map.Entry<String, String> entry: paths.entrySet()){
             final String name = (super.getPath() + entry.getValue());
 
-            Resource resource = Resource.external(super.dispatcher().getRootDirectory() + name);
+            Resource resource = Resource.external(super.dispatcher().getDirectory() + name);
             if(!resource.exists())
-                resource = Resource.external(ResourceDispatcher.DEFAULT_ROOT_DIR + name);
+                resource = Resource.external(super.dispatcher().getDefaultDirectory() + name);
 
             atlas.put(entry.getKey(), resource);
         }

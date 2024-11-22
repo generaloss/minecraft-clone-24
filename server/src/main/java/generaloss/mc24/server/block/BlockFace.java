@@ -1,4 +1,4 @@
-package generaloss.mc24.client.level.renderer.block;
+package generaloss.mc24.server.block;
 
 import generaloss.mc24.server.common.Directory;
 import jpize.util.array.FloatList;
