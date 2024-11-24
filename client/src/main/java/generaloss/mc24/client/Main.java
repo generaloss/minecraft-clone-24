@@ -1,6 +1,6 @@
 package generaloss.mc24.client;
 
-import generaloss.mc24.client.resource.ResourceDispatcherClient;
+import generaloss.mc24.client.resource.ResourcesRegistryClient;
 import generaloss.mc24.client.screen.TitleScreen;
 import generaloss.mc24.client.screen.ScreenDispatcher;
 import generaloss.mc24.client.session.ClientSession;
@@ -9,7 +9,7 @@ import generaloss.mc24.server.ArgsMap;
 import generaloss.mc24.server.Server;
 import jpize.app.Jpize;
 import jpize.app.JpizeApplication;
-import jpize.audio.Audio;
+import jpize.audio.AlDevices;
 import jpize.gl.Gl;
 import jpize.glfw.Glfw;
 import jpize.glfw.init.GlfwPlatform;
@@ -17,28 +17,26 @@ import jpize.glfw.input.Key;
 import jpize.util.font.Font;
 import jpize.util.font.FontLoader;
 import jpize.util.math.Maths;
+import jpize.util.res.ExternalResource;
+import jpize.util.res.Resource;
 
 public class Main extends JpizeApplication {
 
-    private final ScreenDispatcher screens;
-    private final ResourceDispatcherClient resources;
+    private final ResourcesRegistryClient resources;
     private final Server localServer;
     private final Font font;
+    private final ScreenDispatcher screens;
     private final ClientSession session;
 
     public Main() {
-        this.screens = new ScreenDispatcher();
-        this.resources = new ResourceDispatcherClient();
-        this.localServer = new Server();
+        this.resources = new ResourcesRegistryClient();
+        this.localServer = new Server(resources);
         this.font = FontLoader.loadDefault();
+        this.screens = new ScreenDispatcher();
         this.session = new ClientSession(this);
     }
 
-    public ScreenDispatcher screens() {
-        return screens;
-    }
-
-    public ResourceDispatcherClient resources() {
+    public ResourcesRegistryClient resources() {
         return resources;
     }
 
@@ -46,24 +44,34 @@ public class Main extends JpizeApplication {
         return localServer;
     }
 
+    public ScreenDispatcher screens() {
+        return screens;
+    }
+
 
     @Override
     public void init() {
         System.out.println("Initializing client");
         // audio
-        Audio.init();
-        Audio.openDevice();
+        AlDevices.openDevice();
         // screens
         screens.register(new TitleScreen(this));
         screens.register(new SessionScreen(this, session));
         // resources
         this.loadResources();
         // set menu screen
-        screens.show("session");
+        screens.show("title");
+        startLocalSession();
     }
 
 
     private void loadResources() {
+        // load block models
+        final String blockModelsPath = "/resources/models/blocks/";
+        final ExternalResource defaultBlockModelsRes = Resource.external(resources.getDefaultDirectory() + blockModelsPath);
+        System.out.println("Loading " + defaultBlockModelsRes.list().length + " block models..");
+        for(ExternalResource blockModelRes: defaultBlockModelsRes.listRes())
+            resources.registerBlock(blockModelRes.simpleName(), blockModelsPath + blockModelRes.name());
         // apply default asset pack
         resources.reloadAll();
     }
@@ -118,6 +126,7 @@ public class Main extends JpizeApplication {
         screens.dispose();
         resources.dispose();
         font.dispose();
+        AlDevices.dispose();
     }
 
 

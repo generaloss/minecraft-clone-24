@@ -1,4 +1,4 @@
-package generaloss.mc24.server.resource;
+package generaloss.mc24.client.resource;
 
 import jpize.util.Disposable;
 import jpize.util.time.Stopwatch;
@@ -6,12 +6,12 @@ import jpize.util.time.Stopwatch;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ResourceDispatcher implements Disposable {
+public class ResourcesRegistry implements Disposable {
 
     private final Map<String, ResourceHandle<?>> resources;
     private String directory;
 
-    public ResourceDispatcher() {
+    public ResourcesRegistry() {
         this.resources = new HashMap<>();
         this.resetDirectory();
     }
@@ -25,7 +25,7 @@ public class ResourceDispatcher implements Disposable {
     }
 
     public String getDefaultDirectory() {
-        return "assets/server";
+        return "assets";
     }
 
     public void resetDirectory() {
@@ -38,8 +38,24 @@ public class ResourceDispatcher implements Disposable {
         return resourceHandle;
     }
 
-    public ResourceBlock registerBlock(String identifier, String path) {
-        return (ResourceBlock) this.register(new ResourceBlock(this, identifier, path));
+    public ResourceTexture registerTexture(String identifier, String path) {
+        return (ResourceTexture) this.register(new ResourceTexture(this, identifier, path));
+    }
+
+    public ResourceSkybox registerSkybox(String identifier, String path) {
+        return (ResourceSkybox) this.register(new ResourceSkybox(this, identifier, path));
+    }
+
+    public ResourceMusic registerMusic(String identifier, String path) {
+        return (ResourceMusic) this.register(new ResourceMusic(this, identifier, path));
+    }
+
+    public ResourceShader registerShader(String identifier, String path) {
+        return (ResourceShader) this.register(new ResourceShader(this, identifier, path));
+    }
+
+    public ResourceAtlas registerAtlas(String identifier, String path, int width, int height) {
+        return (ResourceAtlas) this.register(new ResourceAtlas(this, identifier, path, width, height));
     }
 
 

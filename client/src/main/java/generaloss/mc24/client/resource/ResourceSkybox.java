@@ -1,7 +1,5 @@
 package generaloss.mc24.client.resource;
 
-import generaloss.mc24.server.resource.ResourceDispatcher;
-import generaloss.mc24.server.resource.ResourceHandle;
 import jpize.gl.texture.GlCubemapTarget;
 import jpize.gl.texture.Skybox;
 import jpize.util.pixmap.Pixmap;
@@ -14,7 +12,7 @@ public class ResourceSkybox extends ResourceHandle<Skybox> {
 
     private final Skybox skybox;
 
-    public ResourceSkybox(ResourceDispatcher dispatcher, String identifier, String path) {
+    public ResourceSkybox(ResourcesRegistry dispatcher, String identifier, String path) {
         super(dispatcher, identifier, path);
         this.skybox = new Skybox();
     }

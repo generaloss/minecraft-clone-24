@@ -1,4 +1,4 @@
-package generaloss.mc24.server.common;
+package generaloss.mc24.server;
 
 import jpize.util.math.vector.Vec3i;
 

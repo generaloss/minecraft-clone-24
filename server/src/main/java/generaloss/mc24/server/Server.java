@@ -1,6 +1,6 @@
 package generaloss.mc24.server;
 
-import generaloss.mc24.server.resource.ResourceDispatcher;
+import generaloss.mc24.server.resource.ResourcesRegistry;
 import jpize.util.net.tcp.TcpServer;
 import jpize.util.res.ExternalResource;
 import jpize.util.res.Resource;
@@ -9,13 +9,13 @@ import jpize.util.time.Tickable;
 public class Server implements Tickable {
 
     private int port;
-    private final ResourceDispatcher resources;
+    private final ResourcesRegistry resources;
     private final ServerConnections connections;
     private final TcpServer tcpServer;
 
-    public Server() {
+    public Server(ResourcesRegistry resources) {
         System.out.println("Initializing server");
-        this.resources = new ResourceDispatcher();
+        this.resources = resources;
         this.loadResources();
         this.connections = new ServerConnections(this);
         this.tcpServer = new TcpServer()
@@ -28,7 +28,7 @@ public class Server implements Tickable {
         return port;
     }
 
-    public ResourceDispatcher resources() {
+    public ResourcesRegistry resources() {
         return resources;
     }
 
@@ -38,16 +38,13 @@ public class Server implements Tickable {
 
 
     private void loadResources() {
-        // load block models
-        final String blockModelsPath = "/blocks/";
-        final ExternalResource defaultBlockModelsRes = Resource.external(resources.getDefaultDirectory() + blockModelsPath);
-        System.out.println("Loading " + defaultBlockModelsRes.list().length + " blocks..");
-        for(ExternalResource blockModelRes: defaultBlockModelsRes.listRes())
-            resources.registerBlock(blockModelRes.simpleName(), blockModelsPath + blockModelRes.name());
-        // reload
-        resources.reloadAll();
+        // load blocks
+        final String blocksPath = "/behaviours/blocks/";
+        final ExternalResource blocksRes = Resource.external(resources.getDefaultDirectory() + blocksPath);
+        System.out.println("Loading " + blocksRes.list().length + " blocks..");
+        for(ExternalResource blockRes: blocksRes.listRes())
+            resources.registerBlock(blockRes.simpleName(), blocksPath + blockRes.name());
     }
-
 
     public void run(int port) {
         this.port = port;

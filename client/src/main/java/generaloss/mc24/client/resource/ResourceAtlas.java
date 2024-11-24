@@ -1,7 +1,5 @@
 package generaloss.mc24.client.resource;
 
-import generaloss.mc24.server.resource.ResourceDispatcher;
-import generaloss.mc24.server.resource.ResourceHandle;
 import jpize.gl.texture.GlFilter;
 import jpize.gl.texture.Texture2D;
 import jpize.util.atlas.TextureAtlas;
@@ -18,7 +16,7 @@ public class ResourceAtlas extends ResourceHandle<Texture2D> {
     private final Map<String, String> paths;
     private final TextureAtlas<String> atlas;
 
-    public ResourceAtlas(ResourceDispatcher dispatcher, String identifier, String path, int width, int height) {
+    public ResourceAtlas(ResourcesRegistry dispatcher, String identifier, String path, int width, int height) {
         super(dispatcher, identifier, path);
         this.width = width;
         this.height = height;

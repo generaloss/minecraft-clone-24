@@ -2,23 +2,23 @@ package generaloss.mc24.server.block;
 
 public class Block {
 
-    private final String identifier;
-    private BlockModel model;
+    private String stringID;
+    private int numericID;
 
-    public Block(String identifier) {
-        this.identifier = identifier;
+    public void setStringID(String stringID) {
+        this.stringID = stringID;
     }
 
-    public String getIdentifier() {
-        return identifier;
+    public void setNumericID(int numericID) {
+        this.numericID = numericID;
     }
 
-    public BlockModel model() {
-        return model;
+    public String getStringID() {
+        return stringID;
     }
 
-    public void setModel(BlockModel model) {
-        this.model = model;
+    public int getNumericID() {
+        return numericID;
     }
 
 }

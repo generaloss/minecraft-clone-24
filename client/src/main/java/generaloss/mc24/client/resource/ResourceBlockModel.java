@@ -1,67 +1,64 @@
-package generaloss.mc24.server.resource;
+package generaloss.mc24.client.resource;
 
-import generaloss.mc24.server.block.Block;
-import generaloss.mc24.server.block.BlockFace;
-import generaloss.mc24.server.block.BlockModel;
-import generaloss.mc24.server.block.BlockVertex;
+import generaloss.mc24.client.level.renderer.block.BlockFace;
+import generaloss.mc24.client.level.renderer.block.BlockModel;
+import generaloss.mc24.client.level.renderer.block.BlockVertex;
 import jpize.util.res.Resource;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-public class ResourceBlock extends ResourceHandle<Block> {
+public class ResourceBlockModel extends ResourceHandle<BlockModel> {
 
-    private final Block block;
+    private final BlockModel model;
 
-    public ResourceBlock(ResourceDispatcher dispatcher, String identifier, String path) {
+    public ResourceBlockModel(ResourcesRegistry dispatcher, String identifier, String path) {
         super(dispatcher, identifier, path);
-        this.block = new Block(identifier);
+        this.model = new BlockModel();
     }
 
     @Override
-    public Block resource() {
-        return block;
+    public BlockModel resource() {
+        return model;
     }
 
     @Override
     public void reload() {
-
         Resource resource = Resource.external(super.dispatcher().getDirectory() + super.getPath());
         if(!resource.exists())
             resource = Resource.external(super.dispatcher().getDefaultDirectory() + super.getPath());
 
-        final JSONObject object = new JSONObject(resource.readString());
+        final JSONObject jsonObject = new JSONObject(resource.readString());
 
-        if(object.has("model")) {
-            block.setModel(new BlockModel());
+        model.clear();
+        model.setDontHideSameBlockFaces(jsonObject.getBoolean("dont_hide_same_block_faces"));
 
-            final JSONObject model = object.getJSONObject("model");
-            block.model().setDontHideSameBlockFaces(model.getBoolean("dont_hide_same_block_faces"));
+        final JSONObject jsonFaces = jsonObject.getJSONObject("faces");
+        for(String faceKey: jsonFaces.keySet()){
+            final JSONObject jsonFace = jsonFaces.getJSONObject(faceKey);
+            // texture
+            final String textureID = jsonFace.getString("texture_ID");
+            // vertices
+            final JSONArray vertices = jsonFace.getJSONArray("vertices");
+            final BlockVertex[] verticesArray = new BlockVertex[vertices.length()];
+            for(int i = 0; i < vertices.length(); i++){
+                final JSONArray jsonVertex = vertices.getJSONArray(i);
+                final float[] vertexArray = new float[BlockVertex.SIZE];
+                for(int j = 0; j < jsonVertex.length(); j++)
+                    vertexArray[j] = jsonVertex.getFloat(j);
 
-            final JSONObject faces = model.getJSONObject("faces");
-            for(String faceKey: faces.keySet()){
-                final JSONObject face = faces.getJSONObject(faceKey);
-                // texture
-                final String textureID = face.getString("texture_ID");
-                // vertices
-                final JSONArray vertices = face.getJSONArray("vertices");
-                final BlockVertex[] verticesArray = new BlockVertex[vertices.length()];
-                for(int i = 0; i < vertices.length(); i++){
-                    final JSONArray vertex = vertices.getJSONArray(i);
-                    final float[] vertexArray = new float[BlockVertex.SIZE];
-                    for(int j = 0; j < vertex.length(); j++)
-                        vertexArray[j] = vertex.getFloat(j);
-
-                    verticesArray[i] = new BlockVertex(
-                        vertexArray[0], vertexArray[1], vertexArray[2], // position
-                        vertexArray[3], vertexArray[4], // texcoord
-                        vertexArray[5], vertexArray[6], vertexArray[7], vertexArray[8] // color
-                    );
-                }
-
-                block.model().addFace(new BlockFace(textureID, verticesArray));
+                verticesArray[i] = new BlockVertex(
+                    vertexArray[0], vertexArray[1], vertexArray[2], // position
+                    vertexArray[3], vertexArray[4], // texcoord
+                    vertexArray[5], vertexArray[6], vertexArray[7], vertexArray[8] // color
+                );
             }
+
+            model.addFace(new BlockFace(textureID, verticesArray));
         }
     }
+
+    @Override
+    public void dispose() { }
 
     // static {
     //     registerModel("grass_block", new BlockModel(false)
@@ -217,8 +214,5 @@ public class ResourceBlock extends ResourceHandle<Block> {
     //             new BlockVertex(1, 0, 0F, 1, 1, 1, 1, 1, 1F), new BlockVertex(1, 1, 0F, 1, 0, 1, 1, 1, 1F)
     //         })));
     // }
-
-    @Override
-    public void dispose() { }
 
 }

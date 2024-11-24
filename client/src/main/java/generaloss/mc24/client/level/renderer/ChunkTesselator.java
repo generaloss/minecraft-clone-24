@@ -1,12 +1,15 @@
 package generaloss.mc24.client.level.renderer;
 
 import generaloss.mc24.client.Main;
+import generaloss.mc24.client.level.renderer.block.BlockFace;
+import generaloss.mc24.client.level.renderer.block.BlockModel;
+import generaloss.mc24.client.level.renderer.block.BlockVertex;
+import generaloss.mc24.server.Directory;
 import generaloss.mc24.server.block.*;
 import generaloss.mc24.client.level.LevelChunk;
 import generaloss.mc24.client.level.WorldLevel;
 import generaloss.mc24.client.resource.ResourceAtlas;
 import generaloss.mc24.server.chunk.ChunkPos;
-import generaloss.mc24.server.common.Directory;
 import jpize.app.Jpize;
 import jpize.util.Disposable;
 import jpize.util.array.FloatList;
@@ -89,14 +92,13 @@ public class ChunkTesselator implements Disposable {
         return chunk.getBlock(norX, norY, norZ);
     }
 
-    private static final String[] BLOCK_BY_ID = { "air", "grass_block", "dirt", "stone" }; //! hardcoded shufashaua
-
     private Block getBlock(int blockID) {
-        return (Block) context.localServer().resources().get(BLOCK_BY_ID[blockID]).resource();
+        return BlockRegistry.get(blockID);
     }
 
     private BlockModel getBlockModel(int blockID) {
-        return this.getBlock(blockID).model();
+        final String stringID = this.getBlock(blockID).getStringID();
+        return (BlockModel) context.resources().get(stringID).resource();
     }
 
 

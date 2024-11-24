@@ -1,20 +1,20 @@
-package generaloss.mc24.server.resource;
+package generaloss.mc24.client.resource;
 
 import jpize.util.Disposable;
 
 public abstract class ResourceHandle<T> implements Disposable {
 
-    private final ResourceDispatcher dispatcher;
+    private final ResourcesRegistry dispatcher;
     private final String identifier;
     private String path;
 
-    protected ResourceHandle(ResourceDispatcher dispatcher, String identifier, String path) {
+    protected ResourceHandle(ResourcesRegistry dispatcher, String identifier, String path) {
         this.dispatcher = dispatcher;
         this.identifier = identifier;
         this.setPath(path);
     }
 
-    public ResourceDispatcher dispatcher() {
+    public ResourcesRegistry dispatcher() {
         return dispatcher;
     }
 

@@ -1,6 +1,6 @@
-package generaloss.mc24.server.block;
+package generaloss.mc24.client.level.renderer.block;
 
-import generaloss.mc24.server.common.Directory;
+import generaloss.mc24.server.Directory;
 
 import java.util.ArrayList;
 import java.util.HashMap;

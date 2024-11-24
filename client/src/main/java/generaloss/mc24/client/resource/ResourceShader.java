@@ -1,7 +1,5 @@
 package generaloss.mc24.client.resource;
 
-import generaloss.mc24.server.resource.ResourceDispatcher;
-import generaloss.mc24.server.resource.ResourceHandle;
 import jpize.gl.shader.Shader;
 import jpize.util.res.Resource;
 
@@ -9,7 +7,7 @@ public class ResourceShader extends ResourceHandle<Shader> {
 
     private final Shader shader;
 
-    public ResourceShader(ResourceDispatcher dispatcher, String identifier, String path) {
+    public ResourceShader(ResourcesRegistry dispatcher, String identifier, String path) {
         super(dispatcher, identifier, path);
         this.shader = new Shader();
     }

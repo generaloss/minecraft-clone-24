@@ -1,7 +1,7 @@
 package generaloss.mc24.client.screen;
 
 import generaloss.mc24.client.Main;
-import generaloss.mc24.client.resource.ResourceDispatcherClient;
+import generaloss.mc24.client.resource.ResourcesRegistryClient;
 import jpize.app.Jpize;
 import jpize.audio.util.AlMusic;
 import jpize.gl.texture.GlFilter;
@@ -24,19 +24,19 @@ public class TitleScreen extends IScreen {
         super(context, "title");
 
         // resources
-        final ResourceDispatcherClient resources = super.context().resources();
+        final ResourcesRegistryClient resources = super.context().resources();
 
         this.overlayTexture = resources
-            .registerTexture("menu_panorama_overlay", "/textures/gui/title/panorama_overlay.png")
+            .registerTexture("menu_panorama_overlay", "/resources/textures/gui/title/panorama_overlay.png")
             .resource()
             .setFilters(GlFilter.LINEAR);
 
         this.skybox = resources
-            .registerSkybox("menu_panorama_skybox", "/textures/gui/title/panorama_%s.png")
+            .registerSkybox("menu_panorama_skybox", "/resources/textures/gui/title/panorama_%s.png")
             .resource();
 
         this.music = resources
-            .registerMusic("menu_music", "/music/beginning2.ogg")
+            .registerMusic("menu_music", "/resources/music/beginning2.ogg")
             .resource();
 
         // camera
