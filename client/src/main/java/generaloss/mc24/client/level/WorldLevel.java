@@ -1,8 +1,7 @@
 package generaloss.mc24.client.level;
 
 import generaloss.mc24.client.Main;
-import generaloss.mc24.client.level.renderer.ChunkTesselator;
-import generaloss.mc24.client.level.renderer.LevelRenderer;
+import generaloss.mc24.client.chunk.ChunkTesselator;
 import generaloss.mc24.server.chunk.Chunk;
 import generaloss.mc24.server.chunk.ChunkPos;
 import jpize.util.Disposable;

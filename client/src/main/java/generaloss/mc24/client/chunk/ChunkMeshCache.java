@@ -1,4 +1,4 @@
-package generaloss.mc24.client.level.renderer;
+package generaloss.mc24.client.chunk;
 
 import jpize.util.Disposable;
 

@@ -1,31 +1,17 @@
-package generaloss.mc24.client.resource;
+package generaloss.mc24.client.block;
 
-import generaloss.mc24.client.level.renderer.block.BlockFace;
-import generaloss.mc24.client.level.renderer.block.BlockModel;
-import generaloss.mc24.client.level.renderer.block.BlockVertex;
 import jpize.util.res.Resource;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-public class ResourceBlockModel extends ResourceHandle<BlockModel> {
+public class BlockModelLoader {
 
-    private final BlockModel model;
-
-    public ResourceBlockModel(ResourcesRegistry dispatcher, String identifier, String path) {
-        super(dispatcher, identifier, path);
-        this.model = new BlockModel();
-    }
-
-    @Override
-    public BlockModel resource() {
-        return model;
-    }
-
-    @Override
     public void reload() {
-        Resource resource = Resource.external(super.dispatcher().getDirectory() + super.getPath());
-        if(!resource.exists())
-            resource = Resource.external(super.dispatcher().getDefaultDirectory() + super.getPath());
+        BlockModel model = null;
+
+        Resource resource = null; //Resource.external(super.dispatcher().getDirectory() + super.getPath());
+        //if(!resource.exists())
+        //    resource = Resource.external(super.dispatcher().getDefaultDirectory() + super.getPath());
 
         final JSONObject jsonObject = new JSONObject(resource.readString());
 
@@ -56,9 +42,6 @@ public class ResourceBlockModel extends ResourceHandle<BlockModel> {
             model.addFace(new BlockFace(textureID, verticesArray));
         }
     }
-
-    @Override
-    public void dispose() { }
 
     // static {
     //     registerModel("grass_block", new BlockModel(false)

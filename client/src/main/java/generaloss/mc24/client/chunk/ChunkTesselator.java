@@ -1,9 +1,9 @@
-package generaloss.mc24.client.level.renderer;
+package generaloss.mc24.client.chunk;
 
 import generaloss.mc24.client.Main;
-import generaloss.mc24.client.level.renderer.block.BlockFace;
-import generaloss.mc24.client.level.renderer.block.BlockModel;
-import generaloss.mc24.client.level.renderer.block.BlockVertex;
+import generaloss.mc24.client.block.BlockFace;
+import generaloss.mc24.client.block.BlockModel;
+import generaloss.mc24.client.block.BlockVertex;
 import generaloss.mc24.server.Directory;
 import generaloss.mc24.server.block.*;
 import generaloss.mc24.client.level.LevelChunk;
@@ -93,7 +93,7 @@ public class ChunkTesselator implements Disposable {
     }
 
     private Block getBlock(int blockID) {
-        return BlockRegistry.get(blockID);
+        return null; //BlockRegistry.get(blockID);
     }
 
     private BlockModel getBlockModel(int blockID) {

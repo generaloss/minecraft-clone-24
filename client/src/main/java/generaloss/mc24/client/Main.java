@@ -1,12 +1,18 @@
 package generaloss.mc24.client;
 
-import generaloss.mc24.client.resource.ResourcesRegistryClient;
+import generaloss.mc24.client.block.BlockFace;
+import generaloss.mc24.client.block.BlockModel;
+import generaloss.mc24.client.block.BlockVertex;
+import generaloss.mc24.client.registry.ClientRegistries;
+import generaloss.mc24.client.resource.ResourcesRegistry;
 import generaloss.mc24.client.screen.TitleScreen;
 import generaloss.mc24.client.screen.ScreenDispatcher;
 import generaloss.mc24.client.session.ClientSession;
 import generaloss.mc24.client.session.SessionScreen;
 import generaloss.mc24.server.ArgsMap;
 import generaloss.mc24.server.Server;
+import generaloss.mc24.server.block.Block;
+import generaloss.mc24.server.registry.Registries;
 import jpize.app.Jpize;
 import jpize.app.JpizeApplication;
 import jpize.audio.AlDevices;
@@ -19,24 +25,28 @@ import jpize.util.font.FontLoader;
 import jpize.util.math.Maths;
 import jpize.util.res.ExternalResource;
 import jpize.util.res.Resource;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 public class Main extends JpizeApplication {
 
-    private final ResourcesRegistryClient resources;
+    private final ResourcesRegistry resources;
+    private final ClientRegistries registries;
     private final Server localServer;
     private final Font font;
     private final ScreenDispatcher screens;
     private final ClientSession session;
 
     public Main() {
-        this.resources = new ResourcesRegistryClient();
-        this.localServer = new Server(resources);
+        this.resources = new ResourcesRegistry();
+        this.registries = new ClientRegistries();
+        this.localServer = new Server(registries);
         this.font = FontLoader.loadDefault();
         this.screens = new ScreenDispatcher();
         this.session = new ClientSession(this);
     }
 
-    public ResourcesRegistryClient resources() {
+    public ResourcesRegistry resources() {
         return resources;
     }
 
@@ -70,10 +80,52 @@ public class Main extends JpizeApplication {
         final String blockModelsPath = "/resources/models/blocks/";
         final ExternalResource defaultBlockModelsRes = Resource.external(resources.getDefaultDirectory() + blockModelsPath);
         System.out.println("Loading " + defaultBlockModelsRes.list().length + " block models..");
-        for(ExternalResource blockModelRes: defaultBlockModelsRes.listRes())
-            resources.registerBlock(blockModelRes.simpleName(), blockModelsPath + blockModelRes.name());
+        for(ExternalResource blockModelRes: defaultBlockModelsRes.listRes()){
+            loadBlockModel(Resource.external(blockModelsPath + blockModelRes.name()));
+        }
         // apply default asset pack
         resources.reloadAll();
+    }
+
+    private void loadBlockModel(Resource resource) {
+        BlockModel model = new BlockModel();
+
+        final JSONObject jsonObject = new JSONObject(resource.readString());
+
+        final String id = jsonObject.getString("ID");
+
+        model.clear();
+        model.setDontHideSameBlockFaces(jsonObject.getBoolean("dont_hide_same_block_faces"));
+
+        final JSONObject jsonFaces = jsonObject.getJSONObject("faces");
+        for(String faceKey: jsonFaces.keySet()){
+            final JSONObject jsonFace = jsonFaces.getJSONObject(faceKey);
+            // texture
+            final String textureID = jsonFace.getString("texture_ID");
+            // vertices
+            final JSONArray vertices = jsonFace.getJSONArray("vertices");
+            final BlockVertex[] verticesArray = new BlockVertex[vertices.length()];
+            for(int i = 0; i < vertices.length(); i++){
+                final JSONArray jsonVertex = vertices.getJSONArray(i);
+                final float[] vertexArray = new float[BlockVertex.SIZE];
+                for(int j = 0; j < jsonVertex.length(); j++)
+                    vertexArray[j] = jsonVertex.getFloat(j);
+
+                verticesArray[i] = new BlockVertex(
+                        vertexArray[0], vertexArray[1], vertexArray[2], // position
+                        vertexArray[3], vertexArray[4], // texcoord
+                        vertexArray[5], vertexArray[6], vertexArray[7], vertexArray[8] // color
+                );
+            }
+
+            model.addFace(new BlockFace(textureID, verticesArray));
+        }
+
+        final Block block = registries.BLOCK.get(id);
+        if(block == null)
+            throw new IllegalStateException("Block model cannot be loaded. Block with ID '" + id + "' is not exists.");
+
+        registries.BLOCK_MODEL.register(blockState, model);
     }
 
 

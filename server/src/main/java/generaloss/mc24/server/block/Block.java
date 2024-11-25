@@ -2,23 +2,10 @@ package generaloss.mc24.server.block;
 
 public class Block {
 
-    private String stringID;
-    private int numericID;
+    private final String ID;
 
-    public void setStringID(String stringID) {
-        this.stringID = stringID;
-    }
-
-    public void setNumericID(int numericID) {
-        this.numericID = numericID;
-    }
-
-    public String getStringID() {
-        return stringID;
-    }
-
-    public int getNumericID() {
-        return numericID;
+    public Block(String ID) {
+        this.ID = ID;
     }
 
 }

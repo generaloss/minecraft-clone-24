@@ -1,4 +1,4 @@
-package generaloss.mc24.client.level.renderer.block;
+package generaloss.mc24.client.block;
 
 import jpize.util.math.vector.Vec3f;
 

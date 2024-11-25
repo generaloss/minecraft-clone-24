@@ -1,4 +1,6 @@
 {
+  "ID" : "dirt",
+
   "dont_hide_same_block_faces" : false,
 
   "faces" : {
