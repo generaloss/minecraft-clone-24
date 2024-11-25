@@ -1,6 +1,6 @@
 package generaloss.mc24.server.registry;
 
-import generaloss.mc24.server.block.ObjectIntMap;
+import generaloss.mc24.server.ObjectIntMap;
 
 public class IntRegistry <T> {
 

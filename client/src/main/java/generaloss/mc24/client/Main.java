@@ -12,7 +12,7 @@ import generaloss.mc24.client.session.SessionScreen;
 import generaloss.mc24.server.ArgsMap;
 import generaloss.mc24.server.Server;
 import generaloss.mc24.server.block.Block;
-import generaloss.mc24.server.registry.Registries;
+import generaloss.mc24.server.block.BlockState;
 import jpize.app.Jpize;
 import jpize.app.JpizeApplication;
 import jpize.audio.AlDevices;
@@ -50,6 +50,10 @@ public class Main extends JpizeApplication {
         return resources;
     }
 
+    public ClientRegistries registries() {
+        return registries;
+    }
+
     public Server localServer() {
         return localServer;
     }
@@ -62,6 +66,7 @@ public class Main extends JpizeApplication {
     @Override
     public void init() {
         System.out.println("Initializing client");
+        localServer.init();
         // audio
         AlDevices.openDevice();
         // screens
@@ -77,8 +82,8 @@ public class Main extends JpizeApplication {
 
     private void loadResources() {
         // load block models
-        final String blockModelsPath = "/resources/models/blocks/";
-        final ExternalResource defaultBlockModelsRes = Resource.external(resources.getDefaultDirectory() + blockModelsPath);
+        final String blockModelsPath = "/assets/resources/models/blocks/";
+        final ExternalResource defaultBlockModelsRes = Resource.external(blockModelsPath);
         System.out.println("Loading " + defaultBlockModelsRes.list().length + " block models..");
         for(ExternalResource blockModelRes: defaultBlockModelsRes.listRes()){
             loadBlockModel(Resource.external(blockModelsPath + blockModelRes.name()));
@@ -94,7 +99,6 @@ public class Main extends JpizeApplication {
 
         final String id = jsonObject.getString("ID");
 
-        model.clear();
         model.setDontHideSameBlockFaces(jsonObject.getBoolean("dont_hide_same_block_faces"));
 
         final JSONObject jsonFaces = jsonObject.getJSONObject("faces");
@@ -125,7 +129,10 @@ public class Main extends JpizeApplication {
         if(block == null)
             throw new IllegalStateException("Block model cannot be loaded. Block with ID '" + id + "' is not exists.");
 
-        registries.BLOCK_MODEL.register(blockState, model);
+        final BlockState state = block.getDefaultState();
+
+        registries.BLOCK_MODEL.register(state, model);
+        System.out.println("Loaded block model with ID '" + id + "'");
     }
 
 

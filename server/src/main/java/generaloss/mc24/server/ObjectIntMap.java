@@ -1,4 +1,4 @@
-package generaloss.mc24.server.block;
+package generaloss.mc24.server;
 
 import org.jetbrains.annotations.NotNull;
 

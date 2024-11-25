@@ -33,6 +33,7 @@ public class ClientSession {
     public void connect(String host, int port) {
         player.input().enable();
         Gl.enable(GlTarget.DEPTH_TEST);
+        level.loadChunks();
     }
 
     public void close() {

@@ -16,6 +16,9 @@ public class Registry<K, V> {
     }
 
     public V get(K ID) {
+        if(!map.containsKey(ID))
+            throw new IllegalStateException("Block with ID '" + ID + "' not loaded.");
+
         return map.get(ID);
     }
 

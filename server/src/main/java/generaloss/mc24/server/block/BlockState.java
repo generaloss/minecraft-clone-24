@@ -5,23 +5,28 @@ import java.util.*;
 public class BlockState {
 
     private final Block block;
-    private final Map<AbstractProperty<?>, Object> propertyValuesMap;
+    private final Map<StateProperty<?>, Object> propertyValues;
 
-    public BlockState(Block block, Map<AbstractProperty<?>, Object> propertyValuesMap) {
+    public BlockState(Block block, Map<StateProperty<?>, Object> propertyValues) {
         this.block = block;
-        this.propertyValuesMap = propertyValuesMap;
+        this.propertyValues = propertyValues;
     }
 
     public Block getBlock() {
         return block;
     }
 
-    public Collection<AbstractProperty<?>> getProperties(){
-        return propertyValuesMap.keySet();
+    public Collection<StateProperty<?>> getProperties(){
+        return propertyValues.keySet();
     }
 
     public Collection<Object> getPropertyValues() {
-        return propertyValuesMap.values();
+        return propertyValues.values();
+    }
+
+
+    public String getID() {
+        return block.getID();
     }
 
 }

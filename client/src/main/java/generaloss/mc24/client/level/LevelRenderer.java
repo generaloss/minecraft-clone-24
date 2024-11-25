@@ -53,7 +53,7 @@ public class LevelRenderer {
             if(mesh == null)
                 continue;
 
-            final ChunkPos position = chunk.getPosition();
+            final ChunkPos position = chunk.position();
             if(!position.isVisible(camera.frustum()))
                 continue;
 
