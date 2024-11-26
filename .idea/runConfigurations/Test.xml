@@ -1,0 +1,16 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Test" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="generaloss.Main" />
+    <module name="mc24-client" />
+    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/client/run" />
+    <extension name="coverage">
+      <pattern>
+        <option name="PATTERN" value="generaloss.mc24.client.resource.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+    </extension>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

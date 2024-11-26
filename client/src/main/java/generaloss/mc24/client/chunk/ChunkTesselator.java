@@ -177,7 +177,7 @@ public class ChunkTesselator implements Disposable {
                 verticesCache.set(cachePosIndex + 2, rotatedVertex.getZ() + z);
 
                 // texcoord
-                final ResourceAtlas atlas = context.registries().atlas().get("blocks");
+                final ResourceAtlas atlas = context.registries().resource().getAtlas("blocks");
                 final TextureRegion region = atlas.getRegion(face.getTextureID());
 
                 verticesCache.set(cacheTexcoordIndex + 0, (region.u1() + region.getWidth()  * rotatedVertex.getU()));

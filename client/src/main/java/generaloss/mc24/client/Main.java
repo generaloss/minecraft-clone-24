@@ -75,7 +75,7 @@ public class Main extends JpizeApplication {
         screens.register(new TitleScreen(this));
         screens.register(new SessionScreen(this));
         // load resources
-        registries.reloadResources();
+        registries.resource().loadResources();
         // set menu screen
         screens.show("title");
         this.connectLocal();

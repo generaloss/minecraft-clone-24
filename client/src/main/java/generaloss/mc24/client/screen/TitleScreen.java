@@ -1,10 +1,7 @@
 package generaloss.mc24.client.screen;
 
 import generaloss.mc24.client.Main;
-import generaloss.mc24.client.registry.ClientRegistries;
-import generaloss.mc24.client.resource.ResourceMusic;
-import generaloss.mc24.client.resource.ResourceSkybox;
-import generaloss.mc24.client.resource.ResourceTexture;
+import generaloss.mc24.client.registry.ResourceRegistry;
 import jpize.app.Jpize;
 import jpize.audio.util.AlMusic;
 import jpize.gl.texture.GlFilter;
@@ -27,19 +24,19 @@ public class TitleScreen extends IScreen {
         super(context, "title");
 
         // resources
-        final ClientRegistries registries = context.registries();
+        final ResourceRegistry resourceRegistry = context.registries().resource();
 
-        this.overlayTexture = registries.texture()
-            .register(new ResourceTexture("menu_panorama_overlay", "/textures/gui/title/panorama_overlay.png"))
+        this.overlayTexture = resourceRegistry
+            .registerTexture("menu_panorama_overlay", "textures/gui/title/panorama_overlay.png")
             .object()
             .setFilters(GlFilter.LINEAR);
 
-        this.skybox = registries.skybox()
-            .register(new ResourceSkybox("menu_panorama_skybox", "/textures/gui/title/panorama_%s.png"))
+        this.skybox = resourceRegistry
+            .registerSkybox("menu_panorama_skybox", "textures/gui/title/panorama_%s.png")
             .object();
 
-        this.music = registries.music()
-            .register(new ResourceMusic("menu_music", "/music/beginning2.ogg"))
+        this.music = resourceRegistry
+            .registerMusic("menu_music", "music/beginning2.ogg")
             .object();
 
         // camera

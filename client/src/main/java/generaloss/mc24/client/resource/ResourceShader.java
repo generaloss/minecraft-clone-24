@@ -7,8 +7,8 @@ public class ResourceShader extends ResourceHandle<Shader> {
 
     private final Shader shader;
 
-    public ResourceShader(String ID, String path) {
-        super(ID, path);
+    public ResourceShader(ResourcePack defaultPack, String ID, String path) {
+        super(defaultPack, ID, path);
         this.shader = new Shader();
     }
 
@@ -18,13 +18,9 @@ public class ResourceShader extends ResourceHandle<Shader> {
     }
 
     @Override
-    public void reload() {
-        final String vertexName = (super.getPath() + ".vsh");
-        final Resource vertexRes = Resource.external("assets/resources/" + vertexName);
-
-        final String fragmentName = (super.getPath() + ".fsh");
-        final Resource fragmentRes = Resource.external("assets/resources/" + fragmentName);
-
+    public void load(ResourcePack pack) {
+        final Resource vertexRes = pack.getOrDefault(super.getPath() + ".vsh", super.getDefaultPack());
+        final Resource fragmentRes = pack.getOrDefault(super.getPath() + ".fsh", super.getDefaultPack());
         shader.load(vertexRes, fragmentRes);
     }
 

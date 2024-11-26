@@ -12,8 +12,8 @@ public class ResourceSkybox extends ResourceHandle<Skybox> {
 
     private final Skybox skybox;
 
-    public ResourceSkybox(String ID, String path) {
-        super(ID, path);
+    public ResourceSkybox(ResourcePack defaultPack, String ID, String path) {
+        super(defaultPack, ID, path);
         this.skybox = new Skybox();
     }
 
@@ -23,10 +23,10 @@ public class ResourceSkybox extends ResourceHandle<Skybox> {
     }
 
     @Override
-    public void reload() {
+    public void load(ResourcePack pack) {
         for(GlCubemapTarget target: GlCubemapTarget.values()) {
             final String name = (super.getPath().replace("%s", POSTFIX_ARRAY[target.ordinal()]));
-            final Resource resource = Resource.external("assets/resources/" + name);
+            final Resource resource = pack.getOrDefault(name, super.getDefaultPack());
 
             final Pixmap pixmap = PixmapIO.load(resource);
             skybox.setImage(target, pixmap);

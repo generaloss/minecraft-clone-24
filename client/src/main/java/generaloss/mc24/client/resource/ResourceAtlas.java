@@ -16,8 +16,8 @@ public class ResourceAtlas extends ResourceHandle<Texture2D> {
     private final Map<String, String> paths;
     private final TextureAtlas<String> atlas;
 
-    public ResourceAtlas(String ID, String path, int width, int height) {
-        super(ID, path);
+    public ResourceAtlas(ResourcePack defaultPack, String ID, String path, int width, int height) {
+        super(defaultPack, ID, path);
         this.width = width;
         this.height = height;
         this.paths = new HashMap<>();
@@ -53,10 +53,10 @@ public class ResourceAtlas extends ResourceHandle<Texture2D> {
     }
 
     @Override
-    public void reload() {
+    public void load(ResourcePack pack) {
         for(Map.Entry<String, String> entry: paths.entrySet()){
             final String name = (super.getPath() + entry.getValue());
-            final Resource resource = Resource.external("assets/resources/" + name);
+            final Resource resource = pack.getOrDefault(name, super.getDefaultPack());
 
             atlas.put(entry.getKey(), resource);
         }

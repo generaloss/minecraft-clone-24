@@ -7,8 +7,8 @@ public class ResourceMusic extends ResourceHandle<AlMusic> {
 
     private final AlMusic music;
 
-    public ResourceMusic(String ID, String path) {
-        super(ID, path);
+    public ResourceMusic(ResourcePack defaultPack, String ID, String path) {
+        super(defaultPack, ID, path);
         this.music = new AlMusic();
     }
 
@@ -18,8 +18,8 @@ public class ResourceMusic extends ResourceHandle<AlMusic> {
     }
 
     @Override
-    public void reload() {
-        final Resource resource = Resource.external("assets/resources/" + super.getPath());
+    public void load(ResourcePack pack) {
+        final Resource resource = pack.getOrDefault(super.getPath(), super.getDefaultPack());
         music.load(resource);
     }
 

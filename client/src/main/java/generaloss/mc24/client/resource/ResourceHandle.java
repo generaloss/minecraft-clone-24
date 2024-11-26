@@ -5,12 +5,18 @@ import jpize.util.Disposable;
 
 public abstract class ResourceHandle<Object> implements Disposable, Identifiable<String> {
 
+    private final ResourcePack defaultPack;
     private final String ID;
     private String path;
 
-    protected ResourceHandle(String ID, String path) {
+    protected ResourceHandle(ResourcePack defaultPack, String ID, String path) {
+        this.defaultPack = defaultPack;
         this.ID = ID;
         this.setPath(path);
+    }
+
+    public ResourcePack getDefaultPack() {
+        return defaultPack;
     }
 
     @Override
@@ -29,6 +35,6 @@ public abstract class ResourceHandle<Object> implements Disposable, Identifiable
     }
 
 
-    public abstract void reload();
+    public abstract void load(ResourcePack pack);
 
 }
