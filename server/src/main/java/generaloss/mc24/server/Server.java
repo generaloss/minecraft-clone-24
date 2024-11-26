@@ -6,6 +6,9 @@ import jpize.util.net.tcp.TcpServer;
 import jpize.util.res.ExternalResource;
 import jpize.util.res.Resource;
 import jpize.util.time.Tickable;
+import org.json.JSONObject;
+
+import java.util.Map;
 
 public class Server implements Tickable {
 
@@ -50,9 +53,13 @@ public class Server implements Tickable {
         
         for(ExternalResource blockRes: blocksRes.listRes()){
             final Resource resource = Resource.external(blocksPath + blockRes.name());
-            final Block block = new Block(resource.simpleName());
-            block.buildStates(registries.BLOCK_STATE);
-            registries.BLOCK.register(blockRes.simpleName(), block);
+            // read json
+            final JSONObject jsonObject = new JSONObject(resource.readString());
+            final String blockID = jsonObject.getString("ID");
+            // create block
+            final Block block = new Block(blockID, Map.of(), registries.blockState());
+            // register
+            registries.block().register(blockRes.simpleName(), block);
             System.out.println("Loaded block with ID '" + blockRes.simpleName() + "'");
         }
     }

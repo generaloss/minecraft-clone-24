@@ -2,6 +2,7 @@ package generaloss.mc24.server.chunk;
 
 import generaloss.mc24.server.block.BlockState;
 import generaloss.mc24.server.registry.IntRegistry;
+import generaloss.mc24.server.registry.Registries;
 import generaloss.mc24.server.world.World;
 
 public class Chunk {
@@ -15,10 +16,10 @@ public class Chunk {
     private final IntRegistry<BlockState> blockStateRegistry;
     private final IntNibbleArray blockStateIndices;
 
-    public Chunk(World world, ChunkPos position, IntRegistry<BlockState> blockStateRegistry) {
+    public Chunk(World world, ChunkPos position, Registries registries) {
         this.world = world;
         this.position = position;
-        this.blockStateRegistry = blockStateRegistry;
+        this.blockStateRegistry = registries.blockState();
         this.blockStateIndices = new IntNibbleArray();
     }
 
@@ -40,7 +41,7 @@ public class Chunk {
 
     public boolean setBlockState(int x, int y, int z, BlockState blockState) {
         final int stateID = blockStateRegistry.getID(blockState);
-        if(stateID != -1)
+        if(stateID == -1)
             return false;
         return blockStateIndices.set(x, y, z, stateID);
     }

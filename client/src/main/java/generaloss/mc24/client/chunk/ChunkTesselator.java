@@ -214,7 +214,7 @@ public class ChunkTesselator implements Disposable {
         chunk.forEach((x, y, z) -> {
             // cache neighbor blocks
             final BlockState blockState = chunk.getBlockState(x, y, z);
-            if(blockState == null)
+            if(blockState == null || blockState.isBlockID("air"))
                 return;
 
             for(int i = 0; i < 3; i++){
@@ -226,7 +226,10 @@ public class ChunkTesselator implements Disposable {
                         }
                         final BlockState neighborBlock = this.getBlockState((x + i - 1), (y + j - 1), (z + k - 1));
                         blockCache[i][j][k] = neighborBlock;
-                        lightLevelCache[i][j][k] = ((neighborBlock == null) ? 15 : (neighborBlock.getID().equals("oak_leaves")) ? 2 : 0);
+                        final int lightLevel = (neighborBlock == null ? 15 :
+                                (15 - neighborBlock.properties().getInt(BlockProperty.OPAQUE_LEVEL))
+                        );
+                        lightLevelCache[i][j][k] = lightLevel;
                     }
                 }
             }
@@ -239,69 +242,69 @@ public class ChunkTesselator implements Disposable {
             this.addFaces(x, y, z, model, Directory.NONE);
 
             // east faces
-            final BlockState blockCacheEast = this.getCachedBlockState(Directory.EAST);
-            if(blockCacheEast == null){
+            final BlockState blockStateEast = this.getCachedBlockState(Directory.EAST);
+            if(blockStateEast == null || blockStateEast.isBlockID("air")){
                 this.addFaces(x, y, z, model, Directory.EAST);
 
             }else{
-                //final BlockModel eastBlock = this.getBlockModel(blockCacheEast);
-                //if((blockCacheEast == blockState && eastBlock.isDontHideSameBlockFaces()) || !eastBlock.isOcclude(Directory.EAST))
-                //    this.addFaces(x, y, z, model, Directory.EAST);
+                final BlockModel modelEast = this.getBlockModel(blockStateEast);
+                if((blockStateEast == blockState && modelEast.isDontHidesSameBlockFaces()) || modelEast.isNotHidesOppositeFace(Directory.EAST))
+                    this.addFaces(x, y, z, model, Directory.EAST);
             }
 
             // west faces
-            final BlockState blockCacheWest = this.getCachedBlockState(Directory.WEST);
-            if(blockCacheWest == null){
+            final BlockState blockStateWest = this.getCachedBlockState(Directory.WEST);
+            if(blockStateWest == null || blockStateWest.isBlockID("air")){
                 this.addFaces(x, y, z, model, Directory.WEST);
 
             }else{
-                //final BlockModel westBlock = this.getBlockModel(blockCacheWest);
-                //if((blockCacheWest == blockState && westBlock.isDontHideSameBlockFaces()) || !westBlock.isOcclude(Directory.WEST))
-                //    this.addFaces(x, y, z, model, Directory.WEST);
+                final BlockModel modelWest = this.getBlockModel(blockStateWest);
+                if((blockStateWest == blockState && modelWest.isDontHidesSameBlockFaces()) || modelWest.isNotHidesOppositeFace(Directory.WEST))
+                    this.addFaces(x, y, z, model, Directory.WEST);
             }
 
             // up faces
-            final BlockState blockCacheUp = this.getCachedBlockState(Directory.UP);
-            if(blockCacheUp == null){
+            final BlockState blockStateUp = this.getCachedBlockState(Directory.UP);
+            if(blockStateUp == null || blockStateUp.isBlockID("air")){
                 this.addFaces(x, y, z, model, Directory.UP);
 
             }else{
-                //final BlockModel upBlock = this.getBlockModel(blockCacheUp);
-                //if((blockCacheUp == blockState && upBlock.isDontHideSameBlockFaces()) || !upBlock.isOcclude(Directory.UP))
-                //    this.addFaces(x, y, z, model, Directory.UP);
+                final BlockModel modelUp = this.getBlockModel(blockStateUp);
+                if((blockStateUp == blockState && modelUp.isDontHidesSameBlockFaces()) || modelUp.isNotHidesOppositeFace(Directory.UP))
+                    this.addFaces(x, y, z, model, Directory.UP);
             }
 
             // down faces
-            final BlockState blockCacheDown = this.getCachedBlockState(Directory.DOWN);
-            if(blockCacheDown == null){
+            final BlockState blockStateDown = this.getCachedBlockState(Directory.DOWN);
+            if(blockStateDown == null || blockStateDown.isBlockID("air")){
                 this.addFaces(x, y, z, model, Directory.DOWN);
 
             }else{
-                //final BlockModel downBlock = this.getBlockModel(blockCacheDown);
-                //if((blockCacheDown == blockState && downBlock.isDontHideSameBlockFaces()) || !downBlock.isOcclude(Directory.DOWN))
-                //    this.addFaces(x, y, z, model, Directory.DOWN);
+                final BlockModel modelDown = this.getBlockModel(blockStateDown);
+                if((blockStateDown == blockState && modelDown.isDontHidesSameBlockFaces()) || modelDown.isNotHidesOppositeFace(Directory.DOWN))
+                    this.addFaces(x, y, z, model, Directory.DOWN);
             }
 
             // north faces
-            final BlockState blockCacheNorth = this.getCachedBlockState(Directory.NORTH);
-            if(blockCacheNorth == null){
+            final BlockState blockStateNorth = this.getCachedBlockState(Directory.NORTH);
+            if(blockStateNorth == null || blockStateNorth.isBlockID("air")){
                 this.addFaces(x, y, z, model, Directory.NORTH);
 
             }else{
-                //final BlockModel northBlock = this.getBlockModel(blockCacheNorth);
-                //if((blockCacheNorth == blockState && northBlock.isDontHideSameBlockFaces()) || !northBlock.isOcclude(Directory.NORTH))
-                //    this.addFaces(x, y, z, model, Directory.NORTH);
+                final BlockModel modelNorth = this.getBlockModel(blockStateNorth);
+                if((blockStateNorth == blockState && modelNorth.isDontHidesSameBlockFaces()) || modelNorth.isNotHidesOppositeFace(Directory.NORTH))
+                    this.addFaces(x, y, z, model, Directory.NORTH);
             }
 
             // south faces
-            final BlockState blockCacheSouth = this.getCachedBlockState(Directory.SOUTH);
-            if(blockCacheSouth == null){
+            final BlockState blockStateSouth = this.getCachedBlockState(Directory.SOUTH);
+            if(blockStateSouth == null || blockStateSouth.isBlockID("air")){
                 this.addFaces(x, y, z, model, Directory.SOUTH);
 
             }else{
-                //final BlockModel southBlock = this.getBlockModel(blockCacheSouth);
-                //if((blockCacheSouth == blockState && southBlock.isDontHideSameBlockFaces()) || !southBlock.isOcclude(Directory.SOUTH))
-                //    this.addFaces(x, y, z, model, Directory.SOUTH);
+                final BlockModel modelSouth = this.getBlockModel(blockStateSouth);
+                if((blockStateSouth == blockState && modelSouth.isDontHidesSameBlockFaces()) || modelSouth.isNotHidesOppositeFace(Directory.SOUTH))
+                    this.addFaces(x, y, z, model, Directory.SOUTH);
             }
 
         });

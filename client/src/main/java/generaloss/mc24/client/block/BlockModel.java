@@ -9,52 +9,51 @@ import java.util.Map;
 
 public class BlockModel {
 
-    private boolean dontHideSameBlockFaces;
+    private boolean dontHidesSameBlockFaces;
     private final Map<Directory, List<BlockFace>> faceGroups;
-    private final Map<Directory, Boolean> occludeMap;
+    private final Map<Directory, Boolean> hideOppositeFacesMap;
 
     public BlockModel() {
         this.faceGroups = new HashMap<>();
-        this.occludeMap = new HashMap<>();
-    }
-
-    public BlockModel(boolean dontHideSameBlockFaces) {
-        this();
-        this.dontHideSameBlockFaces = dontHideSameBlockFaces;
+        this.hideOppositeFacesMap = new HashMap<>();
     }
 
     public BlockModel addFace(BlockFace face) {
         // add face
-        final Directory dir = face.getOccludesTo().opposite();
+        final Directory dir = face.getHidesFace().opposite();
         final List<BlockFace> group = faceGroups.getOrDefault(dir, new ArrayList<>());
         group.add(face);
         faceGroups.put(dir, group);
-        // occlusions
-        final Directory occlude = face.getOcclude();
-        if(occlude != Directory.NONE)
-            occludeMap.put(occlude, true);
+        // hide faces map
+        final Directory hideOppositeFace = face.getHideOppositeFace();
+        if(hideOppositeFace != Directory.NONE)
+            hideOppositeFacesMap.put(hideOppositeFace, true);
         return this;
     }
 
     public void clear() {
         faceGroups.clear();
-        occludeMap.clear();
+        hideOppositeFacesMap.clear();
     }
 
     public List<BlockFace> getFacesGroup(Directory dir) {
         return faceGroups.getOrDefault(dir, List.of());
     }
     
-    public boolean isOcclude(Directory dir) {
-        return occludeMap.containsKey(dir);
+    public boolean isHidesOppositeFace(Directory dir) {
+        return hideOppositeFacesMap.containsKey(dir);
     }
 
-    public boolean isDontHideSameBlockFaces() {
-        return dontHideSameBlockFaces;
+    public boolean isNotHidesOppositeFace(Directory dir) {
+        return !this.isHidesOppositeFace(dir);
     }
 
-    public BlockModel setDontHideSameBlockFaces(boolean dontHideSameBlockFaces) {
-        this.dontHideSameBlockFaces = dontHideSameBlockFaces;
+    public boolean isDontHidesSameBlockFaces() {
+        return dontHidesSameBlockFaces;
+    }
+
+    public BlockModel setDontHidesSameBlockFaces(boolean dontHideSameBlockFaces) {
+        this.dontHidesSameBlockFaces = dontHideSameBlockFaces;
         return this;
     }
 

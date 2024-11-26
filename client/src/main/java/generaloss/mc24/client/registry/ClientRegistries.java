@@ -7,6 +7,10 @@ import generaloss.mc24.server.registry.Registry;
 
 public class ClientRegistries extends Registries {
 
-    public final Registry<BlockState, BlockModel> BLOCK_MODEL = new Registry<>();
+    public final Registry<BlockState, BlockModel> BLOCK_MODEL;
+
+    public ClientRegistries() {
+        this.BLOCK_MODEL = new Registry<>();
+    }
 
 }

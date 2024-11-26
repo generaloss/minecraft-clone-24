@@ -11,6 +11,7 @@ import generaloss.mc24.client.screen.ScreenDispatcher;
 import generaloss.mc24.client.session.ClientPlayer;
 import generaloss.mc24.client.session.SessionScreen;
 import generaloss.mc24.server.ArgsMap;
+import generaloss.mc24.server.Directory;
 import generaloss.mc24.server.Server;
 import generaloss.mc24.server.block.Block;
 import generaloss.mc24.server.block.BlockState;
@@ -32,35 +33,38 @@ import org.json.JSONObject;
 
 public class Main extends JpizeApplication {
 
-    private final ResourcesRegistry resources;
-    private final ClientRegistries registries;
-
     private final Font font;
+    private final ClientRegistries registries;
+    private final ResourcesRegistry resources;
     private final ScreenDispatcher screens;
     private final Server localServer;
     private final WorldLevel level;
     private final ClientPlayer player;
 
     public Main() {
-        this.resources = new ResourcesRegistry();
-        this.registries = new ClientRegistries();
         this.font = FontLoader.loadDefault();
+        this.registries = new ClientRegistries();
+        this.resources = new ResourcesRegistry();
         this.screens = new ScreenDispatcher();
         this.localServer = new Server(registries);
         this.level = new WorldLevel(this);
         this.player = new ClientPlayer();
     }
 
-    public ResourcesRegistry resources() {
-        return resources;
-    }
-
     public ClientRegistries registries() {
         return registries;
     }
 
+    public ResourcesRegistry resources() {
+        return resources;
+    }
+
     public ScreenDispatcher screens() {
         return screens;
+    }
+
+    public Server localServer() {
+        return localServer;
     }
 
     public WorldLevel level() {
@@ -69,10 +73,6 @@ public class Main extends JpizeApplication {
 
     public ClientPlayer player() {
         return player;
-    }
-
-    public Server localServer() {
-        return localServer;
     }
 
 
@@ -96,29 +96,31 @@ public class Main extends JpizeApplication {
 
 
     private void loadBlockModels() {
-        // load block models
         final String blockModelsPath = "assets/resources/models/blocks/";
         final ExternalResource defaultBlockModelsRes = Resource.external(blockModelsPath);
         System.out.println("Loading " + defaultBlockModelsRes.list().length + " block models..");
         for(ExternalResource blockModelRes: defaultBlockModelsRes.listRes())
             this.loadBlockModel(Resource.external(blockModelsPath + blockModelRes.name()));
-
     }
 
     private void loadBlockModel(Resource resource) {
         final JSONObject jsonObject = new JSONObject(resource.readString());
-
-        final String id = jsonObject.getString("ID");
-
         final BlockModel model = new BlockModel();
-        model.setDontHideSameBlockFaces(jsonObject.getBoolean("dont_hide_same_block_faces"));
+
+        // set 'dont hides same block faces'
+        model.setDontHidesSameBlockFaces(jsonObject.getBoolean("dont_hides_same_block_faces"));
 
         final JSONObject jsonFaces = jsonObject.getJSONObject("faces");
         for(String faceKey: jsonFaces.keySet()){
+
             final JSONObject jsonFace = jsonFaces.getJSONObject(faceKey);
-            // texture
+            final BlockFace face = new BlockFace();
+
+            // set 'texture ID'
             final String textureID = jsonFace.getString("texture_ID");
-            // vertices
+            face.setTextureID(textureID);
+
+            // set 'vertices'
             final JSONArray vertices = jsonFace.getJSONArray("vertices");
             final BlockVertex[] verticesArray = new BlockVertex[vertices.length()];
             for(int i = 0; i < vertices.length(); i++){
@@ -133,11 +135,27 @@ public class Main extends JpizeApplication {
                         vertexArray[5], vertexArray[6], vertexArray[7], vertexArray[8] // color
                 );
             }
+            face.setVertices(verticesArray);
 
-            model.addFace(new BlockFace(textureID, verticesArray));
+            // set 'hides face'
+            if(jsonFace.has("hides_face")){
+                face.setHidesFace(Directory.valueOf(jsonFace.getString("hides_face")));
+            }else{
+                face.calculateHidesFace();
+            }
+
+            // set 'hide oposite face'
+            if(jsonFace.has("hide_opposite_face")){
+                face.setHideOppositeFace(Directory.valueOf(jsonFace.getString("hide_opposite_face")));
+            }else{
+                face.calculateHideOppositeFace();
+            }
+
+            model.addFace(face);
         }
 
-        final Block block = registries.BLOCK.get(id);
+        final String id = jsonObject.getString("ID");
+        final Block block = registries.block().get(id);
         if(block == null)
             throw new IllegalStateException("Block model cannot be loaded. Block with ID '" + id + "' is not exists.");
 

@@ -1,7 +1,7 @@
 {
   "ID" : "grass_block",
 
-  "dont_hide_same_block_faces" : false,
+  "dont_hides_same_block_faces" : false,
 
   "faces" : {
     "east" : {
@@ -52,10 +52,10 @@
     "south" : {
       "texture_ID" : "grass_block_side",
       "vertices" : [
-        [1, 1, 1,  0, 0,  1, 1, 1, 1],
-        [1, 0, 1,  0, 1,  1, 1, 1, 1],
-        [0, 0, 1,  1, 1,  1, 1, 1, 1],
-        [0, 1, 1,  1, 0,  1, 1, 1, 1]
+        [0, 1, 0,  0, 0,  1, 1, 1, 1],
+        [0, 0, 0,  0, 1,  1, 1, 1, 1],
+        [1, 0, 0,  1, 1,  1, 1, 1, 1],
+        [1, 1, 0,  1, 0,  1, 1, 1, 1]
       ]
     },
     "east_overlay" : {

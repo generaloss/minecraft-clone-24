@@ -28,7 +28,7 @@ public class ResourceAtlas extends ResourceHandle<Texture2D> {
         this.atlas.getTexture()
             .setFilters(GlFilter.LINEAR, GlFilter.NEAREST)
             .generateMipmap(0, 1)
-            .setMaxAnisotropy(4);
+            .setMaxAnisotropy(1);
     }
 
     @Override

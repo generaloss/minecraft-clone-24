@@ -3,10 +3,8 @@ package generaloss.mc24.client.level;
 import generaloss.mc24.client.Main;
 import generaloss.mc24.client.chunk.ChunkTesselator;
 import generaloss.mc24.server.block.Block;
-import generaloss.mc24.server.block.BlockState;
 import generaloss.mc24.server.chunk.Chunk;
 import generaloss.mc24.server.chunk.ChunkPos;
-import generaloss.mc24.server.registry.IntRegistry;
 import generaloss.mc24.server.registry.Registry;
 import generaloss.mc24.server.world.World;
 import jpize.util.Disposable;
@@ -57,10 +55,9 @@ public class WorldLevel extends World implements Disposable {
 
     private void load(int chunkX, int chunkY, int chunkZ) {
         final ChunkPos position = new ChunkPos(chunkX, chunkY, chunkZ);
-        final IntRegistry<BlockState> blockStateRegistry = context.registries().BLOCK_STATE;
-        final LevelChunk chunk = new LevelChunk(this, position, blockStateRegistry);
+        final LevelChunk chunk = new LevelChunk(this, position, context.registries());
 
-        final Registry<String, Block> blockRegistry = context.registries().BLOCK;
+        final Registry<String, Block> blockRegistry = context.registries().block();
         chunk.forEach((x, y, z) -> {
             final int X = chunkX * Chunk.SIZE + x;
             final int Y = chunkY * Chunk.SIZE + y;
@@ -69,7 +66,7 @@ public class WorldLevel extends World implements Disposable {
                 chunk.setBlockState(x, y, z, blockRegistry.get("stone").getDefaultState());
         });
         chunk.forEach((x, y, z) -> {
-            if(chunk.getBlockState(x, y, z) != null && chunk.getBlockState(x, y + 1, z) == null)
+            if(!chunk.getBlockState(x, y, z).isBlockID("air") && (chunk.getBlockState(x, y + 1, z) == null || chunk.getBlockState(x, y + 1, z).isBlockID("air")))
                 chunk.setBlockState(x, y, z, blockRegistry.get("grass_block").getDefaultState());
         });
 

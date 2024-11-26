@@ -3,19 +3,20 @@ package generaloss.mc24.server.registry;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Registry<K, V> {
+public class Registry <Key, Value> {
 
-    private final Map<K, V> map;
+    private final Map<Key, Value> map;
 
     public Registry() {
         this.map = new HashMap<>();
     }
 
-    public void register(K ID, V object) {
+    public <K extends Key, V extends Value> Registry<K, V> register(Key ID, Value object) {
         map.put(ID, object);
+        return (Registry<K, V>) this;
     }
 
-    public V get(K ID) {
+    public Value get(Key ID) {
         if(!map.containsKey(ID))
             throw new IllegalStateException("Block with ID '" + ID + "' not loaded.");
 
