@@ -59,7 +59,7 @@ public class BlockStatesHolder implements Iterable<BlockState> {
         // register states
         for(BlockState state: states){
             blockStateRegistry.register(state);
-            System.out.println("Registered state " + state + " with ID " + blockStateRegistry.getID(state) + " in block " + block.getID());
+            System.out.println("  Registered BlockState with ID '" + blockStateRegistry.getID(state) + "' for block '" + block.getID() + "'");
         }
     }
 

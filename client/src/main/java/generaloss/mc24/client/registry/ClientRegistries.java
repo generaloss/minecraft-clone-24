@@ -1,6 +1,6 @@
 package generaloss.mc24.client.registry;
 
-import generaloss.mc24.client.block.BlockModel;
+import generaloss.mc24.client.block.BlockStateModel;
 import generaloss.mc24.client.resource.*;
 import generaloss.mc24.server.block.BlockState;
 import generaloss.mc24.server.registry.Registries;
@@ -9,7 +9,7 @@ import jpize.util.Disposable;
 
 public class ClientRegistries extends Registries implements Disposable {
 
-    private final Registry<BlockState, BlockModel> blockModel;
+    private final Registry<BlockState, BlockStateModel> blockModel;
 
     private final Registry<String, ResourceAtlas> atlas;
     private final Registry<String, ResourceMusic> music;
@@ -27,7 +27,7 @@ public class ClientRegistries extends Registries implements Disposable {
         this.texture = new Registry<>();
     }
 
-    public Registry<BlockState, BlockModel> blockModel() {
+    public Registry<BlockState, BlockStateModel> blockModel() {
         return blockModel;
     }
 

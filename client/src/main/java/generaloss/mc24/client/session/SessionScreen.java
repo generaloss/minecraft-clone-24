@@ -2,7 +2,6 @@ package generaloss.mc24.client.session;
 
 import generaloss.mc24.client.Main;
 import generaloss.mc24.client.screen.IScreen;
-import jpize.gl.Gl;
 import jpize.glfw.input.Key;
 
 public class SessionScreen extends IScreen {
@@ -24,7 +23,6 @@ public class SessionScreen extends IScreen {
 
     @Override
     public void render() {
-        Gl.clearDepthBuffer();
         context().level().renderer().render(context().player().camera());
     }
 

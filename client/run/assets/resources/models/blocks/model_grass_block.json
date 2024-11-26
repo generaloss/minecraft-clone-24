@@ -1,10 +1,11 @@
 {
-  "ID" : "grass_block",
+  "block_ID" : "grass_block",
 
   "dont_hides_same_block_faces" : false,
 
-  "faces" : {
-    "east" : {
+  "faces" : [
+    {
+      "face_ID" : "east",
       "texture_ID" : "grass_block_side",
       "vertices" : [
         [1, 1, 0,  0, 0,  1, 1, 1, 1],
@@ -13,52 +14,8 @@
         [1, 1, 1,  1, 0,  1, 1, 1, 1]
       ]
     },
-    "west" : {
-      "texture_ID" : "grass_block_side",
-      "vertices" : [
-        [0, 1, 1,  0, 0,  1, 1, 1, 1],
-        [0, 0, 1,  0, 1,  1, 1, 1, 1],
-        [0, 0, 0,  1, 1,  1, 1, 1, 1],
-        [0, 1, 0,  1, 0,  1, 1, 1, 1]
-      ]
-    },
-    "up" : {
-      "texture_ID" : "grass_block_top",
-      "vertices" : [
-        [0, 1, 1,  0, 0,  0.55, 0.75, 0.3, 1],
-        [0, 1, 0,  0, 1,  0.55, 0.75, 0.3, 1],
-        [1, 1, 0,  1, 1,  0.55, 0.75, 0.3, 1],
-        [1, 1, 1,  1, 0,  0.55, 0.75, 0.3, 1]
-      ]
-    },
-    "down" : {
-      "texture_ID" : "dirt",
-      "vertices" : [
-        [0, 0, 0,  0, 0,  1, 1, 1, 1],
-        [0, 0, 1,  0, 1,  1, 1, 1, 1],
-        [1, 0, 1,  1, 1,  1, 1, 1, 1],
-        [1, 0, 0,  1, 0,  1, 1, 1, 1]
-      ]
-    },
-    "north" : {
-      "texture_ID" : "grass_block_side",
-      "vertices" : [
-        [1, 1, 1,  0, 0,  1, 1, 1, 1],
-        [1, 0, 1,  0, 1,  1, 1, 1, 1],
-        [0, 0, 1,  1, 1,  1, 1, 1, 1],
-        [0, 1, 1,  1, 0,  1, 1, 1, 1]
-      ]
-    },
-    "south" : {
-      "texture_ID" : "grass_block_side",
-      "vertices" : [
-        [0, 1, 0,  0, 0,  1, 1, 1, 1],
-        [0, 0, 0,  0, 1,  1, 1, 1, 1],
-        [1, 0, 0,  1, 1,  1, 1, 1, 1],
-        [1, 1, 0,  1, 0,  1, 1, 1, 1]
-      ]
-    },
-    "east_overlay" : {
+    {
+      "face_ID" : "east_overlay",
       "texture_ID" : "grass_block_side_overlay",
       "vertices" : [
         [1, 1, 0,  0, 0,  0.55, 0.75, 0.3, 1],
@@ -67,7 +24,18 @@
         [1, 1, 1,  1, 0,  0.55, 0.75, 0.3, 1]
       ]
     },
-    "west_overlay" : {
+    {
+      "face_ID" : "west",
+      "texture_ID" : "grass_block_side",
+      "vertices" : [
+        [0, 1, 1,  0, 0,  1, 1, 1, 1],
+        [0, 0, 1,  0, 1,  1, 1, 1, 1],
+        [0, 0, 0,  1, 1,  1, 1, 1, 1],
+        [0, 1, 0,  1, 0,  1, 1, 1, 1]
+      ]
+    },
+    {
+      "face_ID" : "west_overlay",
       "texture_ID" : "grass_block_side_overlay",
       "vertices" : [
         [0, 1, 1,  0, 0,  0.55, 0.75, 0.3, 1],
@@ -76,7 +44,38 @@
         [0, 1, 0,  1, 0,  0.55, 0.75, 0.3, 1]
       ]
     },
-    "north_overlay" : {
+    {
+      "face_ID" : "up",
+      "texture_ID" : "grass_block_top",
+      "vertices" : [
+        [0, 1, 1,  0, 0,  0.55, 0.75, 0.3, 1],
+        [0, 1, 0,  0, 1,  0.55, 0.75, 0.3, 1],
+        [1, 1, 0,  1, 1,  0.55, 0.75, 0.3, 1],
+        [1, 1, 1,  1, 0,  0.55, 0.75, 0.3, 1]
+      ]
+    },
+    {
+      "face_ID" : "down",
+      "texture_ID" : "dirt",
+      "vertices" : [
+        [0, 0, 0,  0, 0,  1, 1, 1, 1],
+        [0, 0, 1,  0, 1,  1, 1, 1, 1],
+        [1, 0, 1,  1, 1,  1, 1, 1, 1],
+        [1, 0, 0,  1, 0,  1, 1, 1, 1]
+      ]
+    },
+    {
+      "face_ID" : "north",
+      "texture_ID" : "grass_block_side",
+      "vertices" : [
+        [1, 1, 1,  0, 0,  1, 1, 1, 1],
+        [1, 0, 1,  0, 1,  1, 1, 1, 1],
+        [0, 0, 1,  1, 1,  1, 1, 1, 1],
+        [0, 1, 1,  1, 0,  1, 1, 1, 1]
+      ]
+    },
+    {
+      "face_ID" : "north_overlay",
       "texture_ID" : "grass_block_side_overlay",
       "vertices" : [
         [1, 1, 1,  0, 0,  0.55, 0.75, 0.3, 1],
@@ -85,7 +84,18 @@
         [0, 1, 1,  1, 0,  0.55, 0.75, 0.3, 1]
       ]
     },
-    "south_overlay" : {
+    {
+      "face_ID" : "south",
+      "texture_ID" : "grass_block_side",
+      "vertices" : [
+        [0, 1, 0,  0, 0,  1, 1, 1, 1],
+        [0, 0, 0,  0, 1,  1, 1, 1, 1],
+        [1, 0, 0,  1, 1,  1, 1, 1, 1],
+        [1, 1, 0,  1, 0,  1, 1, 1, 1]
+      ]
+    },
+    {
+      "face_ID" : "south_overlay",
       "texture_ID" : "grass_block_side_overlay",
       "vertices" : [
         [0, 1, 0,  0, 0,  0.55, 0.75, 0.3, 1],
@@ -94,5 +104,5 @@
         [1, 1, 0,  1, 0,  0.55, 0.75, 0.3, 1]
       ]
     }
-  }
+  ]
 }

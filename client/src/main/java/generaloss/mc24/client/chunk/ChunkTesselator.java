@@ -2,7 +2,7 @@ package generaloss.mc24.client.chunk;
 
 import generaloss.mc24.client.Main;
 import generaloss.mc24.client.block.BlockFace;
-import generaloss.mc24.client.block.BlockModel;
+import generaloss.mc24.client.block.BlockStateModel;
 import generaloss.mc24.client.block.BlockVertex;
 import generaloss.mc24.server.Directory;
 import generaloss.mc24.server.block.*;
@@ -92,7 +92,7 @@ public class ChunkTesselator implements Disposable {
         return chunk.getBlockState(norX, norY, norZ);
     }
 
-    private BlockModel getBlockModel(BlockState blockState) {
+    private BlockStateModel getBlockModel(BlockState blockState) {
         return context.registries().blockModel().get(blockState);
     }
 
@@ -142,7 +142,7 @@ public class ChunkTesselator implements Disposable {
         } / 60F;
     }
 
-    private void addFaces(int x, int y, int z, BlockModel model, Directory directory) {
+    private void addFaces(int x, int y, int z, BlockStateModel model, Directory directory) {
         for(BlockFace face: model.getFacesGroup(directory)){
 
             // cache ambient occlusion
@@ -236,7 +236,7 @@ public class ChunkTesselator implements Disposable {
 
 
             // add faces
-            final BlockModel model = this.getBlockModel(blockState);
+            final BlockStateModel model = this.getBlockModel(blockState);
 
             // none faces
             this.addFaces(x, y, z, model, Directory.NONE);
@@ -247,7 +247,7 @@ public class ChunkTesselator implements Disposable {
                 this.addFaces(x, y, z, model, Directory.EAST);
 
             }else{
-                final BlockModel modelEast = this.getBlockModel(blockStateEast);
+                final BlockStateModel modelEast = this.getBlockModel(blockStateEast);
                 if((blockStateEast == blockState && modelEast.isDontHidesSameBlockFaces()) || modelEast.isNotHidesOppositeFace(Directory.EAST))
                     this.addFaces(x, y, z, model, Directory.EAST);
             }
@@ -258,7 +258,7 @@ public class ChunkTesselator implements Disposable {
                 this.addFaces(x, y, z, model, Directory.WEST);
 
             }else{
-                final BlockModel modelWest = this.getBlockModel(blockStateWest);
+                final BlockStateModel modelWest = this.getBlockModel(blockStateWest);
                 if((blockStateWest == blockState && modelWest.isDontHidesSameBlockFaces()) || modelWest.isNotHidesOppositeFace(Directory.WEST))
                     this.addFaces(x, y, z, model, Directory.WEST);
             }
@@ -269,7 +269,7 @@ public class ChunkTesselator implements Disposable {
                 this.addFaces(x, y, z, model, Directory.UP);
 
             }else{
-                final BlockModel modelUp = this.getBlockModel(blockStateUp);
+                final BlockStateModel modelUp = this.getBlockModel(blockStateUp);
                 if((blockStateUp == blockState && modelUp.isDontHidesSameBlockFaces()) || modelUp.isNotHidesOppositeFace(Directory.UP))
                     this.addFaces(x, y, z, model, Directory.UP);
             }
@@ -280,7 +280,7 @@ public class ChunkTesselator implements Disposable {
                 this.addFaces(x, y, z, model, Directory.DOWN);
 
             }else{
-                final BlockModel modelDown = this.getBlockModel(blockStateDown);
+                final BlockStateModel modelDown = this.getBlockModel(blockStateDown);
                 if((blockStateDown == blockState && modelDown.isDontHidesSameBlockFaces()) || modelDown.isNotHidesOppositeFace(Directory.DOWN))
                     this.addFaces(x, y, z, model, Directory.DOWN);
             }
@@ -291,7 +291,7 @@ public class ChunkTesselator implements Disposable {
                 this.addFaces(x, y, z, model, Directory.NORTH);
 
             }else{
-                final BlockModel modelNorth = this.getBlockModel(blockStateNorth);
+                final BlockStateModel modelNorth = this.getBlockModel(blockStateNorth);
                 if((blockStateNorth == blockState && modelNorth.isDontHidesSameBlockFaces()) || modelNorth.isNotHidesOppositeFace(Directory.NORTH))
                     this.addFaces(x, y, z, model, Directory.NORTH);
             }
@@ -302,7 +302,7 @@ public class ChunkTesselator implements Disposable {
                 this.addFaces(x, y, z, model, Directory.SOUTH);
 
             }else{
-                final BlockModel modelSouth = this.getBlockModel(blockStateSouth);
+                final BlockStateModel modelSouth = this.getBlockModel(blockStateSouth);
                 if((blockStateSouth == blockState && modelSouth.isDontHidesSameBlockFaces()) || modelSouth.isNotHidesOppositeFace(Directory.SOUTH))
                     this.addFaces(x, y, z, model, Directory.SOUTH);
             }

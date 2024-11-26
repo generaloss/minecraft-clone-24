@@ -76,9 +76,9 @@ public class WorldLevel extends World implements Disposable {
 
     public void loadChunks() {
         System.out.println("Loading chunks...");
-        for(int y = -4; y < 4; y++){
+        for(int y = -2; y < 2; y++){
             this.load(0, y, 0);
-            for(int r = 0; r < 12; r++){
+            for(int r = 0; r < 10; r++){
                 for(int i = -r; i <= r; i++)
                     this.load(i, y, r);
                 for(int i = -r + 1; i <= r; i++)
