@@ -1,10 +1,11 @@
 package generaloss.mc24.server.block;
 
+import generaloss.mc24.server.registry.Identifiable;
 import generaloss.mc24.server.registry.IntRegistry;
 
 import java.util.*;
 
-public class Block {
+public class Block implements Identifiable<String> {
 
     private final String ID;
     private final BlockPropertiesHolder properties;
@@ -16,6 +17,7 @@ public class Block {
         this.states = new BlockStatesHolder(this, stateProperties, blockStateRegistry);
     }
 
+    @Override
     public String getID() {
         return ID;
     }

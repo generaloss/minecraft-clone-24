@@ -5,7 +5,6 @@ import generaloss.mc24.client.block.BlockModel;
 import generaloss.mc24.client.block.BlockVertex;
 import generaloss.mc24.client.level.WorldLevel;
 import generaloss.mc24.client.registry.ClientRegistries;
-import generaloss.mc24.client.resource.ResourcesRegistry;
 import generaloss.mc24.client.screen.TitleScreen;
 import generaloss.mc24.client.screen.ScreenDispatcher;
 import generaloss.mc24.client.session.ClientPlayer;
@@ -35,7 +34,6 @@ public class Main extends JpizeApplication {
 
     private final Font font;
     private final ClientRegistries registries;
-    private final ResourcesRegistry resources;
     private final ScreenDispatcher screens;
     private final Server localServer;
     private final WorldLevel level;
@@ -44,7 +42,6 @@ public class Main extends JpizeApplication {
     public Main() {
         this.font = FontLoader.loadDefault();
         this.registries = new ClientRegistries();
-        this.resources = new ResourcesRegistry();
         this.screens = new ScreenDispatcher();
         this.localServer = new Server(registries);
         this.level = new WorldLevel(this);
@@ -53,10 +50,6 @@ public class Main extends JpizeApplication {
 
     public ClientRegistries registries() {
         return registries;
-    }
-
-    public ResourcesRegistry resources() {
-        return resources;
     }
 
     public ScreenDispatcher screens() {
@@ -87,8 +80,8 @@ public class Main extends JpizeApplication {
         // screens
         screens.register(new TitleScreen(this));
         screens.register(new SessionScreen(this));
-        // resources
-        resources.reloadAll();
+        // load resources
+        registries.reloadResources();
         // set menu screen
         screens.show("title");
         this.connectLocal();
@@ -161,7 +154,7 @@ public class Main extends JpizeApplication {
 
         final BlockState state = block.getDefaultState();
 
-        registries.BLOCK_MODEL.register(state, model);
+        registries.blockModel().register(state, model);
         System.out.println("Loaded block model with ID '" + id + "'");
     }
 
@@ -185,20 +178,6 @@ public class Main extends JpizeApplication {
 
     @Override
     public void update() {
-        // --- reload resources test --- //
-        if(Key.NUM_0.up()){
-            resources.resetDirectory();
-            resources.reloadAll();
-        }
-        if(Key.NUM_1.up()){
-            resources.setDirectory("resource-packs/test-pack-1");
-            resources.reloadAll();
-        }
-        if(Key.NUM_2.up()){
-            resources.setDirectory("resource-packs/test-pack-2");
-            resources.reloadAll();
-        }
-
         // fullscreen
         if(Key.F11.down())
             Jpize.window().toggleFullscreen();
@@ -222,7 +201,7 @@ public class Main extends JpizeApplication {
     @Override
     public void dispose() {
         screens.dispose();
-        resources.dispose();
+        registries.dispose();
         font.dispose();
         AlDevices.dispose();
     }

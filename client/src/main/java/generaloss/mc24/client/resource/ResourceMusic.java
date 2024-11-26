@@ -7,22 +7,19 @@ public class ResourceMusic extends ResourceHandle<AlMusic> {
 
     private final AlMusic music;
 
-    public ResourceMusic(ResourcesRegistry dispatcher, String identifier, String path) {
-        super(dispatcher, identifier, path);
+    public ResourceMusic(String ID, String path) {
+        super(ID, path);
         this.music = new AlMusic();
     }
 
     @Override
-    public AlMusic resource() {
+    public AlMusic object() {
         return music;
     }
 
     @Override
     public void reload() {
-        Resource resource = Resource.external(super.dispatcher().getDirectory() + super.getPath());
-        if(!resource.exists())
-            resource = Resource.external(super.dispatcher().getDefaultDirectory() + super.getPath());
-
+        final Resource resource = Resource.external("assets/resources/" + super.getPath());
         music.load(resource);
     }
 

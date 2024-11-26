@@ -18,7 +18,7 @@ public class Registries {
         // register air block
         final Block airBlock = new Block("air", Map.of(), blockState);
         airBlock.properties().set(BlockProperty.OPAQUE_LEVEL, 0);
-        block.register("air", airBlock);
+        block.register(airBlock);
         System.out.println("Registered 'air' Block and BlockState with ID " + blockState.getID(airBlock.getDefaultState()));
     }
 

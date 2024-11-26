@@ -7,27 +7,23 @@ public class ResourceShader extends ResourceHandle<Shader> {
 
     private final Shader shader;
 
-    public ResourceShader(ResourcesRegistry dispatcher, String identifier, String path) {
-        super(dispatcher, identifier, path);
+    public ResourceShader(String ID, String path) {
+        super(ID, path);
         this.shader = new Shader();
     }
 
     @Override
-    public Shader resource() {
+    public Shader object() {
         return shader;
     }
 
     @Override
     public void reload() {
         final String vertexName = (super.getPath() + ".vsh");
-        Resource vertexRes = Resource.external(super.dispatcher().getDirectory() + vertexName);
-        if(!vertexRes.exists())
-            vertexRes = Resource.external(super.dispatcher().getDefaultDirectory() + vertexName);
+        final Resource vertexRes = Resource.external("assets/resources/" + vertexName);
 
         final String fragmentName = (super.getPath() + ".fsh");
-        Resource fragmentRes = Resource.external(super.dispatcher().getDirectory() + fragmentName);
-        if(!fragmentRes.exists())
-            fragmentRes = Resource.external(super.dispatcher().getDefaultDirectory() + fragmentName);
+        final Resource fragmentRes = Resource.external("assets/resources/" + fragmentName);
 
         shader.load(vertexRes, fragmentRes);
     }

@@ -93,7 +93,7 @@ public class ChunkTesselator implements Disposable {
     }
 
     private BlockModel getBlockModel(BlockState blockState) {
-        return context.registries().BLOCK_MODEL.get(blockState);
+        return context.registries().blockModel().get(blockState);
     }
 
 
@@ -177,7 +177,7 @@ public class ChunkTesselator implements Disposable {
                 verticesCache.set(cachePosIndex + 2, rotatedVertex.getZ() + z);
 
                 // texcoord
-                final ResourceAtlas atlas = context.resources().get("block_atlas");
+                final ResourceAtlas atlas = context.registries().atlas().get("blocks");
                 final TextureRegion region = atlas.getRegion(face.getTextureID());
 
                 verticesCache.set(cacheTexcoordIndex + 0, (region.u1() + region.getWidth()  * rotatedVertex.getU()));

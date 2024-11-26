@@ -10,9 +10,9 @@ public class IntRegistry <Value> {
         this.identityMap = new ObjectIntMap<>();
     }
 
-    public <V extends Value> IntRegistry<V> register(Value object) {
+    public Value register(Value object) {
         identityMap.add(object);
-        return (IntRegistry<V>) this;
+        return object;
     }
 
     public Value get(int ID) {

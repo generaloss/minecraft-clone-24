@@ -1,28 +1,24 @@
 package generaloss.mc24.client.resource;
 
+import generaloss.mc24.server.registry.Identifiable;
 import jpize.util.Disposable;
 
-public abstract class ResourceHandle<T> implements Disposable {
+public abstract class ResourceHandle<Object> implements Disposable, Identifiable<String> {
 
-    private final ResourcesRegistry dispatcher;
-    private final String identifier;
+    private final String ID;
     private String path;
 
-    protected ResourceHandle(ResourcesRegistry dispatcher, String identifier, String path) {
-        this.dispatcher = dispatcher;
-        this.identifier = identifier;
+    protected ResourceHandle(String ID, String path) {
+        this.ID = ID;
         this.setPath(path);
     }
 
-    public ResourcesRegistry dispatcher() {
-        return dispatcher;
+    @Override
+    public String getID() {
+        return ID;
     }
 
-    public String getIdentifier() {
-        return identifier;
-    }
-
-    public abstract T resource();
+    public abstract Object object();
 
     public String getPath() {
         return path;

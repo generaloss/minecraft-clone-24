@@ -16,8 +16,8 @@ public class ResourceAtlas extends ResourceHandle<Texture2D> {
     private final Map<String, String> paths;
     private final TextureAtlas<String> atlas;
 
-    public ResourceAtlas(ResourcesRegistry dispatcher, String identifier, String path, int width, int height) {
-        super(dispatcher, identifier, path);
+    public ResourceAtlas(String ID, String path, int width, int height) {
+        super(ID, path);
         this.width = width;
         this.height = height;
         this.paths = new HashMap<>();
@@ -32,7 +32,7 @@ public class ResourceAtlas extends ResourceHandle<Texture2D> {
     }
 
     @Override
-    public Texture2D resource() {
+    public Texture2D object() {
         return atlas.getTexture();
     }
 
@@ -42,9 +42,9 @@ public class ResourceAtlas extends ResourceHandle<Texture2D> {
     }
 
     public ResourceAtlas registerAllInDirectory() {
-        final ExternalResource directoryRes = Resource.external(super.dispatcher().getDirectory() + super.getPath());
+        final ExternalResource directoryRes = Resource.external("assets/resources/" + super.getPath());
         for(ExternalResource resource: directoryRes.listRes())
-            register(resource.simpleName(), "/" + resource.name());
+            this.register(resource.simpleName(), "/" + resource.name());
         return this;
     }
 
@@ -56,10 +56,7 @@ public class ResourceAtlas extends ResourceHandle<Texture2D> {
     public void reload() {
         for(Map.Entry<String, String> entry: paths.entrySet()){
             final String name = (super.getPath() + entry.getValue());
-
-            Resource resource = Resource.external(super.dispatcher().getDirectory() + name);
-            if(!resource.exists())
-                resource = Resource.external(super.dispatcher().getDefaultDirectory() + name);
+            final Resource resource = Resource.external("assets/resources/" + name);
 
             atlas.put(entry.getKey(), resource);
         }

@@ -59,7 +59,7 @@ public class Server implements Tickable {
             // create block
             final Block block = new Block(blockID, Map.of(), registries.blockState());
             // register
-            registries.block().register(blockRes.simpleName(), block);
+            registries.block().register(block);
             System.out.println("Loaded block with ID '" + blockRes.simpleName() + "'");
         }
     }

@@ -9,22 +9,19 @@ public class ResourceTexture extends ResourceHandle<Texture2D> {
 
     private final Texture2D texture;
 
-    public ResourceTexture(ResourcesRegistry dispatcher, String identifier, String path) {
-        super(dispatcher, identifier, path);
+    public ResourceTexture(String ID, String path) {
+        super(ID, path);
         this.texture = new Texture2D();
     }
 
     @Override
-    public Texture2D resource() {
+    public Texture2D object() {
         return texture;
     }
 
     @Override
     public void reload() {
-        Resource resource = Resource.external(super.dispatcher().getDirectory() + super.getPath());
-        if(!resource.exists())
-            resource = Resource.external(super.dispatcher().getDefaultDirectory() + super.getPath());
-
+        final Resource resource = Resource.external("assets/resources/" + super.getPath());
         final Pixmap pixmap = PixmapIO.load(resource);
         texture.setImage(pixmap);
         pixmap.dispose();
