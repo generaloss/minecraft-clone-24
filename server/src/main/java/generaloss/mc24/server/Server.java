@@ -44,14 +44,16 @@ public class Server implements Tickable {
     
     private void loadBlocks() {
         // load blocks
-        final String blocksPath = "/assets/behaviours/blocks/";
+        final String blocksPath = "assets/behaviours/blocks/";
         final ExternalResource blocksRes = Resource.external(blocksPath);
         System.out.println("Loading " + blocksRes.list().length + " blocks..");
         
         for(ExternalResource blockRes: blocksRes.listRes()){
-            Resource resource = Resource.external(blocksPath + blockRes.name());
-            System.out.println(resource.name());
-            registries.BLOCK.register(blockRes.simpleName(), new Block(resource.simpleName()));
+            final Resource resource = Resource.external(blocksPath + blockRes.name());
+            final Block block = new Block(resource.simpleName());
+            block.buildStates(registries.BLOCK_STATE);
+            registries.BLOCK.register(blockRes.simpleName(), block);
+            System.out.println("Loaded block with ID '" + blockRes.simpleName() + "'");
         }
     }
 

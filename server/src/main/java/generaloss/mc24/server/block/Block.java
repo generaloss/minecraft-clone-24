@@ -1,5 +1,7 @@
 package generaloss.mc24.server.block;
 
+import generaloss.mc24.server.registry.IntRegistry;
+
 import java.util.*;
 
 public class Block {
@@ -32,7 +34,7 @@ public class Block {
     }
 
 
-    public Block buildStates() {
+    public Block buildStates(IntRegistry<BlockState> blockStateRegistry) {
         final List<StateProperty<?>> properties = new ArrayList<>();
         final List<Collection<?>> values = new ArrayList<>();
 
@@ -53,6 +55,14 @@ public class Block {
             }
             states.add(new BlockState(this, statePropertyValues));
         }
+
+        if(properties.isEmpty())
+            states.add(new BlockState(this, Map.of()));
+
+        // register states
+        for(BlockState state: states)
+            blockStateRegistry.register(state);
+
         return this;
     }
 

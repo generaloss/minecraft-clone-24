@@ -3,11 +3,12 @@ package generaloss.mc24.client;
 import generaloss.mc24.client.block.BlockFace;
 import generaloss.mc24.client.block.BlockModel;
 import generaloss.mc24.client.block.BlockVertex;
+import generaloss.mc24.client.level.WorldLevel;
 import generaloss.mc24.client.registry.ClientRegistries;
 import generaloss.mc24.client.resource.ResourcesRegistry;
 import generaloss.mc24.client.screen.TitleScreen;
 import generaloss.mc24.client.screen.ScreenDispatcher;
-import generaloss.mc24.client.session.ClientSession;
+import generaloss.mc24.client.session.ClientPlayer;
 import generaloss.mc24.client.session.SessionScreen;
 import generaloss.mc24.server.ArgsMap;
 import generaloss.mc24.server.Server;
@@ -17,6 +18,7 @@ import jpize.app.Jpize;
 import jpize.app.JpizeApplication;
 import jpize.audio.AlDevices;
 import jpize.gl.Gl;
+import jpize.gl.glenum.GlTarget;
 import jpize.glfw.Glfw;
 import jpize.glfw.init.GlfwPlatform;
 import jpize.glfw.input.Key;
@@ -32,18 +34,21 @@ public class Main extends JpizeApplication {
 
     private final ResourcesRegistry resources;
     private final ClientRegistries registries;
-    private final Server localServer;
+
     private final Font font;
     private final ScreenDispatcher screens;
-    private final ClientSession session;
+    private final Server localServer;
+    private final WorldLevel level;
+    private final ClientPlayer player;
 
     public Main() {
         this.resources = new ResourcesRegistry();
         this.registries = new ClientRegistries();
-        this.localServer = new Server(registries);
         this.font = FontLoader.loadDefault();
         this.screens = new ScreenDispatcher();
-        this.session = new ClientSession(this);
+        this.localServer = new Server(registries);
+        this.level = new WorldLevel(this);
+        this.player = new ClientPlayer();
     }
 
     public ResourcesRegistry resources() {
@@ -54,12 +59,20 @@ public class Main extends JpizeApplication {
         return registries;
     }
 
-    public Server localServer() {
-        return localServer;
-    }
-
     public ScreenDispatcher screens() {
         return screens;
+    }
+
+    public WorldLevel level() {
+        return level;
+    }
+
+    public ClientPlayer player() {
+        return player;
+    }
+
+    public Server localServer() {
+        return localServer;
     }
 
 
@@ -67,38 +80,37 @@ public class Main extends JpizeApplication {
     public void init() {
         System.out.println("Initializing client");
         localServer.init();
+        // blocks
+        this.loadBlockModels();
         // audio
         AlDevices.openDevice();
         // screens
         screens.register(new TitleScreen(this));
-        screens.register(new SessionScreen(this, session));
+        screens.register(new SessionScreen(this));
         // resources
-        this.loadResources();
+        resources.reloadAll();
         // set menu screen
         screens.show("title");
-        startLocalSession();
+        this.connectLocal();
     }
 
 
-    private void loadResources() {
+    private void loadBlockModels() {
         // load block models
-        final String blockModelsPath = "/assets/resources/models/blocks/";
+        final String blockModelsPath = "assets/resources/models/blocks/";
         final ExternalResource defaultBlockModelsRes = Resource.external(blockModelsPath);
         System.out.println("Loading " + defaultBlockModelsRes.list().length + " block models..");
-        for(ExternalResource blockModelRes: defaultBlockModelsRes.listRes()){
-            loadBlockModel(Resource.external(blockModelsPath + blockModelRes.name()));
-        }
-        // apply default asset pack
-        resources.reloadAll();
+        for(ExternalResource blockModelRes: defaultBlockModelsRes.listRes())
+            this.loadBlockModel(Resource.external(blockModelsPath + blockModelRes.name()));
+
     }
 
     private void loadBlockModel(Resource resource) {
-        BlockModel model = new BlockModel();
-
         final JSONObject jsonObject = new JSONObject(resource.readString());
 
         final String id = jsonObject.getString("ID");
 
+        final BlockModel model = new BlockModel();
         model.setDontHideSameBlockFaces(jsonObject.getBoolean("dont_hide_same_block_faces"));
 
         final JSONObject jsonFaces = jsonObject.getJSONObject("faces");
@@ -136,11 +148,20 @@ public class Main extends JpizeApplication {
     }
 
 
-    public void startLocalSession() {
+    public void connectLocal() {
         System.out.println("Starting local session..");
         localServer.run(Maths.random(64000, 64999));
-        session.connect("localhost", localServer.getPort());
+        player.input().enable();
+        Gl.enable(GlTarget.DEPTH_TEST);
+        level.loadChunks();
         screens.show("session");
+    }
+
+    public void close() {
+        player.input().disable();
+        level.dispose();
+        Gl.disable(GlTarget.DEPTH_TEST);
+        System.out.println("close");
     }
 
 

@@ -33,6 +33,8 @@ public class Chunk {
 
     public BlockState getBlockState(int x, int y, int z) {
         final int stateID = blockStateIndices.get(x, y, z);
+        if(stateID == -1)
+            return null;
         return blockStateRegistry.get(stateID);
     }
 

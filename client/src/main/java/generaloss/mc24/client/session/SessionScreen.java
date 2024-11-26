@@ -2,43 +2,35 @@ package generaloss.mc24.client.session;
 
 import generaloss.mc24.client.Main;
 import generaloss.mc24.client.screen.IScreen;
+import jpize.gl.Gl;
+import jpize.glfw.input.Key;
 
 public class SessionScreen extends IScreen {
 
-    private final ClientSession session;
-
-    public SessionScreen(Main context, ClientSession session) {
+    public SessionScreen(Main context) {
         super(context, "session");
-        this.session = session;
-    }
-
-    public ClientSession session() {
-        return session;
-    }
-
-    @Override
-    public void show() {
-
-    }
-
-    @Override
-    public void hide() {
-        session.close();
     }
 
     @Override
     public void update() {
-        session.update();
+        // player
+        context().player().update();
+        // exit to title screen
+        if(Key.ESCAPE.down())
+            context().screens().show("title");
+        // tesselate chunk meshes
+        context().level().tesselator().update();
     }
 
     @Override
     public void render() {
-        session.render();
+        Gl.clearDepthBuffer();
+        context().level().renderer().render(context().player().camera());
     }
 
     @Override
     public void resize(int width, int height) {
-        session.resize(width, height);
+        context().player().camera().resize(width, height);
     }
 
 }

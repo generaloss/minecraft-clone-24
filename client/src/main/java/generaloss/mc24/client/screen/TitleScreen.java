@@ -63,7 +63,7 @@ public class TitleScreen extends IScreen {
         camera.update();
         // start session
         if(Key.P.down())
-            context().startLocalSession();
+            context().connectLocal();
         // exit
         if(Key.ESCAPE.down())
             Jpize.exit();
