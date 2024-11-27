@@ -52,15 +52,7 @@ public class Server implements Tickable {
         System.out.println("Loading " + blocksRes.list().length + " blocks [");
         
         for(ExternalResource blockRes: blocksRes.listRes()){
-            final Resource resource = Resource.external(blocksPath + blockRes.name());
-            // read json
-            final JSONObject jsonObject = new JSONObject(resource.readString());
-            final String blockID = jsonObject.getString("block_ID");
-            // create block
-            final Block block = new Block(blockID, Map.of(), registries.blockState());
-            // register
-            registries.block().register(block);
-            System.out.println("  Loaded Block with ID '" + blockRes.simpleName() + "'");
+
         }
         System.out.println("]");
     }

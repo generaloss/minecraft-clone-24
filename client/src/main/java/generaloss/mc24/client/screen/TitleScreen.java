@@ -1,7 +1,7 @@
 package generaloss.mc24.client.screen;
 
 import generaloss.mc24.client.Main;
-import generaloss.mc24.client.registry.ResourceRegistry;
+import generaloss.mc24.client.registry.ClientRegistries;
 import jpize.app.Jpize;
 import jpize.audio.util.AlMusic;
 import jpize.gl.texture.GlFilter;
@@ -24,7 +24,7 @@ public class TitleScreen extends IScreen {
         super(context, "title");
 
         // resources
-        final ResourceRegistry resourceRegistry = context.registries().resource();
+        final ClientRegistries resourceRegistry = context.registries();
 
         this.overlayTexture = resourceRegistry
             .registerTexture("menu_panorama_overlay", "textures/gui/title/panorama_overlay.png")

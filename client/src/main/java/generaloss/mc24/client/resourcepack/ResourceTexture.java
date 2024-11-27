@@ -1,11 +1,13 @@
-package generaloss.mc24.client.resource;
+package generaloss.mc24.client.resourcepack;
 
+import generaloss.mc24.server.resourcepack.ResourceHandle;
+import generaloss.mc24.server.resourcepack.ResourcePack;
 import jpize.gl.texture.Texture2D;
 import jpize.util.pixmap.Pixmap;
 import jpize.util.pixmap.PixmapIO;
 import jpize.util.res.Resource;
 
-public class ResourceTexture extends ResourceHandle<Texture2D> {
+public class ResourceTexture extends ResourceHandle<String, Texture2D> {
 
     private final Texture2D texture;
 

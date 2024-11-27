@@ -5,7 +5,7 @@
     <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/client/run" />
     <extension name="coverage">
       <pattern>
-        <option name="PATTERN" value="generaloss.mc24.client.resource.*" />
+        <option name="PATTERN" value="generaloss.mc24.server.resourcepack.*" />
         <option name="ENABLED" value="true" />
       </pattern>
     </extension>

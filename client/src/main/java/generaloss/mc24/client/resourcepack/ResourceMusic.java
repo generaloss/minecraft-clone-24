@@ -1,9 +1,11 @@
-package generaloss.mc24.client.resource;
+package generaloss.mc24.client.resourcepack;
 
+import generaloss.mc24.server.resourcepack.ResourceHandle;
+import generaloss.mc24.server.resourcepack.ResourcePack;
 import jpize.audio.util.AlMusic;
 import jpize.util.res.Resource;
 
-public class ResourceMusic extends ResourceHandle<AlMusic> {
+public class ResourceMusic extends ResourceHandle<String, AlMusic> {
 
     private final AlMusic music;
 

@@ -1,17 +1,22 @@
-package generaloss.mc24.client.resource;
+package generaloss.mc24.server.resourcepack;
 
 import generaloss.mc24.server.registry.Identifiable;
 import jpize.util.Disposable;
 
-public abstract class ResourceHandle<Object> implements Disposable, Identifiable<String> {
+public abstract class ResourceHandle<Key, Object> implements Disposable, Identifiable<Key> {
 
     private final ResourcePack defaultPack;
-    private final String ID;
+    private Key ID;
     private String path;
 
-    protected ResourceHandle(ResourcePack defaultPack, String ID, String path) {
+    protected ResourceHandle(ResourcePack defaultPack, Key ID, String path) {
         this.defaultPack = defaultPack;
         this.ID = ID;
+        this.setPath(path);
+    }
+
+    protected ResourceHandle(ResourcePack defaultPack, String path) {
+        this.defaultPack = defaultPack;
         this.setPath(path);
     }
 
@@ -19,8 +24,12 @@ public abstract class ResourceHandle<Object> implements Disposable, Identifiable
         return defaultPack;
     }
 
+    protected void setID(Key ID) {
+        this.ID = ID;
+    }
+
     @Override
-    public String getID() {
+    public Key getID() {
         return ID;
     }
 

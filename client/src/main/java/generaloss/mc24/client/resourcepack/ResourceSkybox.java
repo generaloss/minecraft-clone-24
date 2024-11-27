@@ -1,12 +1,14 @@
-package generaloss.mc24.client.resource;
+package generaloss.mc24.client.resourcepack;
 
+import generaloss.mc24.server.resourcepack.ResourceHandle;
+import generaloss.mc24.server.resourcepack.ResourcePack;
 import jpize.gl.texture.GlCubemapTarget;
 import jpize.gl.texture.Skybox;
 import jpize.util.pixmap.Pixmap;
 import jpize.util.pixmap.PixmapIO;
 import jpize.util.res.Resource;
 
-public class ResourceSkybox extends ResourceHandle<Skybox> {
+public class ResourceSkybox extends ResourceHandle<String, Skybox> {
 
     private static final String[] POSTFIX_ARRAY = { "1", "3", "4", "5", "0", "2" };
 

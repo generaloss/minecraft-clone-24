@@ -8,7 +8,7 @@ import generaloss.mc24.server.Directory;
 import generaloss.mc24.server.block.*;
 import generaloss.mc24.client.level.LevelChunk;
 import generaloss.mc24.client.level.WorldLevel;
-import generaloss.mc24.client.resource.ResourceAtlas;
+import generaloss.mc24.client.resourcepack.ResourceAtlas;
 import generaloss.mc24.server.chunk.ChunkPos;
 import jpize.app.Jpize;
 import jpize.util.Disposable;
@@ -93,7 +93,7 @@ public class ChunkTesselator implements Disposable {
     }
 
     private BlockStateModel getBlockModel(BlockState blockState) {
-        return context.registries().blockModel().get(blockState);
+        return context.registries().getBlockModel(blockState);
     }
 
 
@@ -177,7 +177,7 @@ public class ChunkTesselator implements Disposable {
                 verticesCache.set(cachePosIndex + 2, rotatedVertex.getZ() + z);
 
                 // texcoord
-                final ResourceAtlas atlas = context.registries().resource().getAtlas("blocks");
+                final ResourceAtlas atlas = context.registries().getAtlas("blocks");
                 final TextureRegion region = atlas.getRegion(face.getTextureID());
 
                 verticesCache.set(cacheTexcoordIndex + 0, (region.u1() + region.getWidth()  * rotatedVertex.getU()));

@@ -1,5 +1,7 @@
-package generaloss.mc24.client.resource;
+package generaloss.mc24.client.resourcepack;
 
+import generaloss.mc24.server.resourcepack.ResourceHandle;
+import generaloss.mc24.server.resourcepack.ResourcePack;
 import jpize.gl.texture.GlFilter;
 import jpize.gl.texture.Texture2D;
 import jpize.util.atlas.TextureAtlas;
@@ -10,7 +12,7 @@ import jpize.util.res.Resource;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ResourceAtlas extends ResourceHandle<Texture2D> {
+public class ResourceAtlas extends ResourceHandle<String, Texture2D> {
 
     private final int width, height;
     private final Map<String, String> paths;

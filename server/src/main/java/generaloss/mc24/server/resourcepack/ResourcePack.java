@@ -1,4 +1,4 @@
-package generaloss.mc24.client.resource;
+package generaloss.mc24.server.resourcepack;
 
 import jpize.util.Disposable;
 import jpize.util.Utils;
@@ -12,12 +12,16 @@ import java.util.zip.ZipFile;
 
 public class ResourcePack implements Disposable {
 
+    public static final String DIRECTORY = "./resource-packs/";
+
+    private final String ID;
     private final ZipFile zipFile;
     private final Map<String, ZipEntryResource> resourceMap;
 
-    public ResourcePack(String filepath) {
+    public ResourcePack(String filename) {
         try{
-            this.zipFile = new ZipFile(filepath);
+            this.ID = filename;
+            this.zipFile = new ZipFile(DIRECTORY + filename);
             final ZipEntryResource[] resources = Resource.zipEntry(zipFile);
 
             this.resourceMap = new HashMap<>();
@@ -25,12 +29,12 @@ public class ResourcePack implements Disposable {
                 resourceMap.put(resource.path(), resource);
 
         }catch(IOException e){
-            throw new IllegalArgumentException("Could not load resource pack: " + filepath);
+            throw new IllegalArgumentException("Could not load resource pack: '" + filename + "'");
         }
     }
 
     public String getID() {
-        return zipFile.getName();
+        return ID;
     }
 
     public ZipEntryResource get(String path) {

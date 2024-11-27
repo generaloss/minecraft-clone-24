@@ -1,9 +1,11 @@
-package generaloss.mc24.client.resource;
+package generaloss.mc24.client.resourcepack;
 
+import generaloss.mc24.server.resourcepack.ResourceHandle;
+import generaloss.mc24.server.resourcepack.ResourcePack;
 import jpize.gl.shader.Shader;
 import jpize.util.res.Resource;
 
-public class ResourceShader extends ResourceHandle<Shader> {
+public class ResourceShader extends ResourceHandle<String, Shader> {
 
     private final Shader shader;
 

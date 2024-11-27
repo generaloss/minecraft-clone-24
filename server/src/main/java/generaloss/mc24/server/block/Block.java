@@ -7,14 +7,12 @@ import java.util.*;
 
 public class Block implements Identifiable<String> {
 
-    private final String ID;
+    private String ID;
     private final BlockPropertiesHolder properties;
-    private final BlockStatesHolder states;
+    private BlockStatesHolder states;
 
-    public Block(String ID, Map<String, StateProperty<?>> stateProperties, IntRegistry<BlockState> blockStateRegistry) {
-        this.ID = ID;
+    public Block() {
         this.properties = new BlockPropertiesHolder();
-        this.states = new BlockStatesHolder(this, stateProperties, blockStateRegistry);
     }
 
     @Override
@@ -22,9 +20,16 @@ public class Block implements Identifiable<String> {
         return ID;
     }
 
+    public Block setID(String ID) {
+        this.ID = ID;
+        return this;
+    }
+
+
     public BlockPropertiesHolder properties() {
         return properties;
     }
+
 
     public BlockStatesHolder states() {
         return states;
@@ -32,6 +37,11 @@ public class Block implements Identifiable<String> {
 
     public BlockState getDefaultState() {
         return states.getDefaultState();
+    }
+
+    public Block createStates(Map<String, StateProperty<?>> stateProperties, IntRegistry<BlockState> blockStateRegistry) {
+        states = new BlockStatesHolder(this, stateProperties, blockStateRegistry);
+        return this;
     }
 
 }

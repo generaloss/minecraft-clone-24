@@ -1,15 +1,14 @@
 package generaloss.mc24.client;
 
-import generaloss.mc24.client.block.BlockStateModel;
 import generaloss.mc24.client.level.WorldLevel;
 import generaloss.mc24.client.registry.ClientRegistries;
+import generaloss.mc24.server.resourcepack.ResourcePack;
 import generaloss.mc24.client.screen.TitleScreen;
 import generaloss.mc24.client.screen.ScreenDispatcher;
 import generaloss.mc24.client.session.ClientPlayer;
 import generaloss.mc24.client.session.SessionScreen;
 import generaloss.mc24.server.ArgsMap;
 import generaloss.mc24.server.Server;
-import generaloss.mc24.server.block.BlockState;
 import jpize.app.Jpize;
 import jpize.app.JpizeApplication;
 import jpize.audio.AlDevices;
@@ -21,12 +20,12 @@ import jpize.glfw.input.Key;
 import jpize.util.font.Font;
 import jpize.util.font.FontLoader;
 import jpize.util.math.Maths;
-import jpize.util.res.ExternalResource;
 import jpize.util.res.Resource;
 
 public class Main extends JpizeApplication {
 
     private final Font font;
+    private final ResourcePack defaultPack;
     private final ClientRegistries registries;
     private final ScreenDispatcher screens;
     private final Server localServer;
@@ -35,11 +34,16 @@ public class Main extends JpizeApplication {
 
     public Main() {
         this.font = FontLoader.loadDefault();
-        this.registries = new ClientRegistries();
+        this.defaultPack = new ResourcePack("vanilla-pack.zip");
+        this.registries = new ClientRegistries(this);
         this.screens = new ScreenDispatcher();
         this.localServer = new Server(registries);
         this.level = new WorldLevel(this);
         this.player = new ClientPlayer();
+    }
+
+    public ResourcePack getDefaultPack() {
+        return defaultPack;
     }
 
     public ClientRegistries registries() {
@@ -75,7 +79,7 @@ public class Main extends JpizeApplication {
         screens.register(new TitleScreen(this));
         screens.register(new SessionScreen(this));
         // load resources
-        registries.resource().loadResources();
+        registries.loadResources();
         // set menu screen
         screens.show("title");
         this.connectLocal();
@@ -83,22 +87,9 @@ public class Main extends JpizeApplication {
 
 
     private void loadBlockModels() {
-        final String blockModelsPath = "assets/resources/models/blocks/";
-        final ExternalResource blockModelsRes = Resource.external(blockModelsPath);
-        System.out.println("Loading " + blockModelsRes.list().length + " block models [");
-
-        for(ExternalResource blockModelRes : blockModelsRes.listRes()) {
-            final Resource resource = Resource.external(blockModelsPath + blockModelRes.name());
-            final BlockStateModel model = new BlockStateModel()
-                    .loadFromJSON(resource.readString(), registries);
-
-            // get block state
-            final BlockState state = model.getBlock().getDefaultState();
-            // register
-            registries.blockModel().register(state, model);
-            System.out.println("  Loaded block model with ID '" + model.getBlock().getID() + "'");
+        for(Resource blockModelRes : defaultPack.get("models/blocks/").listRes()) {
+            registries.registerBlockModel(blockModelRes.path());
         }
-        System.out.println("]");
     }
 
 
