@@ -91,12 +91,36 @@ public class BlockFace {
         final float x0 = vertices[0].getX();
         final float y0 = vertices[0].getY();
         final float z0 = vertices[0].getZ();
-        if(x0 < 0 || x0 > 1 || y0 < 0 || y0 > 1 || z0 < 0 || z0 > 1){
-            this.setHidesFace(Directory.NONE);
-        }else{
-            final Directory dir = evalDirectory(vertices, x0, y0, z0);
-            return this.setHidesFace(dir);
+        boolean hasX = true;
+        boolean hasY = true;
+        boolean hasZ = true;
+
+        for(int i = 1; i < vertices.length; i++){
+            final float x = vertices[i].getX();
+            if(x != x0)
+                hasX = false;
+
+            final float y = vertices[i].getY();
+            if(y != y0)
+                hasY = false;
+
+            final float z = vertices[i].getZ();
+            if(z != z0)
+                hasZ = false;
+
+            if(x < 0F || x > 1F || y < 0F || y > 1F || z < 0F || z > 1F){
+                hasX = false;
+                hasY = false;
+                hasZ = false;
+                break;
+            }
         }
+
+        this.setHidesFace(Directory.byVector(
+            (hasX ? -Math.signum((x0 * 2 - 1)) : 0),
+            (hasY ? -Math.signum((y0 * 2 - 1)) : 0),
+            (hasZ ? -Math.signum((z0 * 2 - 1)) : 0)
+        ));
         return this;
     }
 
@@ -114,20 +138,10 @@ public class BlockFace {
         final float x0 = vertices[0].getX();
         final float y0 = vertices[0].getY();
         final float z0 = vertices[0].getZ();
-        if(!(x0 == 0F || x0 == 1F) || !(y0 == 0F || y0 == 1F) || !(z0 == 0F || z0 == 1F)){
-            return this.setHideOppositeFace(Directory.NONE);
-        }else{
-            final Directory dir = evalDirectory(vertices, x0, y0, z0);
-            this.setHideOppositeFace(dir);
-        }
-        return this;
-    }
-
-
-    private static Directory evalDirectory(BlockVertex[] vertices, float x0, float y0, float z0) {
         boolean hasX = true;
         boolean hasY = true;
         boolean hasZ = true;
+
         for(int i = 1; i < vertices.length; i++){
             final float x = vertices[i].getX();
             if(x != x0)
@@ -140,13 +154,21 @@ public class BlockFace {
             final float z = vertices[i].getZ();
             if(z != z0)
                 hasZ = false;
+
+            if((x > 0F && x < 1F) || (y > 0F && y < 1F) || (z > 0F && z < 1F)){
+                hasX = false;
+                hasY = false;
+                hasZ = false;
+                break;
+            }
         }
 
-        return Directory.byVector(
-            (hasX ? Math.signum((-x0 + 0.5) * 2) : 0),
-            (hasY ? Math.signum((-y0 + 0.5) * 2) : 0),
-            (hasZ ? Math.signum((-z0 + 0.5) * 2) : 0)
-        );
+        this.setHideOppositeFace(Directory.byVector(
+            (hasX ? -Math.signum((x0 * 2 - 1)) : 0),
+            (hasY ? -Math.signum((y0 * 2 - 1)) : 0),
+            (hasZ ? -Math.signum((z0 * 2 - 1)) : 0)
+        ));
+        return this;
     }
 
 }

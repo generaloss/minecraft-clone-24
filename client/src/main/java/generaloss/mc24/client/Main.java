@@ -1,7 +1,9 @@
 package generaloss.mc24.client;
 
+import generaloss.mc24.client.level.LevelChunk;
 import generaloss.mc24.client.level.WorldLevel;
 import generaloss.mc24.client.registry.ClientRegistries;
+import generaloss.mc24.server.chunk.ChunkPos;
 import generaloss.mc24.server.resourcepack.ResourcePack;
 import generaloss.mc24.client.screen.TitleScreen;
 import generaloss.mc24.client.screen.ScreenDispatcher;
@@ -21,6 +23,8 @@ import jpize.util.font.Font;
 import jpize.util.font.FontLoader;
 import jpize.util.math.Maths;
 import jpize.util.res.Resource;
+
+import java.util.List;
 
 public class Main extends JpizeApplication {
 
@@ -114,6 +118,24 @@ public class Main extends JpizeApplication {
         // fullscreen
         if(Key.F11.down())
             Jpize.window().toggleFullscreen();
+
+        // resource pack
+        if(Key.NUM_0.up()){
+            registries.reloadResources(List.of(defaultPack));
+        }else if(Key.NUM_1.up()){
+            final ResourcePack testPack1 = new ResourcePack("test-pack-1.zip");
+            registries.reloadResources(List.of(testPack1, defaultPack));
+        }else if(Key.NUM_2.up()){
+            final ResourcePack testPack1 = new ResourcePack("test-pack-2.zip");
+            registries.reloadResources(List.of(testPack1, defaultPack));
+        }
+
+        if(Key.B.down()) {
+            final LevelChunk chunk = level.getChunk(new ChunkPos(0, 0, 0));
+            for(int i = 0; i < 100; i++)
+                chunk.setBlockState(Maths.random(1, 14), Maths.random(1, 14), Maths.random(1, 14), registries.getBlock("stairs").getDefaultState());
+            level.tesselator().tesselate(chunk);
+        }
 
         // secreens
         screens.update();
