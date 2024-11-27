@@ -2,48 +2,42 @@ package generaloss.mc24.server.resourcepack;
 
 import generaloss.mc24.server.registry.Identifiable;
 import jpize.util.Disposable;
+import jpize.util.res.Resource;
 
-public abstract class ResourceHandle<Key, Object> implements Disposable, Identifiable<Key> {
+import java.util.Collection;
+import java.util.Iterator;
 
-    private final ResourcePack defaultPack;
-    private Key ID;
-    private String path;
+public abstract class ResourceHandle<Key, Object> implements Identifiable<Key>, Disposable {
 
-    protected ResourceHandle(ResourcePack defaultPack, Key ID, String path) {
-        this.defaultPack = defaultPack;
-        this.ID = ID;
-        this.setPath(path);
+    protected final String path;
+
+    public ResourceHandle(String path) {
+        this.path = path;
     }
-
-    protected ResourceHandle(ResourcePack defaultPack, String path) {
-        this.defaultPack = defaultPack;
-        this.setPath(path);
-    }
-
-    public ResourcePack getDefaultPack() {
-        return defaultPack;
-    }
-
-    protected void setID(Key ID) {
-        this.ID = ID;
-    }
-
-    @Override
-    public Key getID() {
-        return ID;
-    }
-
-    public abstract Object object();
 
     public String getPath() {
         return path;
     }
 
-    public void setPath(String path) {
-        this.path = path;
+    @Override
+    abstract public Key getID();
+
+    abstract public Object getObject();
+
+    abstract public void load(ResourcePack defaultPack);
+
+    abstract public void reload(Collection<ResourcePack> packs);
+
+    @Override
+    abstract public void dispose();
+
+
+    protected <R extends Resource> R getResourceFromPacks(Collection<ResourcePack> packs, String path) {
+        R resource = null;
+        final Iterator<ResourcePack> packIterator = packs.iterator();
+        while(resource == null)
+            resource = (R) packIterator.next().get(path);
+        return resource;
     }
-
-
-    public abstract void load(ResourcePack pack);
 
 }

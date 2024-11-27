@@ -7,34 +7,41 @@ import generaloss.mc24.server.resourcepack.ResourceHandle;
 import generaloss.mc24.server.resourcepack.ResourcePack;
 import jpize.util.res.Resource;
 
+import java.util.Collection;
+
 public class ResourceBlockStateModel extends ResourceHandle<BlockState, BlockStateModel> {
 
     private final ClientRegistries registries;
     private final BlockStateModel model;
 
-    public ResourceBlockStateModel(ResourcePack defaultPack, ClientRegistries registries, String path) {
-        super(defaultPack, path);
+    public ResourceBlockStateModel(String path, ClientRegistries registries) {
+        super(path);
         this.registries = registries;
         this.model = new BlockStateModel();
     }
 
     @Override
-    public BlockStateModel object() {
+    public BlockState getID() {
+        return model.getBlockState();
+    }
+
+    @Override
+    public BlockStateModel getObject() {
         return model;
     }
 
     @Override
     public void load(ResourcePack pack) {
-        final Resource resource = pack.getOrDefault(super.getPath(), super.getDefaultPack());
-
+        final Resource resource = pack.get(super.getPath());
         model.loadFromJSON(resource.readString(), registries);
+        System.out.println("Loaded model of block '" + model.getBlockState().getBlockID() + "' for state '" + registries.getBlockStateID(model.getBlockState()) + "'");
+    }
 
-        // set ID
-        final BlockState state = model.getBlock().getDefaultState();
-        super.setID(state);
-        registries.registerBlockModel(this);
-
-        System.out.println("Loaded model for Block with ID '" + state.getBlockID() + "', for state with ID '" + registries.blockState().getID(state) + "'");
+    @Override
+    public void reload(Collection<ResourcePack> packs) {
+        final Resource resource = super.getResourceFromPacks(packs, super.getPath());
+        model.loadFromJSON(resource.readString(), registries);
+        System.out.println("Reloaded model of block '" + model.getBlockState().getBlockID() + "' for state '" + registries.getBlockStateID(model.getBlockState()) + "'");
     }
 
     @Override

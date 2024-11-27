@@ -2,6 +2,7 @@ package generaloss.mc24.client.block;
 
 import generaloss.mc24.server.Directory;
 import generaloss.mc24.server.block.Block;
+import generaloss.mc24.server.block.BlockState;
 import generaloss.mc24.server.registry.Registries;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -13,7 +14,7 @@ import java.util.Map;
 
 public class BlockStateModel {
 
-    private Block block;
+    private BlockState blockState;
     private boolean dontHidesSameBlockFaces;
     private final Map<Directory, List<BlockFace>> faceGroups;
     private final Map<Directory, Boolean> hideOppositeFacesMap;
@@ -23,15 +24,10 @@ public class BlockStateModel {
         this.hideOppositeFacesMap = new HashMap<>();
     }
 
-
-    public Block getBlock() {
-        return block;
+    public BlockState getBlockState() {
+        return blockState;
     }
 
-    public BlockStateModel setBlock(Block block) {
-        this.block = block;
-        return this;
-    }
 
     public boolean isDontHidesSameBlockFaces() {
         return dontHidesSameBlockFaces;
@@ -75,10 +71,10 @@ public class BlockStateModel {
 
         // set block
         final String blockID = jsonObject.getString("block_ID");
-        final Block block = registries.block().get(blockID);
+        final Block block = registries.getBlock(blockID);
         if(block == null)
             throw new IllegalStateException("Block model cannot be loaded. Block with ID '" + blockID + "' is not exists.");
-        this.setBlock(block);
+        blockState = block.getDefaultState();
 
         // set 'dont hides same block faces'
         this.setDontHidesSameBlockFaces(jsonObject.getBoolean("dont_hides_same_block_faces"));
@@ -94,7 +90,7 @@ public class BlockStateModel {
             final BlockFace face = new BlockFace();
 
             // set 'texture ID'
-            final String textureID = jsonFace.getString("texture_ID");
+            final String textureID = jsonFace.getString("texture");
             face.setTextureID(textureID);
 
             // set 'vertices'

@@ -4,6 +4,7 @@ import generaloss.mc24.server.ArgsMap;
 import generaloss.mc24.server.Config;
 import generaloss.mc24.server.Server;
 import generaloss.mc24.server.registry.Registries;
+import generaloss.mc24.server.resourcepack.ResourcePack;
 import jpize.util.res.ExternalResource;
 import jpize.util.res.Resource;
 import jpize.util.time.TimeUtils;
@@ -21,7 +22,7 @@ public class Main {
         config.putIfAbsent("port", 22854);
         config.save(configRes);
 
-        final Server server = new Server(new Registries());
+        final Server server = new Server(new Registries(new ResourcePack("vanilla-pack.zip")));
         server.run(config.getInt("port"));
         TimeUtils.waitFor(server.tcpServer()::isClosed);
     }

@@ -1,14 +1,9 @@
 package generaloss.mc24.server;
 
-import generaloss.mc24.server.block.Block;
 import generaloss.mc24.server.registry.Registries;
 import jpize.util.net.tcp.TcpServer;
-import jpize.util.res.ExternalResource;
 import jpize.util.res.Resource;
 import jpize.util.time.Tickable;
-import org.json.JSONObject;
-
-import java.util.Map;
 
 public class Server implements Tickable {
 
@@ -46,15 +41,8 @@ public class Server implements Tickable {
     }
     
     private void loadBlocks() {
-        // load blocks
-        final String blocksPath = "assets/behaviours/blocks/";
-        final ExternalResource blocksRes = Resource.external(blocksPath);
-        System.out.println("Loading " + blocksRes.list().length + " blocks [");
-        
-        for(ExternalResource blockRes: blocksRes.listRes()){
-
-        }
-        System.out.println("]");
+        for(Resource blockRes : registries.getDefaultPack().get("blocks/").listRes())
+            registries.registerBlock(blockRes.path());
     }
 
     public void run(int port) {

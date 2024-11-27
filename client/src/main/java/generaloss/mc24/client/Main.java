@@ -35,7 +35,7 @@ public class Main extends JpizeApplication {
     public Main() {
         this.font = FontLoader.loadDefault();
         this.defaultPack = new ResourcePack("vanilla-pack.zip");
-        this.registries = new ClientRegistries(this);
+        this.registries = new ClientRegistries(defaultPack);
         this.screens = new ScreenDispatcher();
         this.localServer = new Server(registries);
         this.level = new WorldLevel(this);
@@ -87,9 +87,8 @@ public class Main extends JpizeApplication {
 
 
     private void loadBlockModels() {
-        for(Resource blockModelRes : defaultPack.get("models/blocks/").listRes()) {
+        for(Resource blockModelRes : registries.getDefaultPack().get("models/blocks/").listRes())
             registries.registerBlockModel(blockModelRes.path());
-        }
     }
 
 

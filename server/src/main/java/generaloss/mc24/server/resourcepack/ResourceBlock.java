@@ -1,11 +1,11 @@
 package generaloss.mc24.server.resourcepack;
 
 import generaloss.mc24.server.block.Block;
-import generaloss.mc24.server.block.BlockState;
 import generaloss.mc24.server.registry.Registries;
 import jpize.util.res.Resource;
 import org.json.JSONObject;
 
+import java.util.Collection;
 import java.util.Map;
 
 public class ResourceBlock extends ResourceHandle<String, Block> {
@@ -13,31 +13,49 @@ public class ResourceBlock extends ResourceHandle<String, Block> {
     private final Registries registries;
     private final Block block;
 
-    public ResourceBlock(ResourcePack defaultPack, Registries registries, String path) {
-        super(defaultPack, path);
+    public ResourceBlock(String path, Registries registries) {
+        super(path);
         this.registries = registries;
         this.block = new Block();
     }
 
+    public ResourceBlock(Block block) {
+        super(null);
+        this.registries = null;
+        this.block = block;
+        System.out.println("Loaded block '" + block.getID() + "'");
+    }
+
     @Override
-    public Block object() {
+    public String getID() {
+        return block.getID();
+    }
+
+    @Override
+    public Block getObject() {
         return block;
     }
 
     @Override
-    public void load(ResourcePack pack) {
-        final Resource resource = pack.getOrDefault(super.getPath(), super.getDefaultPack());
+    public void load(ResourcePack defaultPack) {
+        if(registries == null)
+            return;
+
+        final Resource resource = defaultPack.get(super.getPath());
 
         // read json
         final JSONObject jsonObject = new JSONObject(resource.readString());
         final String blockID = jsonObject.getString("block_ID");
-        // create block
-        final Block block = new Block(blockID, Map.of(), registries.blockState());
 
-        registries.block().register(block);
+        // load
+        block.setID(blockID);
+        block.buildStates(Map.of(), registries);
 
-        System.out.println("Loaded Block with ID '" + blockID + "'");
+        System.out.println("Loaded block '" + blockID + "'");
     }
+
+    @Override
+    public void reload(Collection<ResourcePack> packs) { }
 
     @Override
     public void dispose() { }

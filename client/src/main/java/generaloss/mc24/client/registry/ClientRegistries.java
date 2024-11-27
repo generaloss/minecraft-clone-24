@@ -1,37 +1,33 @@
 package generaloss.mc24.client.registry;
 
-import generaloss.mc24.client.Main;
 import generaloss.mc24.client.block.BlockStateModel;
 import generaloss.mc24.client.resourcepack.*;
 import generaloss.mc24.server.block.BlockState;
 import generaloss.mc24.server.registry.Registries;
-import generaloss.mc24.server.registry.Registry;
+import generaloss.mc24.server.registry.ResourceRegistry;
 import generaloss.mc24.server.resourcepack.ResourcePack;
 import jpize.util.Disposable;
 import jpize.util.time.Stopwatch;
 
+import java.util.Collection;
+
 public class ClientRegistries extends Registries implements Disposable {
 
-    private final Main context;
+    private final ResourceRegistry<String, ResourceAtlas> atlas;
+    private final ResourceRegistry<String, ResourceMusic> music;
+    private final ResourceRegistry<String, ResourceShader> shader;
+    private final ResourceRegistry<String, ResourceSkybox> skybox;
+    private final ResourceRegistry<String, ResourceTexture> texture;
+    private final ResourceRegistry<BlockState, ResourceBlockStateModel> blockModel;
 
-    private final Registry<String, ResourceAtlas> atlas;
-    private final Registry<String, ResourceMusic> music;
-    private final Registry<String, ResourceShader> shader;
-    private final Registry<String, ResourceSkybox> skybox;
-    private final Registry<String, ResourceTexture> texture;
-
-    private final Registry<BlockState, ResourceBlockStateModel> blockModel;
-
-    public ClientRegistries(Main context) {
-        this.context = context;
-
-        this.atlas = new Registry<>();
-        this.music = new Registry<>();
-        this.shader = new Registry<>();
-        this.skybox = new Registry<>();
-        this.texture = new Registry<>();
-
-        this.blockModel = new Registry<>();
+    public ClientRegistries(ResourcePack defaultPack) {
+        super(defaultPack);
+        this.atlas = new ResourceRegistry<>();
+        this.music = new ResourceRegistry<>();
+        this.shader = new ResourceRegistry<>();
+        this.skybox = new ResourceRegistry<>();
+        this.texture = new ResourceRegistry<>();
+        this.blockModel = new ResourceRegistry<>();
     }
 
 
@@ -56,61 +52,70 @@ public class ClientRegistries extends Registries implements Disposable {
     }
 
     public BlockStateModel getBlockModel(BlockState ID) {
-        return blockModel.get(ID).object();
+        return blockModel.get(ID).getObject();
     }
 
 
     public ResourceAtlas registerAtlas(String ID, String path, int width, int height) {
-        return atlas.register(new ResourceAtlas(context.getDefaultPack(), ID, path, width, height));
+        return atlas.register(new ResourceAtlas(ID, path, width, height));
     }
 
     public ResourceMusic registerMusic(String ID, String path) {
-        return music.register(new ResourceMusic(context.getDefaultPack(), ID, path));
+        return music.register(new ResourceMusic(ID, path));
     }
 
     public ResourceShader registerShader(String ID, String path) {
-        return shader.register(new ResourceShader(context.getDefaultPack(), ID, path));
+        return shader.register(new ResourceShader(ID, path));
     }
 
     public ResourceSkybox registerSkybox(String ID, String path) {
-        return skybox.register(new ResourceSkybox(context.getDefaultPack(), ID, path));
+        return skybox.register(new ResourceSkybox(ID, path));
     }
 
     public ResourceTexture registerTexture(String ID, String path) {
-        return texture.register(new ResourceTexture(context.getDefaultPack(), ID, path));
+        return texture.register(new ResourceTexture(ID, path));
     }
 
     public ResourceBlockStateModel registerBlockModel(String path) {
-        return blockModel.register(new ResourceBlockStateModel(context.getDefaultPack(), this, path));
+        return blockModel.register(new ResourceBlockStateModel(path, this));
     }
 
     public ResourceBlockStateModel registerBlockModel(ResourceBlockStateModel blockStateModelResource) {
         return blockModel.register(blockStateModelResource);
     }
 
-
-    public void loadResources(ResourcePack pack) {
+    @Override
+    public void loadResources(ResourcePack defaultPack) {
+        super.loadResources(defaultPack);
         final Stopwatch stopwatch = new Stopwatch().start();
-        for(ResourceAtlas res : atlas) res.load(pack);
-        for(ResourceMusic res : music) res.load(pack);
-        for(ResourceShader res : shader) res.load(pack);
-        for(ResourceSkybox res : skybox) res.load(pack);
-        for(ResourceTexture res : texture) res.load(pack);
-        for(ResourceBlockStateModel res : blockModel) res.load(pack);
-        System.out.println("Loaded resource pack '" + pack.getID() + "' in " + stopwatch.getMillis() + " ms.");
+        atlas.load(defaultPack);
+        music.load(defaultPack);
+        shader.load(defaultPack);
+        skybox.load(defaultPack);
+        texture.load(defaultPack);
+        blockModel.load(defaultPack);
+        System.out.println("[Client] Loaded resources in " + stopwatch.getMillis() + " ms.");
     }
 
-    public void loadResources() {
-        this.loadResources(context.getDefaultPack());
+    public void reloadResources(Collection<ResourcePack> packs) {
+        final Stopwatch stopwatch = new Stopwatch().start();
+        atlas.reload(packs);
+        music.reload(packs);
+        shader.reload(packs);
+        skybox.reload(packs);
+        texture.reload(packs);
+        blockModel.reload(packs);
+        System.out.println("[Client] Reloaded resources in " + stopwatch.getMillis() + " ms.");
     }
 
     @Override
     public void dispose() {
-        for(Disposable res : atlas) res.dispose();
-        for(Disposable res : music) res.dispose();
-        for(Disposable res : shader) res.dispose();
-        for(Disposable res : skybox) res.dispose();
-        for(Disposable res : texture) res.dispose();
+        atlas.dispose();
+        music.dispose();
+        shader.dispose();
+        skybox.dispose();
+        texture.dispose();
+        blockModel.dispose();
     }
 
 }

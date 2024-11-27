@@ -1,7 +1,7 @@
 package generaloss.mc24.server.block;
 
 import generaloss.mc24.server.registry.Identifiable;
-import generaloss.mc24.server.registry.IntRegistry;
+import generaloss.mc24.server.registry.Registries;
 
 import java.util.*;
 
@@ -9,7 +9,7 @@ public class Block implements Identifiable<String> {
 
     private String ID;
     private final BlockPropertiesHolder properties;
-    private BlockStatesHolder states;
+    private BlockStatesHolder statesHolder;
 
     public Block() {
         this.properties = new BlockPropertiesHolder();
@@ -32,15 +32,15 @@ public class Block implements Identifiable<String> {
 
 
     public BlockStatesHolder states() {
-        return states;
+        return statesHolder;
     }
 
     public BlockState getDefaultState() {
-        return states.getDefaultState();
+        return statesHolder.getDefaultState();
     }
 
-    public Block createStates(Map<String, StateProperty<?>> stateProperties, IntRegistry<BlockState> blockStateRegistry) {
-        states = new BlockStatesHolder(this, stateProperties, blockStateRegistry);
+    public Block buildStates(Map<String, StateProperty<?>> stateProperties, Registries registries) {
+        statesHolder = new BlockStatesHolder(this, stateProperties, registries);
         return this;
     }
 

@@ -41,10 +41,6 @@ public class ResourcePack implements Disposable {
         return resourceMap.get(path);
     }
 
-    public ZipEntryResource getOrDefault(String path, ResourcePack defaultPack) {
-        return resourceMap.getOrDefault(path, defaultPack.get(path));
-    }
-
     @Override
     public void dispose() {
         Utils.close(zipFile);

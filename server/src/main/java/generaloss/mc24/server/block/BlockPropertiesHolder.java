@@ -9,8 +9,13 @@ public class BlockPropertiesHolder {
 
     public BlockPropertiesHolder() {
         this.valuesMap = new HashMap<>();
+        this.setDefaults();
+    }
+
+    public BlockPropertiesHolder setDefaults() {
         for(BlockProperty property: BlockProperty.values())
             valuesMap.put(property, property.getDefaultValue());
+        return this;
     }
 
 

@@ -30,12 +30,11 @@ public class LevelRenderer {
 
         this.shader = resourceRegistry
             .registerShader("level_chunk", "shaders/chunk")
-            .object();
+            .getObject();
 
         this.blockAtlas = resourceRegistry
-            .registerAtlas("blocks", "textures/blocks", 256, 256)
-            .registerAllInDirectory()
-            .object();
+            .registerAtlas("blocks", "textures/blocks/", 256, 256)
+            .getObject();
 
         // matrix
         this.matrix = new Matrix4f();

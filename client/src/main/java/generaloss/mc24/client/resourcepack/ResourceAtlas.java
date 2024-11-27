@@ -4,26 +4,28 @@ import generaloss.mc24.server.resourcepack.ResourceHandle;
 import generaloss.mc24.server.resourcepack.ResourcePack;
 import jpize.gl.texture.GlFilter;
 import jpize.gl.texture.Texture2D;
+import jpize.util.array.StringList;
 import jpize.util.atlas.TextureAtlas;
 import jpize.util.region.TextureRegion;
-import jpize.util.res.ExternalResource;
 import jpize.util.res.Resource;
+import jpize.util.res.ZipEntryResource;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class ResourceAtlas extends ResourceHandle<String, Texture2D> {
 
+    private final String ID;
     private final int width, height;
-    private final Map<String, String> paths;
+    private final StringList toLoadPaths;
     private final TextureAtlas<String> atlas;
 
-    public ResourceAtlas(ResourcePack defaultPack, String ID, String path, int width, int height) {
-        super(defaultPack, ID, path);
+    public ResourceAtlas(String ID, String directoryPath, int width, int height) {
+        super(directoryPath);
+        this.ID = ID;
         this.width = width;
         this.height = height;
-        this.paths = new HashMap<>();
-
+        this.toLoadPaths = new StringList();
+        // atlas
         this.atlas = new TextureAtlas<>();
         this.atlas.setPadding(4);
         this.atlas.setFillPaddings(true);
@@ -34,20 +36,13 @@ public class ResourceAtlas extends ResourceHandle<String, Texture2D> {
     }
 
     @Override
-    public Texture2D object() {
+    public String getID() {
+        return ID;
+    }
+
+    @Override
+    public Texture2D getObject() {
         return atlas.getTexture();
-    }
-
-    public ResourceAtlas register(String identifier, String name) {
-        this.paths.put(identifier, name);
-        return this;
-    }
-
-    public ResourceAtlas registerAllInDirectory() {
-        final ExternalResource directoryRes = Resource.external("assets/resources/" + super.getPath());
-        for(ExternalResource resource: directoryRes.listRes())
-            this.register(resource.simpleName(), "/" + resource.name());
-        return this;
     }
 
     public TextureRegion getRegion(String identifier) {
@@ -55,14 +50,23 @@ public class ResourceAtlas extends ResourceHandle<String, Texture2D> {
     }
 
     @Override
-    public void load(ResourcePack pack) {
-        for(Map.Entry<String, String> entry: paths.entrySet()){
-            final String name = (super.getPath() + entry.getValue());
-            final Resource resource = pack.getOrDefault(name, super.getDefaultPack());
-
-            atlas.put(entry.getKey(), resource);
+    public void load(ResourcePack defaultPack) {
+        final ZipEntryResource directoryRes = defaultPack.get(super.getPath());
+        final ZipEntryResource[] list = directoryRes.listRes();
+        for(ZipEntryResource resource : list){
+            if(resource.isDir())
+                continue;
+            toLoadPaths.add(resource.path());
         }
+        this.reload(List.of(defaultPack));
+    }
 
+    @Override
+    public void reload(Collection<ResourcePack> packs) {
+        for(String path: toLoadPaths){
+            final Resource resource = super.getResourceFromPacks(packs, path);
+            atlas.put(path.substring(super.getPath().length()), resource);
+        }
         atlas.build(width, height);
     }
 

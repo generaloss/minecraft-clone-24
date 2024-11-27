@@ -28,16 +28,16 @@ public class TitleScreen extends IScreen {
 
         this.overlayTexture = resourceRegistry
             .registerTexture("menu_panorama_overlay", "textures/gui/title/panorama_overlay.png")
-            .object()
+            .getObject()
             .setFilters(GlFilter.LINEAR);
 
         this.skybox = resourceRegistry
             .registerSkybox("menu_panorama_skybox", "textures/gui/title/panorama_%s.png")
-            .object();
+            .getObject();
 
         this.music = resourceRegistry
             .registerMusic("menu_music", "music/beginning2.ogg")
-            .object();
+            .getObject();
 
         // camera
         this.camera = new PerspectiveCamera(0.01F, 5F, 85F);

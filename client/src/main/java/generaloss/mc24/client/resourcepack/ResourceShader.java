@@ -5,24 +5,40 @@ import generaloss.mc24.server.resourcepack.ResourcePack;
 import jpize.gl.shader.Shader;
 import jpize.util.res.Resource;
 
+import java.util.Collection;
+
 public class ResourceShader extends ResourceHandle<String, Shader> {
 
+    private final String ID;
     private final Shader shader;
 
-    public ResourceShader(ResourcePack defaultPack, String ID, String path) {
-        super(defaultPack, ID, path);
+    public ResourceShader(String ID, String path) {
+        super(path);
+        this.ID = ID;
         this.shader = new Shader();
     }
 
     @Override
-    public Shader object() {
+    public String getID() {
+        return ID;
+    }
+
+    @Override
+    public Shader getObject() {
         return shader;
     }
 
     @Override
     public void load(ResourcePack pack) {
-        final Resource vertexRes = pack.getOrDefault(super.getPath() + ".vsh", super.getDefaultPack());
-        final Resource fragmentRes = pack.getOrDefault(super.getPath() + ".fsh", super.getDefaultPack());
+        final Resource vertexRes = pack.get(super.getPath() + ".vsh");
+        final Resource fragmentRes = pack.get(super.getPath() + ".fsh");
+        shader.load(vertexRes, fragmentRes);
+    }
+
+    @Override
+    public void reload(Collection<ResourcePack> packs) {
+        final Resource vertexRes = super.getResourceFromPacks(packs, super.getPath() + ".vsh");
+        final Resource fragmentRes = super.getResourceFromPacks(packs, super.getPath() + ".fsh");
         shader.load(vertexRes, fragmentRes);
     }
 

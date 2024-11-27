@@ -1,6 +1,6 @@
 package generaloss.mc24.server.block;
 
-import generaloss.mc24.server.registry.IntRegistry;
+import generaloss.mc24.server.registry.Registries;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -10,10 +10,10 @@ public class BlockStatesHolder implements Iterable<BlockState> {
     private final Block block;
     private final List<BlockState> states;
 
-    public BlockStatesHolder(Block block, Map<String, StateProperty<?>> properties, IntRegistry<BlockState> blockStateRegistry) {
+    public BlockStatesHolder(Block block, Map<String, StateProperty<?>> properties, Registries registries) {
         this.block = block;
         this.states = new ArrayList<>();
-        this.create(properties, blockStateRegistry);
+        this.create(properties, registries);
     }
 
 
@@ -31,7 +31,7 @@ public class BlockStatesHolder implements Iterable<BlockState> {
     }
 
 
-    public void create(Map<String, StateProperty<?>> properties, IntRegistry<BlockState> blockStateRegistry) {
+    public void create(Map<String, StateProperty<?>> properties, Registries registries) {
         final List<StateProperty<?>> propertiesList = new ArrayList<>();
         final List<Collection<?>> valuesList = new ArrayList<>();
 
@@ -58,8 +58,8 @@ public class BlockStatesHolder implements Iterable<BlockState> {
 
         // register states
         for(BlockState state: states){
-            blockStateRegistry.register(state);
-            System.out.println("  Registered BlockState with ID '" + blockStateRegistry.getID(state) + "' for block '" + block.getID() + "'");
+            registries.registerBlockState(state);
+            System.out.println("  Registered BlockState with ID '" + registries.getBlockStateID(state) + "' for block '" + block.getID() + "'");
         }
     }
 
