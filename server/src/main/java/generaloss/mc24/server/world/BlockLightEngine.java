@@ -12,6 +12,8 @@ import java.util.Queue;
 
 public class BlockLightEngine <C extends Chunk<?>> {
 
+    public static final int MAX_LEVEL = 15;
+
     private record Task <C extends Chunk<?>> (C chunk, int x, int y, int z, int lightLevel) { }
     private record Node(int x, int y, int z, int lightLevel) { }
 
@@ -59,19 +61,15 @@ public class BlockLightEngine <C extends Chunk<?>> {
     public void processIncrease() {
         while(!increaseQueue.isEmpty()) {
             final Node node = increaseQueue.poll();
-
-            final int x = node.x;
-            final int y = node.y;
-            final int z = node.z;
             final int lightLevel = node.lightLevel;
 
             for(int i = 0; i < 6; i++){
                 final Directory dir = Directory.values()[i];
                 final Vec3i normal = dir.getNormal();
 
-                final int nx = (x + normal.x);
-                final int ny = (y + normal.y);
-                final int nz = (z + normal.z);
+                final int nx = (node.x + normal.x);
+                final int ny = (node.y + normal.y);
+                final int nz = (node.z + normal.z);
 
                 final int neighborLightLevel = chunkCache.getBlockLightLevel(nx, ny, nz);
 
@@ -82,8 +80,8 @@ public class BlockLightEngine <C extends Chunk<?>> {
                 if(neighborBlockState == null)
                     continue;
 
-                final int neighborOpaqueLevel = neighborBlockState.properties().getInt(BlockProperty.OPAQUE_LEVEL);
-                final int targetLightLevel = (lightLevel - Math.max(1, neighborOpaqueLevel));
+                final int neighborBlockOpacity = neighborBlockState.properties().getInt(BlockProperty.OPACITY);
+                final int targetLightLevel = (lightLevel - Math.max(1, neighborBlockOpacity));
 
                 if(targetLightLevel > neighborLightLevel){
                     chunkCache.setBlockLightLevel(nx, ny, nz, targetLightLevel);

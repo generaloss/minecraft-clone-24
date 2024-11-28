@@ -97,23 +97,17 @@ public class BlockFace {
 
         for(int i = 1; i < vertices.length; i++){
             final float x = vertices[i].getX();
-            if(x != x0)
+            if(x != x0 || x != 0F && x != 1F)
                 hasX = false;
 
             final float y = vertices[i].getY();
-            if(y != y0)
+            if(y != y0 || y != 0F && y != 1F)
                 hasY = false;
 
             final float z = vertices[i].getZ();
-            if(z != z0)
+            if(z != z0 || z != 0F && z != 1F)
                 hasZ = false;
 
-            if(x < 0F || x > 1F || y < 0F || y > 1F || z < 0F || z > 1F){
-                hasX = false;
-                hasY = false;
-                hasZ = false;
-                break;
-            }
         }
 
         this.setHidesFace(Directory.byVector(

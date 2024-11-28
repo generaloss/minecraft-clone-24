@@ -9,6 +9,7 @@ import generaloss.mc24.server.block.*;
 import generaloss.mc24.client.level.LevelChunk;
 import generaloss.mc24.client.level.WorldLevel;
 import generaloss.mc24.client.resourcepack.ResourceAtlas;
+import generaloss.mc24.server.world.BlockLightEngine;
 import generaloss.mc24.server.world.ChunkCache;
 import jpize.app.Jpize;
 import jpize.util.Disposable;
@@ -93,37 +94,37 @@ public class ChunkTesselator implements Disposable {
                 this.getCachedLightLevel(-1,  0 + y, -1 + z) +
                 this.getCachedLightLevel(-1, -1 + y,  0 + z) +
                 this.getCachedLightLevel(-1,  0 + y,  0 + z)
-            ) / 60F;
+            ) / 4F / BlockLightEngine.MAX_LEVEL;
             case EAST -> (
                 this.getCachedLightLevel( 1, -1 + y, -1 + z) +
                 this.getCachedLightLevel( 1,  0 + y, -1 + z) +
                 this.getCachedLightLevel( 1, -1 + y,  0 + z) +
                 this.getCachedLightLevel( 1,  0 + y,  0 + z)
-            ) / 60F;
+            ) / 4F / BlockLightEngine.MAX_LEVEL;
             case DOWN -> (
                 this.getCachedLightLevel(-1 + x, -1, -1 + z) +
                 this.getCachedLightLevel( 0 + x, -1, -1 + z) +
                 this.getCachedLightLevel(-1 + x, -1,  0 + z) +
                 this.getCachedLightLevel( 0 + x, -1,  0 + z)
-            ) / 60F;
+            ) / 4F / BlockLightEngine.MAX_LEVEL;
             case UP -> (
                 this.getCachedLightLevel(-1 + x,  1, -1 + z) +
                 this.getCachedLightLevel( 0 + x,  1, -1 + z) +
                 this.getCachedLightLevel(-1 + x,  1,  0 + z) +
                 this.getCachedLightLevel( 0 + x,  1,  0 + z)
-            ) / 60F;
+            ) / 4F / BlockLightEngine.MAX_LEVEL;
             case SOUTH -> (
                 this.getCachedLightLevel(-1 + x, -1 + y, -1) +
                 this.getCachedLightLevel( 0 + x, -1 + y, -1) +
                 this.getCachedLightLevel(-1 + x,  0 + y, -1) +
                 this.getCachedLightLevel( 0 + x,  0 + y, -1)
-            ) / 60F;
+            ) / 4F / BlockLightEngine.MAX_LEVEL;
             case NORTH -> (
                 this.getCachedLightLevel(-1 + x, -1 + y, 1) +
                 this.getCachedLightLevel( 0 + x, -1 + y, 1) +
                 this.getCachedLightLevel(-1 + x,  0 + y, 1) +
                 this.getCachedLightLevel( 0 + x,  0 + y, 1)
-            ) / 60F;
+            ) / 4F / BlockLightEngine.MAX_LEVEL;
             default -> {
                 final float[][][] blockVertices = new float[2][2][2];
                 for(int i = 0; i < 2; i++) {
@@ -157,7 +158,7 @@ public class ChunkTesselator implements Disposable {
 
                 final float z0 = y0 * (1F - vertexZ) + y1 * vertexZ;
 
-                yield z0 / 15F / 2F;
+                yield z0 / 2F / BlockLightEngine.MAX_LEVEL;
             }
         };
     }

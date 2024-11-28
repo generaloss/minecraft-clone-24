@@ -7,7 +7,7 @@ import java.util.Map;
 
 public enum BlockProperty {
 
-    OPAQUE_LEVEL ("opaque_level", 15);
+    OPACITY ("opacity", 15);
 
     private final String name;
     private final Object defaultValue;

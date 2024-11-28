@@ -6,7 +6,7 @@ import generaloss.mc24.server.world.World;
 
 public class Chunk <W extends World<? extends Chunk<W>>> {
 
-    public static final int SIZE = 32;
+    public static final int SIZE = 16;
     public static final int AREA = SIZE * SIZE;
     public static final int VOLUME = AREA * SIZE;
 
