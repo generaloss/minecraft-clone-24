@@ -4,19 +4,19 @@ import generaloss.mc24.server.block.BlockState;
 import generaloss.mc24.server.registry.Registries;
 import generaloss.mc24.server.world.World;
 
-public class Chunk {
+public class Chunk <W extends World<?>> {
 
-    public static final int SIZE = 16;
+    public static final int SIZE = 32;
     public static final int AREA = SIZE * SIZE;
     public static final int VOLUME = AREA * SIZE;
 
-    private final World world;
+    private final W world;
     private final ChunkPos position;
     private final Registries registries;
     private final ByteNibbleArray blockStateIndices;
     private final ByteNibbleArray blockLightLevels;
 
-    public Chunk(World world, ChunkPos position, Registries registries) {
+    public Chunk(W world, ChunkPos position, Registries registries) {
         this.world = world;
         this.position = position;
         this.registries = registries;
@@ -25,7 +25,7 @@ public class Chunk {
     }
 
 
-    public World world() {
+    public W world() {
         return world;
     }
 
@@ -54,6 +54,10 @@ public class Chunk {
 
     public boolean setBlockLightLevel(int x, int y, int z, int lightLevel) {
         return blockLightLevels.set(x, y, z, lightLevel);
+    }
+
+    public void propagateBlockLight(int x, int y, int z, int lightLevel) {
+
     }
 
 

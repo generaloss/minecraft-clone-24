@@ -3,7 +3,6 @@ package generaloss.mc24.client;
 import generaloss.mc24.client.level.LevelChunk;
 import generaloss.mc24.client.level.WorldLevel;
 import generaloss.mc24.client.registry.ClientRegistries;
-import generaloss.mc24.server.chunk.ChunkPos;
 import generaloss.mc24.server.resourcepack.ResourcePack;
 import generaloss.mc24.client.screen.TitleScreen;
 import generaloss.mc24.client.screen.ScreenDispatcher;
@@ -131,7 +130,7 @@ public class Main extends JpizeApplication {
         }
 
         if(Key.B.down()) {
-            final LevelChunk chunk = level.getChunk(new ChunkPos(0, 0, 0));
+            final LevelChunk chunk = level.getChunk(0, 0, 0);
             for(int i = 0; i < 100; i++)
                 chunk.setBlockState(Maths.random(1, 14), Maths.random(1, 14), Maths.random(1, 14), registries.getBlock("stairs").getDefaultState());
             level.tesselator().tesselate(chunk);

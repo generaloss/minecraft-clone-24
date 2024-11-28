@@ -5,27 +5,24 @@ import generaloss.mc24.client.chunk.ChunkTesselator;
 import generaloss.mc24.server.chunk.Chunk;
 import generaloss.mc24.server.chunk.ChunkPos;
 import generaloss.mc24.server.registry.Registries;
+import generaloss.mc24.server.world.BlockLightEngine;
 import generaloss.mc24.server.world.World;
 import jpize.util.Disposable;
 import jpize.util.math.FastNoise;
 import jpize.util.math.Maths;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-
-public class WorldLevel extends World implements Disposable {
+public class WorldLevel extends World<LevelChunk> implements Disposable {
 
     private final Main context;
     private final ChunkTesselator tesselator;
     private final LevelRenderer renderer;
-    private final Map<ChunkPos, LevelChunk> chunks;
+    private final BlockLightEngine<WorldLevel> blockLightEngine;
 
     public WorldLevel(Main context) {
         this.context = context;
         this.tesselator = new ChunkTesselator(context, this);
         this.renderer = new LevelRenderer(context, this);
-        this.chunks = new HashMap<>();
+        this.blockLightEngine = new BlockLightEngine<>(this);
     }
 
     public ChunkTesselator tesselator() {
@@ -37,20 +34,7 @@ public class WorldLevel extends World implements Disposable {
     }
 
 
-    public Collection<LevelChunk> getChunks() {
-        return chunks.values();
-    }
-
-    public LevelChunk getChunk(ChunkPos pos) {
-        return chunks.get(pos);
-    }
-
-    public void loadChunk(LevelChunk chunk) {
-        chunks.put(chunk.position(), chunk);
-    }
-
-
-    FastNoise noise = new FastNoise(Maths.random(0, 99)).setFrequency(1 / 64F);
+    FastNoise noise = new FastNoise(345).setFrequency(1 / 64F);
 
     private void load(int chunkX, int chunkY, int chunkZ) {
         final ChunkPos position = new ChunkPos(chunkX, chunkY, chunkZ);
@@ -67,11 +51,11 @@ public class WorldLevel extends World implements Disposable {
         chunk.forEach((x, y, z) -> {
             if(!chunk.getBlockState(x, y, z).isBlockID("air") && (chunk.getBlockState(x, y + 1, z) == null || chunk.getBlockState(x, y + 1, z).isBlockID("air")))
                 chunk.setBlockState(x, y, z, registries.getBlock("grass_block").getDefaultState());
-            if(Maths.randomBoolean(0.4F))
-                chunk.setBlockLightLevel(x, y, z, 15);
+            if(Maths.randomBoolean(0.01F))
+                chunk.propagateBlockLight(x, y, z, 15);
         });
 
-        this.loadChunk(chunk);
+        super.putChunk(chunk);
         tesselator.tesselate(chunk);
     }
 
@@ -79,7 +63,7 @@ public class WorldLevel extends World implements Disposable {
         System.out.println("Loading chunks...");
         for(int y = -2; y < 2; y++){
             this.load(0, y, 0);
-            for(int r = 0; r < 10; r++){
+            for(int r = 0; r < 4; r++){
                 for(int i = -r; i <= r; i++)
                     this.load(i, y, r);
                 for(int i = -r + 1; i <= r; i++)

@@ -9,7 +9,7 @@ public class Block implements Identifiable<String> {
 
     private String ID;
     private final BlockPropertiesHolder properties;
-    private BlockStatesHolder statesHolder;
+    private BlockStateContainer statesHolder;
 
     public Block() {
         this.properties = new BlockPropertiesHolder();
@@ -31,7 +31,7 @@ public class Block implements Identifiable<String> {
     }
 
 
-    public BlockStatesHolder states() {
+    public BlockStateContainer states() {
         return statesHolder;
     }
 
@@ -40,7 +40,7 @@ public class Block implements Identifiable<String> {
     }
 
     public Block buildStates(Map<String, StateProperty<?>> stateProperties, Registries registries) {
-        statesHolder = new BlockStatesHolder(this, stateProperties, registries);
+        statesHolder = new BlockStateContainer(this, stateProperties, registries);
         return this;
     }
 

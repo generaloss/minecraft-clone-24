@@ -258,7 +258,7 @@ public class ChunkTesselator implements Disposable {
                         chunkCache[1][1][1] = chunk;
                         continue;
                     }
-                    final LevelChunk neighborChunk = level.getChunk(chunkPosition.getNeighbor(i - 1, j - 1, k - 1));
+                    final LevelChunk neighborChunk = level.getChunk(chunkPosition.getNeighborPacked(i - 1, j - 1, k - 1));
                     chunkCache[i][j][k] = neighborChunk;
                 }
             }
