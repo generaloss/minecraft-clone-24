@@ -12,25 +12,10 @@ import java.util.Queue;
 
 public class BlockLightEngine <C extends Chunk<?>> {
 
-    private class Task {
-        public final C chunk;
-        public final int x;
-        public final int y;
-        public final int z;
-        public final int lightLevel;
-
-        public Task(C chunk, int x, int y, int z, int lightLevel) {
-            this.chunk = chunk;
-            this.x = x;
-            this.y = y;
-            this.z = z;
-            this.lightLevel = lightLevel;
-        }
-    }
-
+    private record Task <C extends Chunk<?>> (C chunk, int x, int y, int z, int lightLevel) { }
     private record Node(int x, int y, int z, int lightLevel) { }
 
-    private final Queue<Task> increaseTaskQueue, decreaseTaskQueue;
+    private final Queue<Task<C>> increaseTaskQueue, decreaseTaskQueue;
     private final Queue<Node> increaseQueue, decreaseQueue;
     private final ChunkCache<C> chunkCache;
 
@@ -45,19 +30,19 @@ public class BlockLightEngine <C extends Chunk<?>> {
     public void increase(C chunk, int x, int y, int z, int lightLevel) {
         if(chunk == null)
             return;
-        increaseTaskQueue.add(new Task(chunk, x, y, z, lightLevel));
+        increaseTaskQueue.add(new Task<>(chunk, x, y, z, lightLevel));
     }
 
     public void decrease(C chunk, int x, int y, int z, int lightLevel) {
         if(chunk == null)
             return;
-        decreaseTaskQueue.add(new Task(chunk, x, y, z, lightLevel));
+        decreaseTaskQueue.add(new Task<>(chunk, x, y, z, lightLevel));
     }
 
     public void update() {
         final Stopwatch timer = new Stopwatch().start();
         while(!increaseTaskQueue.isEmpty()) {
-            final Task task = increaseTaskQueue.poll();
+            final Task<C> task = increaseTaskQueue.poll();
             chunkCache.cacheNeighborsFor(task.chunk);
             increaseQueue.add(new Node(task.x, task.y, task.z, task.lightLevel));
             this.processIncrease();
@@ -102,7 +87,6 @@ public class BlockLightEngine <C extends Chunk<?>> {
 
                 if(targetLightLevel > neighborLightLevel){
                     chunkCache.setBlockLightLevel(nx, ny, nz, targetLightLevel);
-                    // System.out.println("add to " + nx + " => " + targetLightLevel + " > " + neighborLightLevel);
                     increaseQueue.add(new Node(nx, ny, nz, targetLightLevel));
                 }
             }
