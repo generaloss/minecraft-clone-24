@@ -3,6 +3,7 @@ package generaloss.mc24.client.session;
 import generaloss.mc24.client.Main;
 import generaloss.mc24.client.screen.IScreen;
 import jpize.glfw.input.Key;
+import jpize.util.camera.PerspectiveCamera;
 
 public class SessionScreen extends IScreen {
 
@@ -18,12 +19,13 @@ public class SessionScreen extends IScreen {
         if(Key.ESCAPE.down())
             context().screens().show("title");
         // tesselate chunk meshes
-        context().level().tesselator().update();
+        context().level().update();
     }
 
     @Override
     public void render() {
-        context().level().renderer().render(context().player().camera());
+        final PerspectiveCamera camera = super.context().player().camera();
+        super.context().level().render(camera);
     }
 
     @Override

@@ -8,6 +8,7 @@ import generaloss.mc24.server.registry.Registries;
 import generaloss.mc24.server.world.BlockLightEngine;
 import generaloss.mc24.server.world.World;
 import jpize.util.Disposable;
+import jpize.util.camera.PerspectiveCamera;
 import jpize.util.math.FastNoise;
 import jpize.util.math.Maths;
 
@@ -16,7 +17,7 @@ public class WorldLevel extends World<LevelChunk> implements Disposable {
     private final Main context;
     private final ChunkTesselator tesselator;
     private final LevelRenderer renderer;
-    private final BlockLightEngine<WorldLevel> blockLightEngine;
+    private final BlockLightEngine<LevelChunk> blockLightEngine;
 
     public WorldLevel(Main context) {
         this.context = context;
@@ -27,10 +28,6 @@ public class WorldLevel extends World<LevelChunk> implements Disposable {
 
     public ChunkTesselator tesselator() {
         return tesselator;
-    }
-
-    public LevelRenderer renderer() {
-        return renderer;
     }
 
 
@@ -45,14 +42,19 @@ public class WorldLevel extends World<LevelChunk> implements Disposable {
             final int X = chunkX * Chunk.SIZE + x;
             final int Y = chunkY * Chunk.SIZE + y;
             final int Z = chunkZ * Chunk.SIZE + z;
+            if(Y > 50)
+                return;
+
             if(noise.get(X, Y, Z) > 0F)
                 chunk.setBlockState(x, y, z, registries.getBlock("stone").getDefaultState());
+            else if(Maths.randomBoolean(0.0001F)){
+                chunk.setBlockState(x, y, z, registries.getBlock("torch").getDefaultState());
+                blockLightEngine.increase(chunk, x, y, z, 15);
+            }
         });
         chunk.forEach((x, y, z) -> {
-            if(!chunk.getBlockState(x, y, z).isBlockID("air") && (chunk.getBlockState(x, y + 1, z) == null || chunk.getBlockState(x, y + 1, z).isBlockID("air")))
+            if(chunk.getBlockState(x, y, z).isBlockID("stone") && (chunk.getBlockState(x, y + 1, z) == null || chunk.getBlockState(x, y + 1, z).isBlockID("air")))
                 chunk.setBlockState(x, y, z, registries.getBlock("grass_block").getDefaultState());
-            if(Maths.randomBoolean(0.01F))
-                chunk.propagateBlockLight(x, y, z, 15);
         });
 
         super.putChunk(chunk);
@@ -74,6 +76,17 @@ public class WorldLevel extends World<LevelChunk> implements Disposable {
                     this.load(-r, y, i);
             }
         }
+        System.out.println("Chunks loaded.");
+    }
+
+
+    public void update() {
+        blockLightEngine.update();
+        tesselator.update();
+    }
+
+    public void render(PerspectiveCamera camera) {
+        renderer.render(camera);
     }
 
 

@@ -9,11 +9,10 @@ import generaloss.mc24.server.block.*;
 import generaloss.mc24.client.level.LevelChunk;
 import generaloss.mc24.client.level.WorldLevel;
 import generaloss.mc24.client.resourcepack.ResourceAtlas;
-import generaloss.mc24.server.chunk.ChunkPos;
+import generaloss.mc24.server.world.ChunkCache;
 import jpize.app.Jpize;
 import jpize.util.Disposable;
 import jpize.util.array.FloatList;
-import jpize.util.math.Mathc;
 import jpize.util.math.Maths;
 import jpize.util.region.TextureRegion;
 import jpize.util.time.Stopwatch;
@@ -24,24 +23,24 @@ import java.util.Queue;
 public class ChunkTesselator implements Disposable {
 
     private final Main context;
-    private final WorldLevel level;
     private final Queue<LevelChunk> taskQueue;
+    private final ChunkCache<LevelChunk> chunkCache;
 
     private final ChunkMeshCache meshCache;
     private final FloatList verticesCache;
-    private final LevelChunk[][][] chunkCache;
+
     private final BlockState[][][] blockCache;
     private final int[][][] lightLevelCache;
     private final float[] aoCache;
-    private int norX, norY, norZ; //!rename! (normalized block coordinates)
 
     public ChunkTesselator(Main context, WorldLevel level) {
         this.context = context;
-        this.level = level;
         this.taskQueue = new LinkedList<>();
+        this.chunkCache = new ChunkCache<>(level);
+
         this.meshCache = new ChunkMeshCache();
         this.verticesCache = new FloatList();
-        this.chunkCache = new LevelChunk[3][3][3];
+
         this.blockCache = new BlockState[3][3][3];
         this.lightLevelCache = new int[3][3][3];
         this.aoCache = new float[BlockFace.VERTICES_NUMBER];
@@ -63,10 +62,6 @@ public class ChunkTesselator implements Disposable {
         }
     }
 
-    private LevelChunk getCachedChunk(int i, int j, int k) {
-        return chunkCache[i + 1][j + 1][k + 1];
-    }
-
     private BlockState getCachedBlockState(int i, int j, int k) {
         return blockCache[i + 1][j + 1][k + 1];
     }
@@ -77,35 +72,6 @@ public class ChunkTesselator implements Disposable {
 
     public int getCachedLightLevel(int i, int j, int k) {
         return lightLevelCache[i + 1][j + 1][k + 1];
-    }
-
-
-    private LevelChunk findCachedChunkForBlock(int x, int y, int z) {
-        final int chunkY = Mathc.signum(Maths.floor((float) y / LevelChunk.SIZE));
-        final int chunkX = Mathc.signum(Maths.floor((float) x / LevelChunk.SIZE));
-        final int chunkZ = Mathc.signum(Maths.floor((float) z / LevelChunk.SIZE));
-        final LevelChunk chunk = this.getCachedChunk(chunkX, chunkY, chunkZ);
-        if(chunk == null)
-            return null;
-
-        norX = (x - chunkX * LevelChunk.SIZE);
-        norY = (y - chunkY * LevelChunk.SIZE);
-        norZ = (z - chunkZ * LevelChunk.SIZE);
-        return chunk;
-    }
-
-    private BlockState getBlockState(int x, int y, int z) {
-        final LevelChunk chunk = this.findCachedChunkForBlock(x, y, z);
-        if(chunk == null)
-            return null;
-        return chunk.getBlockState(norX, norY, norZ);
-    }
-
-    private byte getBlockLightLevel(int x, int y, int z) {
-        final LevelChunk chunk = this.findCachedChunkForBlock(x, y, z);
-        if(chunk == null)
-            return 0;
-        return chunk.getBlockLightLevel(norX, norY, norZ);
     }
 
     private BlockStateModel getBlockModel(BlockState blockState) {
@@ -249,21 +215,7 @@ public class ChunkTesselator implements Disposable {
 
     private void processTesselate(LevelChunk chunk) {
         // cache neighbor chunks
-        final ChunkPos chunkPosition = chunk.position();
-
-        for(int i = 0; i < 3; i++){
-            for(int j = 0; j < 3; j++){
-                for(int k = 0; k < 3; k++){
-                    if(i == 1 && j == 1 && k == 1){
-                        chunkCache[1][1][1] = chunk;
-                        continue;
-                    }
-                    final LevelChunk neighborChunk = level.getChunk(chunkPosition.getNeighborPacked(i - 1, j - 1, k - 1));
-                    chunkCache[i][j][k] = neighborChunk;
-                }
-            }
-        }
-
+        chunkCache.cacheNeighborsFor(chunk);
 
         chunk.forEach((x, y, z) -> {
             // cache neighbor blocks
@@ -278,9 +230,9 @@ public class ChunkTesselator implements Disposable {
                             blockCache[1][1][1] = blockState;
                             continue;
                         }
-                        final BlockState neighborBlock = this.getBlockState((x + i - 1), (y + j - 1), (z + k - 1));
+                        final BlockState neighborBlock = chunkCache.getBlockState((x + i - 1), (y + j - 1), (z + k - 1));
                         blockCache[i][j][k] = neighborBlock;
-                        final int lightLevel = this.getBlockLightLevel((x + i - 1), (y + j - 1), (z + k - 1));
+                        final int lightLevel = chunkCache.getBlockLightLevel((x + i - 1), (y + j - 1), (z + k - 1));
                         lightLevelCache[i][j][k] = lightLevel;
                     }
                 }

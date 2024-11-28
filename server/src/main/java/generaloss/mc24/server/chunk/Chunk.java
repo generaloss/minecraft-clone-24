@@ -4,7 +4,7 @@ import generaloss.mc24.server.block.BlockState;
 import generaloss.mc24.server.registry.Registries;
 import generaloss.mc24.server.world.World;
 
-public class Chunk <W extends World<?>> {
+public class Chunk <W extends World<? extends Chunk<W>>> {
 
     public static final int SIZE = 32;
     public static final int AREA = SIZE * SIZE;
@@ -54,10 +54,6 @@ public class Chunk <W extends World<?>> {
 
     public boolean setBlockLightLevel(int x, int y, int z, int lightLevel) {
         return blockLightLevels.set(x, y, z, lightLevel);
-    }
-
-    public void propagateBlockLight(int x, int y, int z, int lightLevel) {
-
     }
 
 

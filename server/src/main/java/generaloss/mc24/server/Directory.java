@@ -4,35 +4,41 @@ import jpize.util.math.vector.Vec3i;
 
 public enum Directory {
 
-    NONE  ( 0,  0,  0), // 0
-    WEST  (-1,  0,  0), // 1
-    EAST  (+1,  0,  0), // 2
-    DOWN  ( 0, -1,  0), // 3
-    UP    ( 0, +1,  0), // 4
-    SOUTH ( 0,  0, -1), // 5
-    NORTH ( 0,  0, +1); // 6
+    WEST  (1, new Vec3i(-1,  0,  0)), // 0
+    EAST  (0, new Vec3i(+1,  0,  0)), // 1
+    DOWN  (3, new Vec3i( 0, -1,  0)), // 2
+    UP    (2, new Vec3i( 0, +1,  0)), // 3
+    SOUTH (5, new Vec3i( 0,  0, -1)), // 4
+    NORTH (4, new Vec3i( 0,  0, +1)), // 5
 
-    private final Vec3i vector;
+    NONE  (6, new Vec3i( 0,  0,  0)); // 6
 
-    Directory(int x, int y, int z) {
-        this.vector = new Vec3i(x, y, z);
-    }
+    private final int oppositeIndex;
+    private final Vec3i normal;
 
-
-    public int getX() {
-        return vector.x;
-    }
-
-    public int getY() {
-        return vector.y;
-    }
-
-    public int getZ() {
-        return vector.z;
+    Directory(int oppositeIndex, Vec3i normal) {
+        this.oppositeIndex = oppositeIndex;
+        this.normal = normal;
     }
 
     public Directory opposite() {
-        return byVector(-vector.x, -vector.y, -vector.z);
+        return values()[oppositeIndex];
+    }
+
+    public Vec3i getNormal() {
+        return normal;
+    }
+
+    public int getX() {
+        return normal.x;
+    }
+
+    public int getY() {
+        return normal.y;
+    }
+
+    public int getZ() {
+        return normal.z;
     }
 
 
