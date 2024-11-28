@@ -37,7 +37,7 @@ public class ResourceSkybox extends ResourceHandle<String, Skybox> {
     public void load(ResourcePack pack) {
         for(GlCubemapTarget target: GlCubemapTarget.values()) {
             final String path = super.getPath().replace("%s", POSTFIX_ARRAY[target.ordinal()]);
-            final Resource resource = pack.get(path);
+            final Resource resource = pack.getResource(path);
 
             final Pixmap pixmap = PixmapIO.load(resource);
             skybox.setImage(target, pixmap);

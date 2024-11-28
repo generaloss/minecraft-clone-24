@@ -32,7 +32,7 @@ public class ResourceBlockStateModel extends ResourceHandle<BlockState, BlockSta
 
     @Override
     public void load(ResourcePack pack) {
-        final Resource resource = pack.get(super.getPath());
+        final Resource resource = pack.getResource(super.getPath());
         model.loadFromJSON(resource.readString(), registries);
         System.out.println("Loaded model of block '" + model.getBlockState().getBlockID() + "' for state '" + registries.getBlockStateID(model.getBlockState()) + "'");
     }

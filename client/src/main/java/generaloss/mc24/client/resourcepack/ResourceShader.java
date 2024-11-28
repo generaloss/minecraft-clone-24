@@ -30,8 +30,8 @@ public class ResourceShader extends ResourceHandle<String, Shader> {
 
     @Override
     public void load(ResourcePack pack) {
-        final Resource vertexRes = pack.get(super.getPath() + ".vsh");
-        final Resource fragmentRes = pack.get(super.getPath() + ".fsh");
+        final Resource vertexRes = pack.getResource(super.getPath() + ".vsh");
+        final Resource fragmentRes = pack.getResource(super.getPath() + ".fsh");
         shader.load(vertexRes, fragmentRes);
     }
 

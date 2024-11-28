@@ -45,6 +45,10 @@ public class Main extends JpizeApplication {
         this.player = new ClientPlayer();
     }
 
+    public Font font() {
+        return font;
+    }
+
     public ResourcePack getDefaultPack() {
         return defaultPack;
     }
@@ -85,18 +89,18 @@ public class Main extends JpizeApplication {
         registries.loadResources();
         // set menu screen
         screens.show("title");
-        this.connectLocal();
+        this.connectLocalSession();
     }
 
 
     private void loadBlockModels() {
-        for(Resource blockModelRes : registries.getDefaultPack().get("models/blocks/").listRes())
+        for(Resource blockModelRes : registries.getDefaultPack().getResource("models/blocks/").listRes())
             registries.registerBlockModel(blockModelRes.path());
     }
 
 
-    public void connectLocal() {
-        System.out.println("Starting local session..");
+    public void connectLocalSession() {
+        System.out.println("Connecting local session..");
         localServer.run(Maths.random(64000, 64999));
         player.input().enable();
         Gl.enable(GlTarget.DEPTH_TEST);
@@ -104,11 +108,12 @@ public class Main extends JpizeApplication {
         screens.show("session");
     }
 
-    public void close() {
+    public void disconnectSession() {
+        localServer.tcpServer().close();
         player.input().disable();
         level.dispose();
         Gl.disable(GlTarget.DEPTH_TEST);
-        System.out.println("close");
+        System.out.println("Disconnect session");
     }
 
 

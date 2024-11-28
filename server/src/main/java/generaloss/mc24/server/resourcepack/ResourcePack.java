@@ -37,7 +37,7 @@ public class ResourcePack implements Disposable {
         return ID;
     }
 
-    public ZipEntryResource get(String path) {
+    public ZipEntryResource getResource(String path) {
         return resourceMap.get(path);
     }
 

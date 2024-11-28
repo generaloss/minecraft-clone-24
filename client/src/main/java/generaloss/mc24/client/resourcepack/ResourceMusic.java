@@ -30,7 +30,7 @@ public class ResourceMusic extends ResourceHandle<String, AlMusic> {
 
     @Override
     public void load(ResourcePack pack) {
-        final Resource resource = pack.get(super.getPath());
+        final Resource resource = pack.getResource(super.getPath());
         music.load(resource);
     }
 

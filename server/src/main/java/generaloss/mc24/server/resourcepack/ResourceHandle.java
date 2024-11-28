@@ -36,7 +36,7 @@ public abstract class ResourceHandle<Key, Object> implements Identifiable<Key>, 
         R resource = null;
         final Iterator<ResourcePack> packIterator = packs.iterator();
         while(resource == null)
-            resource = (R) packIterator.next().get(path);
+            resource = (R) packIterator.next().getResource(path);
         return resource;
     }
 

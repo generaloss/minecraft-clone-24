@@ -63,7 +63,7 @@ public class TitleScreen extends IScreen {
         camera.update();
         // start session
         if(Key.P.down())
-            context().connectLocal();
+            context().connectLocalSession();
         // exit
         if(Key.ESCAPE.down())
             Jpize.exit();
@@ -76,6 +76,10 @@ public class TitleScreen extends IScreen {
         // overlay
         ScreenQuadShader.bind(overlayTexture);
         ScreenQuadMesh.render();
+        // text
+        super.context().font().drawText("Press 'P' for start.", 10, 10);
+        super.context().font().drawText("'0', '1', '2' - changes resourcepack", 10, 80);
+        super.context().font().drawText("'F11' - fullscreen", 10, 150);
     }
 
     @Override

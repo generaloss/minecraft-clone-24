@@ -51,7 +51,7 @@ public class ResourceAtlas extends ResourceHandle<String, Texture2D> {
 
     @Override
     public void load(ResourcePack defaultPack) {
-        final ZipEntryResource directoryRes = defaultPack.get(super.getPath());
+        final ZipEntryResource directoryRes = defaultPack.getResource(super.getPath());
         final ZipEntryResource[] list = directoryRes.listRes();
         for(ZipEntryResource resource : list){
             if(resource.isDir())

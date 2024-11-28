@@ -12,6 +12,11 @@ public class SessionScreen extends IScreen {
     }
 
     @Override
+    public void hide() {
+        super.context().disconnectSession();
+    }
+
+    @Override
     public void update() {
         // player
         context().player().update();

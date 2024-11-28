@@ -41,7 +41,7 @@ public class Server implements Tickable {
     }
     
     private void loadBlocks() {
-        for(Resource blockRes : registries.getDefaultPack().get("blocks/").listRes())
+        for(Resource blockRes : registries.getDefaultPack().getResource("blocks/").listRes())
             registries.registerBlock(blockRes.path());
     }
 

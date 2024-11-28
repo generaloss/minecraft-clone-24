@@ -32,7 +32,7 @@ public class ResourceTexture extends ResourceHandle<String, Texture2D> {
 
     @Override
     public void load(ResourcePack pack) {
-        final Resource resource = pack.get(super.getPath());
+        final Resource resource = pack.getResource(super.getPath());
         final Pixmap pixmap = PixmapIO.load(resource);
         texture.setImage(pixmap);
         pixmap.dispose();

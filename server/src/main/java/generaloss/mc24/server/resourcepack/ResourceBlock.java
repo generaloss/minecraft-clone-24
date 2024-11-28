@@ -41,7 +41,7 @@ public class ResourceBlock extends ResourceHandle<String, Block> {
         if(registries == null)
             return;
 
-        final Resource resource = defaultPack.get(super.getPath());
+        final Resource resource = defaultPack.getResource(super.getPath());
 
         // read json
         final JSONObject jsonObject = new JSONObject(resource.readString());
