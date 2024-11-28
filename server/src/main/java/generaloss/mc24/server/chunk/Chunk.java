@@ -13,13 +13,15 @@ public class Chunk {
     private final World world;
     private final ChunkPos position;
     private final Registries registries;
-    private final IntNibbleArray blockStateIndices;
+    private final ByteNibbleArray blockStateIndices;
+    private final ByteNibbleArray blockLightLevels;
 
     public Chunk(World world, ChunkPos position, Registries registries) {
         this.world = world;
         this.position = position;
         this.registries = registries;
-        this.blockStateIndices = new IntNibbleArray();
+        this.blockStateIndices = new ByteNibbleArray();
+        this.blockLightLevels = new ByteNibbleArray();
     }
 
 
@@ -43,6 +45,15 @@ public class Chunk {
         if(stateID == -1)
             return false;
         return blockStateIndices.set(x, y, z, stateID);
+    }
+
+
+    public byte getBlockLightLevel(int x, int y, int z) {
+        return blockLightLevels.get(x, y, z);
+    }
+
+    public boolean setBlockLightLevel(int x, int y, int z, int lightLevel) {
+        return blockLightLevels.set(x, y, z, lightLevel);
     }
 
 

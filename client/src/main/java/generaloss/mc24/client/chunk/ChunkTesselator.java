@@ -33,6 +33,7 @@ public class ChunkTesselator implements Disposable {
     private final BlockState[][][] blockCache;
     private final int[][][] lightLevelCache;
     private final float[] aoCache;
+    private int norX, norY, norZ; //!rename! (normalized block coordinates)
 
     public ChunkTesselator(Main context, WorldLevel level) {
         this.context = context;
@@ -78,7 +79,8 @@ public class ChunkTesselator implements Disposable {
         return lightLevelCache[i + 1][j + 1][k + 1];
     }
 
-    private BlockState getBlockState(int x, int y, int z) {
+
+    private LevelChunk findCachedChunkForBlock(int x, int y, int z) {
         final int chunkY = Mathc.signum(Maths.floor((float) y / LevelChunk.SIZE));
         final int chunkX = Mathc.signum(Maths.floor((float) x / LevelChunk.SIZE));
         final int chunkZ = Mathc.signum(Maths.floor((float) z / LevelChunk.SIZE));
@@ -86,10 +88,24 @@ public class ChunkTesselator implements Disposable {
         if(chunk == null)
             return null;
 
-        final int norX = (x - chunkX * LevelChunk.SIZE);
-        final int norY = (y - chunkY * LevelChunk.SIZE);
-        final int norZ = (z - chunkZ * LevelChunk.SIZE);
+        norX = (x - chunkX * LevelChunk.SIZE);
+        norY = (y - chunkY * LevelChunk.SIZE);
+        norZ = (z - chunkZ * LevelChunk.SIZE);
+        return chunk;
+    }
+
+    private BlockState getBlockState(int x, int y, int z) {
+        final LevelChunk chunk = this.findCachedChunkForBlock(x, y, z);
+        if(chunk == null)
+            return null;
         return chunk.getBlockState(norX, norY, norZ);
+    }
+
+    private byte getBlockLightLevel(int x, int y, int z) {
+        final LevelChunk chunk = this.findCachedChunkForBlock(x, y, z);
+        if(chunk == null)
+            return 0;
+        return chunk.getBlockLightLevel(norX, norY, norZ);
     }
 
     private BlockStateModel getBlockModel(BlockState blockState) {
@@ -111,37 +127,37 @@ public class ChunkTesselator implements Disposable {
                 this.getCachedLightLevel(-1,  0 + y, -1 + z) +
                 this.getCachedLightLevel(-1, -1 + y,  0 + z) +
                 this.getCachedLightLevel(-1,  0 + y,  0 + z)
-            );
+            ) / 60F;
             case EAST -> (
                 this.getCachedLightLevel( 1, -1 + y, -1 + z) +
                 this.getCachedLightLevel( 1,  0 + y, -1 + z) +
                 this.getCachedLightLevel( 1, -1 + y,  0 + z) +
                 this.getCachedLightLevel( 1,  0 + y,  0 + z)
-            );
+            ) / 60F;
             case DOWN -> (
                 this.getCachedLightLevel(-1 + x, -1, -1 + z) +
                 this.getCachedLightLevel( 0 + x, -1, -1 + z) +
                 this.getCachedLightLevel(-1 + x, -1,  0 + z) +
                 this.getCachedLightLevel( 0 + x, -1,  0 + z)
-            );
+            ) / 60F;
             case UP -> (
                 this.getCachedLightLevel(-1 + x,  1, -1 + z) +
                 this.getCachedLightLevel( 0 + x,  1, -1 + z) +
                 this.getCachedLightLevel(-1 + x,  1,  0 + z) +
                 this.getCachedLightLevel( 0 + x,  1,  0 + z)
-            );
+            ) / 60F;
             case SOUTH -> (
                 this.getCachedLightLevel(-1 + x, -1 + y, -1) +
                 this.getCachedLightLevel( 0 + x, -1 + y, -1) +
                 this.getCachedLightLevel(-1 + x,  0 + y, -1) +
                 this.getCachedLightLevel( 0 + x,  0 + y, -1)
-            );
+            ) / 60F;
             case NORTH -> (
                 this.getCachedLightLevel(-1 + x, -1 + y, 1) +
                 this.getCachedLightLevel( 0 + x, -1 + y, 1) +
                 this.getCachedLightLevel(-1 + x,  0 + y, 1) +
                 this.getCachedLightLevel( 0 + x,  0 + y, 1)
-            );
+            ) / 60F;
             default -> {
                 final float[][][] blockVertices = new float[2][2][2];
                 for(int i = 0; i < 2; i++) {
@@ -163,18 +179,21 @@ public class ChunkTesselator implements Disposable {
                         for(int k = 0; k < 2; k++)
                             blockVertices[i][j][k] /= 4F;
 
-                yield (
-                    blockVertices[0][0][0] * (x + y + z) / 3F +
-                    blockVertices[1][0][0] * (1 - x + y + z) / 3F +
-                    blockVertices[0][1][0] * (x + 1 - y + z) / 3F +
-                    blockVertices[0][0][1] * (x + y + 1 - z) / 3F +
-                    blockVertices[1][1][0] * (2 - x - y + z) / 3F +
-                    blockVertices[0][1][1] * (x + 2 - y - z) / 3F +
-                    blockVertices[1][0][1] * (2 - x + y - z) / 3F +
-                    blockVertices[1][1][1] * (3 - x - y - z) / 3F
-                ) / 2F;
+                final float x0 = blockVertices[0][0][0] * (1F - vertexX) + blockVertices[1][0][0] * vertexX;
+                final float x1 = blockVertices[0][1][0] * (1F - vertexX) + blockVertices[1][1][0] * vertexX;
+
+                final float y0 = x0 * (1F - vertexY) + x1 * vertexY;
+
+                final float x2 = blockVertices[0][0][1] * (1F - vertexX) + blockVertices[1][0][1] * vertexX;
+                final float x3 = blockVertices[0][1][1] * (1F - vertexX) + blockVertices[1][1][1] * vertexX;
+
+                final float y1 = x2 * (1F - vertexY) + x3 * vertexY;
+
+                final float z0 = y0 * (1F - vertexZ) + y1 * vertexZ;
+
+                yield z0 / 15F / 2F;
             }
-        } / 60F;
+        };
     }
 
     private void addFaces(int x, int y, int z, BlockStateModel model, Directory directory) {
@@ -261,12 +280,7 @@ public class ChunkTesselator implements Disposable {
                         }
                         final BlockState neighborBlock = this.getBlockState((x + i - 1), (y + j - 1), (z + k - 1));
                         blockCache[i][j][k] = neighborBlock;
-                        //! hardcoded light levels
-                        final int lightLevel = (
-                            neighborBlock == null || neighborBlock.isBlockID("stairs") ?
-                            15 :
-                            (15 - neighborBlock.properties().getInt(BlockProperty.OPAQUE_LEVEL))
-                        );
+                        final int lightLevel = this.getBlockLightLevel((x + i - 1), (y + j - 1), (z + k - 1));
                         lightLevelCache[i][j][k] = lightLevel;
                     }
                 }

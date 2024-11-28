@@ -67,6 +67,8 @@ public class WorldLevel extends World implements Disposable {
         chunk.forEach((x, y, z) -> {
             if(!chunk.getBlockState(x, y, z).isBlockID("air") && (chunk.getBlockState(x, y + 1, z) == null || chunk.getBlockState(x, y + 1, z).isBlockID("air")))
                 chunk.setBlockState(x, y, z, registries.getBlock("grass_block").getDefaultState());
+            if(Maths.randomBoolean(0.4F))
+                chunk.setBlockLightLevel(x, y, z, 15);
         });
 
         this.loadChunk(chunk);
