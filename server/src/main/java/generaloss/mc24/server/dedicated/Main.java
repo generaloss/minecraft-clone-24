@@ -24,7 +24,7 @@ public class Main {
 
         final Server server = new Server(new Registries(new ResourcePack("vanilla-pack.zip")));
         server.run(config.getInt("port"));
-        TimeUtils.waitFor(server.tcpServer()::isClosed);
+        TimeUtils.waitFor(server::isClosed);
     }
 
 }

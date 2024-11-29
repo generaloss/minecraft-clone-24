@@ -28,7 +28,6 @@ import java.util.List;
 public class Main extends JpizeApplication {
 
     private final Font font;
-    private final ResourcePack defaultPack;
     private final ClientRegistries registries;
     private final ScreenDispatcher screens;
     private final Server localServer;
@@ -37,8 +36,7 @@ public class Main extends JpizeApplication {
 
     public Main() {
         this.font = FontLoader.loadDefault();
-        this.defaultPack = new ResourcePack("vanilla-pack.zip");
-        this.registries = new ClientRegistries(defaultPack);
+        this.registries = new ClientRegistries(new ResourcePack("vanilla-pack.zip"));
         this.screens = new ScreenDispatcher();
         this.localServer = new Server(registries);
         this.level = new WorldLevel(this);
@@ -47,10 +45,6 @@ public class Main extends JpizeApplication {
 
     public Font font() {
         return font;
-    }
-
-    public ResourcePack getDefaultPack() {
-        return defaultPack;
     }
 
     public ClientRegistries registries() {
@@ -78,8 +72,9 @@ public class Main extends JpizeApplication {
     public void init() {
         System.out.println("Initializing client");
         localServer.init();
-        // blocks
-        this.loadBlockModels();
+        // block models
+        for(Resource blockModelRes : registries.getDefaultPack().getResource("models/blocks/").listRes())
+            registries.registerBlockModel(blockModelRes.path());
         // audio
         AlDevices.openDevice();
         // screens
@@ -93,12 +88,6 @@ public class Main extends JpizeApplication {
     }
 
 
-    private void loadBlockModels() {
-        for(Resource blockModelRes : registries.getDefaultPack().getResource("models/blocks/").listRes())
-            registries.registerBlockModel(blockModelRes.path());
-    }
-
-
     public void connectLocalSession() {
         System.out.println("Connecting local session..");
         localServer.run(Maths.random(64000, 64999));
@@ -109,7 +98,7 @@ public class Main extends JpizeApplication {
     }
 
     public void disconnectSession() {
-        localServer.tcpServer().close();
+        localServer.stop();
         player.input().disable();
         level.dispose();
         Gl.disable(GlTarget.DEPTH_TEST);
@@ -125,15 +114,16 @@ public class Main extends JpizeApplication {
 
         // resource pack
         if(Key.NUM_0.up()){
-            registries.reloadResources(List.of(defaultPack));
+            registries.reloadResources(List.of(registries.getDefaultPack()));
         }else if(Key.NUM_1.up()){
             final ResourcePack testPack1 = new ResourcePack("test-pack-1.zip");
-            registries.reloadResources(List.of(testPack1, defaultPack));
+            registries.reloadResources(List.of(testPack1, registries.getDefaultPack()));
         }else if(Key.NUM_2.up()){
-            final ResourcePack testPack1 = new ResourcePack("test-pack-2.zip");
-            registries.reloadResources(List.of(testPack1, defaultPack));
+            final ResourcePack testPack2 = new ResourcePack("test-pack-2.zip");
+            registries.reloadResources(List.of(testPack2, registries.getDefaultPack()));
         }
 
+        // place stairs
         if(Key.B.down()) {
             final LevelChunk chunk = level.getChunk(0, 0, 0);
             for(int i = 0; i < 100; i++)
@@ -149,7 +139,7 @@ public class Main extends JpizeApplication {
     public void render() {
         Gl.clearColorDepthBuffers();
         screens.render();
-        font.drawText("FPS: " + Jpize.getFPS(), 10, Jpize.getHeight() - 10 - font.getLineAdvanceScaled());
+        font.drawText("FPS: " + Jpize.getFPS(), 10F, Jpize.getHeight() - 10F - font.getLineAdvanceScaled());
     }
 
     @Override

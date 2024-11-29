@@ -77,9 +77,10 @@ public class TitleScreen extends IScreen {
         ScreenQuadShader.bind(overlayTexture);
         ScreenQuadMesh.render();
         // text
-        super.context().font().drawText("Press 'P' for start.", 10, 10);
-        super.context().font().drawText("'0', '1', '2' - changes resourcepack", 10, 80);
-        super.context().font().drawText("'F11' - fullscreen", 10, 150);
+        super.context().font().drawText("Press 'P' for start.", 10F, 10F);
+        super.context().font().drawText("'0', '1', '2' - changes resourcepack", 10F, 80F);
+        super.context().font().drawText("'F11' - fullscreen", 10F, 150F);
+        super.context().font().drawText("'B' - place stairs", 10F, 220F);
     }
 
     @Override

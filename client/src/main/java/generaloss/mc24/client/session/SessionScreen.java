@@ -35,7 +35,8 @@ public class SessionScreen extends IScreen {
 
     @Override
     public void resize(int width, int height) {
-        context().player().camera().resize(width, height);
+        final PerspectiveCamera camera = super.context().player().camera();
+        camera.resize(width, height);
     }
 
 }
