@@ -1,3 +1,6 @@
 {
-  "block_ID" : "dirt"
+  "block_ID" : "dirt",
+  "properties" : {
+    "opacity" : 15
+  }
 }

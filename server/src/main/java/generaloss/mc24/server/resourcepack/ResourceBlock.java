@@ -3,10 +3,7 @@ package generaloss.mc24.server.resourcepack;
 import generaloss.mc24.server.block.Block;
 import generaloss.mc24.server.registry.Registries;
 import jpize.util.res.Resource;
-import org.json.JSONObject;
-
 import java.util.Collection;
-import java.util.Map;
 
 public class ResourceBlock extends ResourceHandle<String, Block> {
 
@@ -42,16 +39,8 @@ public class ResourceBlock extends ResourceHandle<String, Block> {
             return;
 
         final Resource resource = defaultPack.getResource(super.getPath());
-
-        // read json
-        final JSONObject jsonObject = new JSONObject(resource.readString());
-        final String blockID = jsonObject.getString("block_ID");
-
-        // load
-        block.setID(blockID);
-        block.buildStates(Map.of(), registries);
-
-        System.out.println("Loaded block '" + blockID + "'");
+        block.loadFromJSON(resource.readString(), registries);
+        System.out.println("Loaded block '" + block.getID() + "'");
     }
 
     @Override

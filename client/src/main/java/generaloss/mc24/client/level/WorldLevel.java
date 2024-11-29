@@ -38,7 +38,6 @@ public class WorldLevel extends World<LevelChunk> implements Disposable {
         final LevelChunk chunk = new LevelChunk(this, position, context.registries());
 
         final Registries registries = context.registries();
-        registries.getBlock("torch").properties().set("opacity", 0);
         chunk.forEach((x, y, z) -> {
             final int X = chunkX * Chunk.SIZE + x;
             final int Y = chunkY * Chunk.SIZE + y;
@@ -52,12 +51,15 @@ public class WorldLevel extends World<LevelChunk> implements Disposable {
                 return;
             }
 
-            if(noise.get(X, Y, Z) > 0F)
+            if(noise.get(X, Y, Z) > 0F){
                 chunk.setBlockState(x, y, z, registries.getBlock("stone").getDefaultState());
-            else if(Maths.randomBoolean(0.002F)){
-                chunk.setBlockState(x, y, z, registries.getBlock("torch").getDefaultState());
-                chunk.setBlockLightLevel(x, y, z, BlockLightEngine.MAX_LEVEL);
-                blockLightEngine.increase(chunk, x, y, z, BlockLightEngine.MAX_LEVEL);
+            }else{
+                // chunk.setBlockLightLevel(x, y, z, BlockLightEngine.MAX_LEVEL);
+                if(Maths.randomBoolean(0.002F)){
+                    chunk.setBlockState(x, y, z, registries.getBlock("torch").getDefaultState());
+                    chunk.setBlockLightLevel(x, y, z, BlockLightEngine.MAX_LEVEL);
+                    blockLightEngine.increase(chunk, x, y, z, BlockLightEngine.MAX_LEVEL);
+                }
             }
         });
         chunk.forEach((x, y, z) -> {

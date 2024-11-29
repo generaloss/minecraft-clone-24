@@ -2,6 +2,7 @@ package generaloss.mc24.server.block;
 
 import generaloss.mc24.server.registry.Identifiable;
 import generaloss.mc24.server.registry.Registries;
+import org.json.JSONObject;
 
 import java.util.*;
 
@@ -42,6 +43,27 @@ public class Block implements Identifiable<String> {
     public Block buildStates(Map<String, StateProperty<?>> stateProperties, Registries registries) {
         statesHolder = new BlockStateContainer(this, stateProperties, registries);
         return this;
+    }
+
+
+    public void loadFromJSON(String jsonString, Registries registries) {
+        final JSONObject jsonObject = new JSONObject(jsonString);
+        this.setID(jsonObject.getString("block_ID"));
+
+        if(jsonObject.has("properties")){
+            final JSONObject jsonProperties = jsonObject.getJSONObject("properties");
+            for(String propertyName: jsonProperties.keySet()){
+                final BlockProperty property = BlockProperty.byName(propertyName);
+                if(property == null){
+                    System.err.println("[WARN]: Block property '" + propertyName + "' does not exist ('" + ID + "' block).");
+                    continue;
+                }
+                properties.set(propertyName, jsonProperties.get(propertyName));
+                System.out.println(properties.getInt(propertyName));
+            }
+        }
+
+        this.buildStates(Map.of(), registries);
     }
 
 }

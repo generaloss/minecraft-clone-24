@@ -1,3 +1,6 @@
 {
-  "block_ID" : "grass_block"
+  "block_ID" : "grass_block",
+  "properties" : {
+    "opacity" : 15
+  }
 }

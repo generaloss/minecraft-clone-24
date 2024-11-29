@@ -42,16 +42,35 @@ public class BlockPropertiesHolder {
         return (Float) this.get(property);
     }
 
+    public Float getFloat(String propertyName) {
+        return (Float) this.get(propertyName);
+    }
+
+
     public int getInt(BlockProperty property) {
         return (int) this.get(property);
     }
+
+    public int getInt(String propertyName) {
+        return (int) this.get(propertyName);
+    }
+
 
     public String getString(BlockProperty property) {
         return (String) this.get(property);
     }
 
+    public String getString(String propertyName) {
+        return (String) this.get(propertyName);
+    }
+
+
     public boolean getBool(BlockProperty property) {
         return (boolean) this.get(property);
+    }
+
+    public boolean getBool(String propertyName) {
+        return (boolean) this.get(propertyName);
     }
 
 }

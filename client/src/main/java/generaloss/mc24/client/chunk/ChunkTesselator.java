@@ -178,7 +178,7 @@ public class ChunkTesselator implements Disposable {
             verticesCache.add(face.getVertexArray());
 
             // correct face rotation for a right ao/light smoothing
-            final boolean rotateFace = (aoCache[0] + aoCache[2]) > (aoCache[1] + aoCache[3]);
+            final boolean rotateFace = (aoCache[0] + aoCache[2] < aoCache[1] + aoCache[3]);
             final int[] rotatedIndices = BlockFace.VERTEX_INDEX_PERMUTATIONS[rotateFace ? 1 : 0];
 
             // correct vertices
@@ -238,7 +238,6 @@ public class ChunkTesselator implements Disposable {
                     }
                 }
             }
-
 
             // add faces
             final BlockStateModel model = this.getBlockModel(blockState);

@@ -1,3 +1,6 @@
 {
-  "block_ID" : "stone"
+  "block_ID" : "stone",
+  "properties" : {
+    "opacity" : 15
+  }
 }

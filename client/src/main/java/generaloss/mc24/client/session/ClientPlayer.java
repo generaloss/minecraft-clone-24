@@ -18,7 +18,7 @@ public class ClientPlayer {
         this.camera = new PerspectiveCamera(0.01F, 1000F, 85F);
         this.motionInput = new MotionInput();
         this.rotationInput = new RotationInput(new EulerAngles(), false);
-        this.rotationInput.setSpeed(0.3F);
+        this.rotationInput.setSpeed(0.15F);
         this.velocity = new Vec3f();
     }
 
