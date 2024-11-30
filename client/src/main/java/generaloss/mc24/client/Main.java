@@ -2,24 +2,23 @@ package generaloss.mc24.client;
 
 import generaloss.mc24.client.level.LevelChunk;
 import generaloss.mc24.client.level.WorldLevel;
+import generaloss.mc24.client.network.Connection;
 import generaloss.mc24.client.registry.ClientRegistries;
 import generaloss.mc24.server.resourcepack.ResourcePack;
 import generaloss.mc24.client.screen.TitleScreen;
 import generaloss.mc24.client.screen.ScreenDispatcher;
-import generaloss.mc24.client.session.ClientPlayer;
-import generaloss.mc24.client.session.SessionScreen;
+import generaloss.mc24.client.player.ClientPlayer;
+import generaloss.mc24.client.screen.SessionScreen;
 import generaloss.mc24.server.ArgsMap;
 import generaloss.mc24.server.Server;
 import jpize.app.Jpize;
 import jpize.app.JpizeApplication;
 import jpize.audio.AlDevices;
 import jpize.gl.Gl;
-import jpize.gl.glenum.GlTarget;
 import jpize.glfw.Glfw;
 import jpize.glfw.init.GlfwPlatform;
 import jpize.glfw.input.Key;
 import jpize.util.font.Font;
-import jpize.util.font.FontLoader;
 import jpize.util.math.Maths;
 import jpize.util.res.Resource;
 
@@ -27,24 +26,20 @@ import java.util.List;
 
 public class Main extends JpizeApplication {
 
-    private final Font font;
     private final ClientRegistries registries;
     private final ScreenDispatcher screens;
     private final Server localServer;
     private final WorldLevel level;
     private final ClientPlayer player;
+    private final Connection connection;
 
     public Main() {
-        this.font = FontLoader.loadDefault();
         this.registries = new ClientRegistries(new ResourcePack("vanilla-pack.zip"));
         this.screens = new ScreenDispatcher();
         this.localServer = new Server(registries);
         this.level = new WorldLevel(this);
         this.player = new ClientPlayer();
-    }
-
-    public Font font() {
-        return font;
+        this.connection = new Connection(this);
     }
 
     public ClientRegistries registries() {
@@ -67,14 +62,20 @@ public class Main extends JpizeApplication {
         return player;
     }
 
+    public Connection connection() {
+        return connection;
+    }
+
 
     @Override
     public void init() {
         System.out.println("Initializing client");
         localServer.init();
         // block models
-        for(Resource blockModelRes : registries.getDefaultPack().getResource("models/blocks/").listRes())
+        for(Resource blockModelRes : registries.getDefaultPack().getResource("models/blocks/").listResources())
             registries.registerBlockModel(blockModelRes.path());
+        // font
+        registries.registerFont("default", "fonts/default/font.fnt");
         // audio
         AlDevices.openDevice();
         // screens
@@ -84,15 +85,19 @@ public class Main extends JpizeApplication {
         registries.loadResources();
         // set menu screen
         screens.show("title");
-        this.connectLocalSession();
     }
 
 
     public void connectLocalSession() {
-        System.out.println("Connecting local session..");
-        localServer.run(Maths.random(64000, 64999));
+        final int port = Maths.random(64000, 64999);
+        localServer.run(port);
+        this.connectSession("localhost", port);
+    }
+
+    public void connectSession(String host, int port) {
+        System.out.println("Connecting to server " + host + ":" + port);
+        connection.connect(host, port);
         player.input().enable();
-        Gl.enable(GlTarget.DEPTH_TEST);
         level.loadChunks();
         screens.show("session");
     }
@@ -101,7 +106,6 @@ public class Main extends JpizeApplication {
         localServer.stop();
         player.input().disable();
         level.dispose();
-        Gl.disable(GlTarget.DEPTH_TEST);
         System.out.println("Disconnect session");
     }
 
@@ -115,12 +119,24 @@ public class Main extends JpizeApplication {
         // resource pack
         if(Key.NUM_0.up()){
             registries.reloadResources(List.of(registries.getDefaultPack()));
+            for(LevelChunk chunk: level.getChunks()){
+                chunk.freeMesh();
+                level.tesselator().tesselate(chunk);
+            }
         }else if(Key.NUM_1.up()){
             final ResourcePack testPack1 = new ResourcePack("test-pack-1.zip");
             registries.reloadResources(List.of(testPack1, registries.getDefaultPack()));
+            for(LevelChunk chunk: level.getChunks()){
+                chunk.freeMesh();
+                level.tesselator().tesselate(chunk);
+            }
         }else if(Key.NUM_2.up()){
             final ResourcePack testPack2 = new ResourcePack("test-pack-2.zip");
             registries.reloadResources(List.of(testPack2, registries.getDefaultPack()));
+            for(LevelChunk chunk: level.getChunks()){
+                chunk.freeMesh();
+                level.tesselator().tesselate(chunk);
+            }
         }
 
         // place stairs
@@ -133,12 +149,17 @@ public class Main extends JpizeApplication {
 
         // secreens
         screens.update();
+
+        // font
+        final Font font = registries.getFont("default");
+        font.getRenderOptions().scale().set(Jpize.getHeight() / font.getHeight() * 0.03F);
     }
 
     @Override
     public void render() {
         Gl.clearColorDepthBuffers();
         screens.render();
+        final Font font = registries.getFont("default");
         font.drawText("FPS: " + Jpize.getFPS(), 10F, Jpize.getHeight() - 10F - font.getLineAdvanceScaled());
     }
 
@@ -151,7 +172,6 @@ public class Main extends JpizeApplication {
     public void dispose() {
         screens.dispose();
         registries.dispose();
-        font.dispose();
         AlDevices.dispose();
     }
 

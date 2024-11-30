@@ -3,7 +3,7 @@ package generaloss.mc24.server.resourcepack;
 import jpize.util.Disposable;
 import jpize.util.Utils;
 import jpize.util.res.Resource;
-import jpize.util.res.ZipEntryResource;
+import jpize.util.res.ZipResource;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -16,16 +16,16 @@ public class ResourcePack implements Disposable {
 
     private final String ID;
     private final ZipFile zipFile;
-    private final Map<String, ZipEntryResource> resourceMap;
+    private final Map<String, ZipResource> resourceMap;
 
     public ResourcePack(String filename) {
         try{
             this.ID = filename;
             this.zipFile = new ZipFile(DIRECTORY + filename);
-            final ZipEntryResource[] resources = Resource.zipEntry(zipFile);
+            final ZipResource[] resources = Resource.zip(zipFile);
 
             this.resourceMap = new HashMap<>();
-            for(ZipEntryResource resource : resources)
+            for(ZipResource resource : resources)
                 resourceMap.put(resource.path(), resource);
 
         }catch(IOException e){
@@ -37,7 +37,7 @@ public class ResourcePack implements Disposable {
         return ID;
     }
 
-    public ZipEntryResource getResource(String path) {
+    public ZipResource getResource(String path) {
         return resourceMap.get(path);
     }
 

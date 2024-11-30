@@ -4,11 +4,13 @@ import generaloss.mc24.client.Main;
 import generaloss.mc24.client.registry.ClientRegistries;
 import jpize.app.Jpize;
 import jpize.audio.util.AlMusic;
+import jpize.gl.Gl;
 import jpize.gl.texture.GlFilter;
 import jpize.gl.texture.Skybox;
 import jpize.gl.texture.Texture2D;
 import jpize.glfw.input.Key;
 import jpize.util.camera.PerspectiveCamera;
+import jpize.util.font.Font;
 import jpize.util.postprocess.ScreenQuadMesh;
 import jpize.util.postprocess.ScreenQuadShader;
 
@@ -46,6 +48,7 @@ public class TitleScreen extends IScreen {
     @Override
     public void show() {
         music.play();
+        Gl.clearColor(0F, 0F, 0F);
     }
 
     @Override
@@ -62,7 +65,7 @@ public class TitleScreen extends IScreen {
         camera.rotation().setRotation(yaw, -15F, 0F);
         camera.update();
         // start session
-        if(Key.P.down())
+        if(Key.ENTER.down())
             context().connectLocalSession();
         // exit
         if(Key.ESCAPE.down())
@@ -77,10 +80,15 @@ public class TitleScreen extends IScreen {
         ScreenQuadShader.bind(overlayTexture);
         ScreenQuadMesh.render();
         // text
-        super.context().font().drawText("Press 'P' for start.", 10F, 10F);
-        super.context().font().drawText("'0', '1', '2' - changes resourcepack", 10F, 80F);
-        super.context().font().drawText("'F11' - fullscreen", 10F, 150F);
-        super.context().font().drawText("'B' - place stairs", 10F, 220F);
+        final Font font = super.context().registries().getFont("default");
+        float position = 10F;
+        font.drawText("Press 'ENTER' for start.", 10F, position);
+        position += font.getLineAdvanceScaled();
+        font.drawText("'0', '1', '2' - changes resourcepack", 10F, position);
+        position += font.getLineAdvanceScaled();
+        font.drawText("'F11' - fullscreen", 10F, position);
+        position += font.getLineAdvanceScaled();
+        font.drawText("'B' - place stairs", 10F, position);
     }
 
     @Override

@@ -4,7 +4,6 @@ import generaloss.mc24.client.Main;
 import generaloss.mc24.client.chunk.ChunkMesh;
 import generaloss.mc24.client.registry.ClientRegistries;
 import generaloss.mc24.server.chunk.ChunkPos;
-import jpize.gl.Gl;
 import jpize.gl.shader.Shader;
 import jpize.gl.texture.Texture2D;
 import jpize.util.camera.PerspectiveCamera;
@@ -34,13 +33,10 @@ public class LevelRenderer {
 
         this.blockAtlas = resourceRegistry
             .registerAtlas("blocks", "textures/blocks/", 256, 256)
-            .getObject();
+            .getObject().getTexture();
 
         // matrix
         this.matrix = new Matrix4f();
-
-        // options
-        Gl.clearColor(0.4, 0.7, 0.9);
     }
 
     public void render(PerspectiveCamera camera) {

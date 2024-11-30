@@ -3,16 +3,14 @@ package generaloss.mc24.client.resourcepack;
 import generaloss.mc24.server.resourcepack.ResourceHandle;
 import generaloss.mc24.server.resourcepack.ResourcePack;
 import jpize.gl.texture.GlFilter;
-import jpize.gl.texture.Texture2D;
 import jpize.util.array.StringList;
 import jpize.util.atlas.TextureAtlas;
-import jpize.util.region.TextureRegion;
 import jpize.util.res.Resource;
-import jpize.util.res.ZipEntryResource;
+import jpize.util.res.ZipResource;
 
 import java.util.*;
 
-public class ResourceAtlas extends ResourceHandle<String, Texture2D> {
+public class ResourceAtlas extends ResourceHandle<String, TextureAtlas<String>> {
 
     private final String ID;
     private final int width, height;
@@ -41,19 +39,15 @@ public class ResourceAtlas extends ResourceHandle<String, Texture2D> {
     }
 
     @Override
-    public Texture2D getObject() {
-        return atlas.getTexture();
-    }
-
-    public TextureRegion getRegion(String identifier) {
-        return atlas.getRegion(identifier);
+    public TextureAtlas<String> getObject() {
+        return atlas;
     }
 
     @Override
     public void load(ResourcePack defaultPack) {
-        final ZipEntryResource directoryRes = defaultPack.getResource(super.getPath());
-        final ZipEntryResource[] list = directoryRes.listRes();
-        for(ZipEntryResource resource : list){
+        final ZipResource directoryRes = defaultPack.getResource(super.getPath());
+        final ZipResource[] list = directoryRes.listResources();
+        for(ZipResource resource : list){
             if(resource.isDir())
                 continue;
             toLoadPaths.add(resource.path());
