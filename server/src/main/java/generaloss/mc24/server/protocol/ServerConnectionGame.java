@@ -2,9 +2,9 @@ package generaloss.mc24.server.protocol;
 
 import generaloss.mc24.server.Server;
 
-public class ServerConnectionLogin extends ServerConnection {
+public class ServerConnectionGame extends ServerConnection {
 
-    public ServerConnectionLogin(Server server) {
+    public ServerConnectionGame(Server server) {
         super(server);
     }
 

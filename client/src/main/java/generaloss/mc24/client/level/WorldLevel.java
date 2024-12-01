@@ -29,7 +29,9 @@ public class WorldLevel extends World<LevelChunk> implements Disposable {
             for(Chunk<?> cachedChunk: this.blockLight.chunkCache().getChunks())
                 tesselator.tesselate((LevelChunk) cachedChunk);
         });
-        super.registerBlockStateChangedCallback((chunk, x, y, z, state) -> tesselator.tesselate(chunk));
+        super.registerBlockStateChangedCallback((chunk, x, y, z, state) ->
+            tesselator.tesselate(chunk)
+        );
     }
 
     public ChunkTesselator tesselator() {

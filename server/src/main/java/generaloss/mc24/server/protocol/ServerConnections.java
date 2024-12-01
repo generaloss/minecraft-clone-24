@@ -1,6 +1,6 @@
-package generaloss.mc24.server;
+package generaloss.mc24.server.protocol;
 
-import generaloss.mc24.server.protocol.ServerConnection;
+import generaloss.mc24.server.Server;
 import jpize.util.net.tcp.TcpConnection;
 import jpize.util.net.tcp.packet.PacketDispatcher;
 
@@ -9,17 +9,19 @@ import java.util.Map;
 
 public class ServerConnections {
 
+    private final Server server;
     private final Map<TcpConnection, ServerConnection> connections;
     private final PacketDispatcher packetDispatcher;
 
     public ServerConnections(Server server) {
+        this.server = server;
         this.connections = new HashMap<>();
         this.packetDispatcher = new PacketDispatcher().register();
     }
 
 
     public void onConnect(TcpConnection connection) {
-        connections.put(connection, null);
+        connections.put(connection, new ServerConnectionPing(server));
     }
 
     public void onDisconnect(TcpConnection connection) {

@@ -1,5 +1,6 @@
 package generaloss.mc24.server;
 
+import generaloss.mc24.server.protocol.ServerConnections;
 import generaloss.mc24.server.registry.Registries;
 import generaloss.mc24.server.world.WorldHolder;
 import jpize.util.net.tcp.TcpServer;
