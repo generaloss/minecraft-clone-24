@@ -1,6 +1,7 @@
 {
   "block_ID" : "torch",
   "properties" : {
-    "opacity" : 0
+    "opacity" : 0,
+    "glowing" : [15, 15, 12]
   }
 }

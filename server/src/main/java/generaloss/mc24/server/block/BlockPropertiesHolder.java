@@ -1,5 +1,7 @@
 package generaloss.mc24.server.block;
 
+import jpize.util.math.vector.Vec3i;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -71,6 +73,15 @@ public class BlockPropertiesHolder {
 
     public boolean getBool(String propertyName) {
         return (boolean) this.get(propertyName);
+    }
+
+
+    public Vec3i getVec3i(BlockProperty property) {
+        return (Vec3i) this.get(property);
+    }
+
+    public Vec3i getVec3i(String propertyName) {
+        return (Vec3i) this.get(propertyName);
     }
 
 }

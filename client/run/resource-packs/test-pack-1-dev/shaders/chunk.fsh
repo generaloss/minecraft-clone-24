@@ -3,6 +3,7 @@
 in vec2 f_texcoord;
 in vec4 f_color;
 in vec3 f_normal;
+in vec3 f_light;
 
 uniform sampler2D u_texture;
 uniform vec3 u_lightDirection;
@@ -11,6 +12,7 @@ void main() {
     vec4 color = texture(u_texture, f_texcoord) * f_color;
     if(color.a <= 0)
         discard;
-    color.rgb *= dot(f_normal, u_lightDirection) * 0.25 + 0.75;
+    color.rgb *= dot(f_normal, u_lightDirection) * 0.2 + 0.8; // shading
+    color.rgb *= f_light.rgb; // light
     gl_FragColor = color;
 }

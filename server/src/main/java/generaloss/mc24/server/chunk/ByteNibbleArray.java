@@ -17,17 +17,16 @@ public class ByteNibbleArray {
         return (x * Chunk.AREA + y * Chunk.SIZE + z);
     }
 
-    public boolean set(int x, int y, int z, int ID) {
-        if(x < 0 || x >= Chunk.SIZE || y < 0 || y >= Chunk.SIZE || z < 0 || z >= Chunk.SIZE)
-            return false;
+    public void set(int x, int y, int z, int ID) {
         array[this.indexBy(x, y, z)] = (byte) ID;
-        return true;
     }
 
     public byte get(int x, int y, int z) {
-        if(x < 0 || x >= Chunk.SIZE || y < 0 || y >= Chunk.SIZE || z < 0 || z >= Chunk.SIZE)
-            return -1;
         return array[this.indexBy(x, y, z)];
+    }
+
+    public boolean isOutOfBounds(int x, int y, int z) {
+        return (x < 0 || y < 0 || z < 0 || x > Chunk.SIZE_BOUND || y > Chunk.SIZE_BOUND || z > Chunk.SIZE_BOUND);
     }
 
 }

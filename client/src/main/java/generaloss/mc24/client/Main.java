@@ -2,7 +2,7 @@ package generaloss.mc24.client;
 
 import generaloss.mc24.client.level.LevelChunk;
 import generaloss.mc24.client.level.WorldLevel;
-import generaloss.mc24.client.network.Connection;
+import generaloss.mc24.client.network.ClientConnection;
 import generaloss.mc24.client.registry.ClientRegistries;
 import generaloss.mc24.server.resourcepack.ResourcePack;
 import generaloss.mc24.client.screen.TitleScreen;
@@ -20,6 +20,7 @@ import jpize.glfw.init.GlfwPlatform;
 import jpize.glfw.input.Key;
 import jpize.util.font.Font;
 import jpize.util.math.Maths;
+import jpize.util.math.vector.Vec3f;
 import jpize.util.res.Resource;
 
 import java.util.List;
@@ -31,7 +32,7 @@ public class Main extends JpizeApplication {
     private final Server localServer;
     private final WorldLevel level;
     private final ClientPlayer player;
-    private final Connection connection;
+    private final ClientConnection connection;
 
     public Main() {
         this.registries = new ClientRegistries(new ResourcePack("vanilla-pack.zip"));
@@ -39,7 +40,7 @@ public class Main extends JpizeApplication {
         this.localServer = new Server(registries);
         this.level = new WorldLevel(this);
         this.player = new ClientPlayer();
-        this.connection = new Connection(this);
+        this.connection = new ClientConnection(this);
     }
 
     public ClientRegistries registries() {
@@ -62,7 +63,7 @@ public class Main extends JpizeApplication {
         return player;
     }
 
-    public Connection connection() {
+    public ClientConnection connection() {
         return connection;
     }
 
@@ -140,11 +141,16 @@ public class Main extends JpizeApplication {
         }
 
         // place stairs
-        if(Key.B.down()) {
-            final LevelChunk chunk = level.getChunk(0, 0, 0);
-            for(int i = 0; i < 100; i++)
-                chunk.setBlockState(Maths.random(1, 14), Maths.random(1, 14), Maths.random(1, 14), registries.getBlock("stairs").getDefaultState());
-            level.tesselator().tesselate(chunk);
+        if(Key.K.down()) {
+            final Vec3f pos = player.camera().position();
+            level.setBlockState(pos.xFloor(), pos.yFloor() - 3, pos.zFloor(),
+                registries.getBlock("stairs").getDefaultState());
+        }
+
+        if(Key.L.down()) {
+            final Vec3f pos = player.camera().position();
+            level.setBlockState(pos.xFloor(), pos.yFloor() - 3, pos.zFloor(),
+                registries.getBlock("torch").getDefaultState());
         }
 
         // secreens

@@ -58,8 +58,8 @@ public class Block implements Identifiable<String> {
                     System.err.println("[WARN]: Block property '" + propertyName + "' does not exist ('" + ID + "' block).");
                     continue;
                 }
-                properties.set(propertyName, jsonProperties.get(propertyName));
-                System.out.println(properties.getInt(propertyName));
+                final Object object = jsonProperties.get(propertyName);
+                properties.set(propertyName, property.loadFromJSON(object));
             }
         }
 

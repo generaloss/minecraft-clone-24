@@ -8,16 +8,18 @@ public class BlockVertex {
     public static final int TEXCOORD_SIZE = 2;
     public static final int COLOR_SIZE = 4;
     public static final int NORMAL_SIZE = 3;
-    public static final int SIZE = (POSITION_SIZE + TEXCOORD_SIZE + COLOR_SIZE + NORMAL_SIZE);
+    public static final int LIGHT_SIZE = 3;
+    public static final int SIZE = (POSITION_SIZE + TEXCOORD_SIZE + COLOR_SIZE + NORMAL_SIZE + LIGHT_SIZE);
 
     public static final int[] ATTRIBUTE_SIZE_ARRAY = {
-        POSITION_SIZE, TEXCOORD_SIZE, COLOR_SIZE, NORMAL_SIZE,
+        POSITION_SIZE, TEXCOORD_SIZE, COLOR_SIZE, NORMAL_SIZE, LIGHT_SIZE,
     };
 
     public static final int POSITION_OFFSET = 0;
     public static final int TEXCOORD_OFFSET = (POSITION_OFFSET + POSITION_SIZE);
     public static final int COLOR_OFFSET = (TEXCOORD_OFFSET + TEXCOORD_SIZE);
     public static final int NORMAL_OFFSET = (COLOR_OFFSET + COLOR_SIZE);
+    public static final int LIGHT_OFFSET = (NORMAL_OFFSET + NORMAL_SIZE);
 
     private final float[] array;
 
@@ -26,7 +28,8 @@ public class BlockVertex {
             x, y, z,    // position
             u, v,       // texcoords
             r, g, b, a, // color
-            0, 0, 0     // normal
+            0F, 0F, 0F, // normal
+            0F, 0F, 0F  // light
         };
     }
 
@@ -112,6 +115,25 @@ public class BlockVertex {
 
     public void setNormal(Vec3f normal) {
         this.setNormal(normal.x, normal.y, normal.z);
+    }
+
+
+    public float getLightR() {
+        return array[LIGHT_OFFSET + 0];
+    }
+
+    public float getLightG() {
+        return array[LIGHT_OFFSET + 1];
+    }
+
+    public float getLightB() {
+        return array[LIGHT_OFFSET + 2];
+    }
+
+    public void setLight(float r, float g, float b) {
+        array[LIGHT_OFFSET + 0] = r;
+        array[LIGHT_OFFSET + 1] = g;
+        array[LIGHT_OFFSET + 2] = b;
     }
 
 }
