@@ -1,4 +1,4 @@
-package generaloss.mc24.server.protocol;
+package generaloss.mc24.server.network.protocol;
 
 import generaloss.mc24.server.Server;
 

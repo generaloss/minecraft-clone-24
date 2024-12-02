@@ -1,4 +1,4 @@
-package generaloss.mc24.server.protocol;
+package generaloss.mc24.server.network.protocol;
 
 import generaloss.mc24.server.Server;
 import jpize.util.net.tcp.packet.PacketHandler;

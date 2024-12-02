@@ -1,6 +1,8 @@
-package generaloss.mc24.server.protocol;
+package generaloss.mc24.server.network;
 
 import generaloss.mc24.server.Server;
+import generaloss.mc24.server.network.protocol.ServerConnection;
+import generaloss.mc24.server.network.protocol.ServerConnectionPing;
 import jpize.util.net.tcp.TcpConnection;
 import jpize.util.net.tcp.packet.PacketDispatcher;
 
