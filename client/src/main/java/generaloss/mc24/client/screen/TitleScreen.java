@@ -11,6 +11,7 @@ import jpize.gl.texture.Texture2D;
 import jpize.glfw.input.Key;
 import jpize.util.camera.PerspectiveCamera;
 import jpize.util.font.Font;
+import jpize.util.font.FontRenderOptions;
 import jpize.util.postprocess.ScreenQuadMesh;
 import jpize.util.postprocess.ScreenQuadShader;
 
@@ -21,6 +22,7 @@ public class TitleScreen extends IScreen {
     private final PerspectiveCamera camera;
     private final AlMusic music;
     private float yaw;
+    private TextField serverAddressField;
 
     public TitleScreen(Main context) {
         super(context, "title");
@@ -45,15 +47,21 @@ public class TitleScreen extends IScreen {
         this.camera = new PerspectiveCamera(0.01F, 5F, 85F);
     }
 
+    public void init() {
+        this.serverAddressField = new TextField(10, 300, super.context().registries().getFont("default"));
+        this.serverAddressField.setHint("localhost:22854");
+    }
+
     @Override
     public void show() {
-        music.play();
         Gl.clearColor(0F, 0F, 0F);
+        music.play();
     }
 
     @Override
     public void hide() {
         music.pause();
+        serverAddressField.disableInput();
     }
 
     @Override
@@ -65,8 +73,14 @@ public class TitleScreen extends IScreen {
         camera.rotation().setRotation(yaw, -15F, 0F);
         camera.update();
         // start session
-        if(Key.ENTER.down())
-            context().connectLocalSession();
+        if(Key.ENTER.down()){
+            final String[] serverAddress = serverAddressField.getText().split(":");
+            try{
+                context().connectSession(serverAddress[0], Integer.parseInt(serverAddress[1]));
+            }catch(Exception e){
+                serverAddressField.setText("Invalid address");
+            }
+        }
         // exit
         if(Key.ESCAPE.down())
             Jpize.exit();
@@ -76,11 +90,15 @@ public class TitleScreen extends IScreen {
     public void render() {
         // skybox
         skybox.render(camera);
+
         // overlay
         ScreenQuadShader.bind(overlayTexture);
         ScreenQuadMesh.render();
-        // text
+
+        // hints
         final Font font = super.context().registries().getFont("default");
+        final FontRenderOptions fontOptions = font.getRenderOptions();
+
         float position = 10F;
         font.drawText("Press 'ENTER' for start.", 10F, position);
         position += font.getLineAdvanceScaled();
@@ -88,7 +106,12 @@ public class TitleScreen extends IScreen {
         position += font.getLineAdvanceScaled();
         font.drawText("'F11' - fullscreen", 10F, position);
         position += font.getLineAdvanceScaled();
-        font.drawText("'B' - place stairs", 10F, position);
+        font.drawText("'K' - place stairs", 10F, position);
+        position += font.getLineAdvanceScaled();
+        font.drawText("'L' - place torches", 10F, position);
+
+        // server address
+        serverAddressField.render();
     }
 
     @Override

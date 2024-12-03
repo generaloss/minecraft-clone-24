@@ -19,8 +19,6 @@ import jpize.glfw.Glfw;
 import jpize.glfw.init.GlfwPlatform;
 import jpize.glfw.input.Key;
 import jpize.util.font.Font;
-import jpize.util.math.Maths;
-import jpize.util.math.vector.Vec3f;
 import jpize.util.res.Resource;
 
 import java.util.List;
@@ -89,13 +87,10 @@ public class Main extends JpizeApplication {
     }
 
 
-    public void connectLocalSession() {
-        final int port = Maths.random(64000, 64999);
-        localServer.run(port);
-        this.connectSession("localhost", port);
-    }
-
     public void connectSession(String host, int port) {
+        if(host.equals("localhost"))
+            localServer.run(port);
+
         System.out.println("Connecting to server " + host + ":" + port);
         connection.connect(host, port);
         player.input().enable();
@@ -119,39 +114,26 @@ public class Main extends JpizeApplication {
             Jpize.window().toggleFullscreen();
 
         // resource pack
-        if(Key.NUM_0.up()){
+        if(Key.F1.up()){
             registries.reloadResources(List.of(registries.getDefaultPack()));
             for(LevelChunk chunk: level.getChunks()){
                 chunk.freeMesh();
                 level.tesselator().tesselate(chunk);
             }
-        }else if(Key.NUM_1.up()){
+        }else if(Key.F2.up()){
             final ResourcePack testPack1 = new ResourcePack("test-pack-1.zip");
             registries.reloadResources(List.of(testPack1, registries.getDefaultPack()));
             for(LevelChunk chunk: level.getChunks()){
                 chunk.freeMesh();
                 level.tesselator().tesselate(chunk);
             }
-        }else if(Key.NUM_2.up()){
+        }else if(Key.F3.up()){
             final ResourcePack testPack2 = new ResourcePack("test-pack-2.zip");
             registries.reloadResources(List.of(testPack2, registries.getDefaultPack()));
             for(LevelChunk chunk: level.getChunks()){
                 chunk.freeMesh();
                 level.tesselator().tesselate(chunk);
             }
-        }
-
-        // place stairs
-        if(Key.K.down()) {
-            final Vec3f pos = player.camera().position();
-            level.setBlockState(pos.xFloor(), pos.yFloor() - 3, pos.zFloor(),
-                registries.getBlock("stairs").getDefaultState());
-        }
-
-        if(Key.L.down()) {
-            final Vec3f pos = player.camera().position();
-            level.setBlockState(pos.xFloor(), pos.yFloor() - 3, pos.zFloor(),
-                registries.getBlock("torch").getDefaultState());
         }
 
         // secreens

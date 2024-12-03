@@ -5,6 +5,7 @@ import jpize.gl.Gl;
 import jpize.gl.glenum.GlTarget;
 import jpize.glfw.input.Key;
 import jpize.util.camera.PerspectiveCamera;
+import jpize.util.math.vector.Vec3f;
 
 public class SessionScreen extends IScreen {
 
@@ -28,6 +29,20 @@ public class SessionScreen extends IScreen {
         }
         // tesselate chunk meshes
         context().level().update();
+
+        // place stairs
+        if(Key.K.down()) {
+            final Vec3f pos = super.context().player().camera().position();
+            super.context().level().setBlockState(pos.xFloor(), pos.yFloor() - 3, pos.zFloor(),
+                super.context().registries().getBlock("stairs").getDefaultState());
+        }
+
+        // place torhces
+        if(Key.L.down()) {
+            final Vec3f pos = super.context().player().camera().position();
+            super.context().level().setBlockState(pos.xFloor(), pos.yFloor() - 3, pos.zFloor(),
+                super.context().registries().getBlock("torch").getDefaultState());
+        }
     }
 
     @Override

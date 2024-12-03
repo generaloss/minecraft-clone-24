@@ -24,7 +24,7 @@ public class ResourceRegistry <ID, Resource extends ResourceHandle<ID, ?>> imple
 
     public Resource get(ID ID) {
         if(!map.containsKey(ID))
-            throw new IllegalStateException("Block with ID '" + ID + "' not loaded.");
+            throw new IllegalStateException("Resource with ID '" + ID + "' not loaded.");
 
         return map.get(ID);
     }
