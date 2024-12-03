@@ -23,7 +23,11 @@ public class ClientConnection implements PacketHandler {
     }
 
     public void connect(String host, int port) {
+        System.out.println("connect");
         tcpClient.connect(host, port);
+        System.out.println("closed : " + tcpClient.isClosed());
+        if(!tcpClient.isConnected())
+            throw new IllegalStateException("Invalid server address");
     }
 
     public void disconnect() {

@@ -76,9 +76,10 @@ public class TitleScreen extends IScreen {
         if(Key.ENTER.down()){
             final String[] serverAddress = serverAddressField.getText().split(":");
             try{
-                context().connectSession(serverAddress[0], Integer.parseInt(serverAddress[1]));
-            }catch(Exception e){
-                serverAddressField.setText("Invalid address");
+                final int port = Integer.parseInt(serverAddress[1]);
+                context().connectSession(serverAddress[0], port);
+            }catch(NumberFormatException | ArrayIndexOutOfBoundsException e){
+                serverAddressField.setText("err");
             }
         }
         // exit
@@ -89,7 +90,7 @@ public class TitleScreen extends IScreen {
     @Override
     public void render() {
         // skybox
-        skybox.render(camera);
+        // skybox.render(camera);
 
         // overlay
         ScreenQuadShader.bind(overlayTexture);
@@ -102,13 +103,15 @@ public class TitleScreen extends IScreen {
         float position = 10F;
         font.drawText("Press 'ENTER' for start.", 10F, position);
         position += font.getLineAdvanceScaled();
-        font.drawText("'0', '1', '2' - changes resourcepack", 10F, position);
+        font.drawText("'F1', 'F2', 'F3' - changes resourcepack", 10F, position);
         position += font.getLineAdvanceScaled();
         font.drawText("'F11' - fullscreen", 10F, position);
         position += font.getLineAdvanceScaled();
-        font.drawText("'K' - place stairs", 10F, position);
+        font.drawText("'K' - place stairs (ingame)", 10F, position);
         position += font.getLineAdvanceScaled();
-        font.drawText("'L' - place torches", 10F, position);
+        font.drawText("'L' - place torches (ingame)", 10F, position);
+        position += font.getLineAdvanceScaled();
+        font.drawText("'ESCAPE' - quit / to main menu", 10F, position);
 
         // server address
         serverAddressField.render();

@@ -56,6 +56,7 @@ public class Server implements Tickable {
         System.out.println("Initializing server");
         for(Resource blockRes: registries.getDefaultPack().getResource("blocks/").listResources())
             registries.registerBlock(blockRes.path());
+        registries.loadResources();
     }
     
     public void run(int port) {
