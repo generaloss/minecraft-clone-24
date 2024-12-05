@@ -22,7 +22,7 @@
         <dependency>
             <groupId>io.github.generaloss</groupId>
             <artifactId>jpize-core</artifactId>
-            <version>24.11.5.2</version>
+            <version>24.11.5.2.0501</version>
         </dependency>
         <dependency>
             <groupId>io.github.generaloss</groupId>
