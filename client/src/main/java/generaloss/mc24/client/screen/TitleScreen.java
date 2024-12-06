@@ -2,6 +2,7 @@ package generaloss.mc24.client.screen;
 
 import generaloss.mc24.client.Main;
 import generaloss.mc24.client.registry.ClientRegistries;
+import generaloss.mc24.server.network.packet2s.Packet2SServerInfoRequest;
 import jpize.app.Jpize;
 import jpize.audio.util.AlMusic;
 import jpize.gl.Gl;
@@ -22,7 +23,9 @@ public class TitleScreen extends IScreen {
     private final PerspectiveCamera camera;
     private final AlMusic music;
     private float yaw;
+
     private TextField serverAddressField;
+    private String serverInfo = "Server Info: (press 'I' to ping server)";
 
     public TitleScreen(Main context) {
         super(context, "title");
@@ -78,13 +81,29 @@ public class TitleScreen extends IScreen {
             try{
                 final int port = Integer.parseInt(serverAddress[1]);
                 context().connectSession(serverAddress[0], port);
-            }catch(NumberFormatException | ArrayIndexOutOfBoundsException e){
-                serverAddressField.setText("err");
+            }catch(NumberFormatException | ArrayIndexOutOfBoundsException | IllegalStateException e){
+                serverInfo = "Server Info: Invalid address (press 'I' to ping server)";
+            }
+        }
+        if(Key.I.down()) {
+            final String[] serverAddress = serverAddressField.getText().split(":");
+            try{
+                final int port = Integer.parseInt(serverAddress[1]);
+                super.context().connection().connect(serverAddress[0], port);
+                super.context().connection().sendPacket(new Packet2SServerInfoRequest(
+                        System.currentTimeMillis()
+                ));
+            }catch(NumberFormatException | ArrayIndexOutOfBoundsException | IllegalStateException e){
+                serverInfo = "Server Info: Invalid address (press 'I' to ping server)";
             }
         }
         // exit
         if(Key.ESCAPE.down())
             Jpize.exit();
+    }
+
+    public void onServerInfo(String motd, String version, double ping) {
+        serverInfo = "Server info: " + motd + ", " + version + ", " + ping + "ms.";
     }
 
     @Override
@@ -112,6 +131,8 @@ public class TitleScreen extends IScreen {
         font.drawText("'L' - place torches (ingame)", 10F, position);
         position += font.getLineAdvanceScaled();
         font.drawText("'ESCAPE' - quit / to main menu", 10F, position);
+        position += font.getLineAdvanceScaled();
+        font.drawText(serverInfo, 10F, position);
 
         // server address
         serverAddressField.render();

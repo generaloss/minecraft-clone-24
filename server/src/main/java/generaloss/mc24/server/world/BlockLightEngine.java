@@ -67,7 +67,7 @@ public class BlockLightEngine <W extends World<C>, C extends Chunk<? extends W>>
                 if(neighborBlockState == null)
                     continue;
 
-                final int neighborBlockOpacity = neighborBlockState.properties().getInt(BlockProperty.OPACITY);
+                final int neighborBlockOpacity = neighborBlockState.properties().getInt("opacity");
                 final int targetLightLevel = (level - Math.max(1, neighborBlockOpacity));
 
                 if(targetLightLevel > neighborLightLevel){

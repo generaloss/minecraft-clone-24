@@ -49,9 +49,9 @@ public class Main extends JpizeApplication {
         return screens;
     }
 
-    public Server localServer() {
-        return localServer;
-    }
+    //public Server localServer() {
+    //    return localServer;
+    //}
 
     public WorldLevel level() {
         return level;
@@ -88,11 +88,13 @@ public class Main extends JpizeApplication {
 
 
     public void connectSession(String host, int port) {
-        if(host.equals("localhost"))
-            localServer.run(port);
+        //if(host.equals("localhost"))
+        //    localServer.run(port);
 
         System.out.println("Connecting to server " + host + ":" + port);
         connection.connect(host, port);
+        connection.sendPacket();
+
         player.input().enable();
         level.loadChunks();
         screens.show("session");
@@ -100,7 +102,7 @@ public class Main extends JpizeApplication {
 
     public void disconnectSession() {
         connection.disconnect();
-        localServer.stop();
+        //localServer.stop();
         player.input().disable();
         level.dispose();
         System.out.println("Disconnect session");

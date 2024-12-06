@@ -39,7 +39,7 @@ public class LevelChunk extends Chunk<WorldLevel> {
         final boolean success = super.setBlockState(x, y, z, blockState);
         if(success) {
             final Block block = blockState.getBlock();
-            final Vec3i glowing = block.properties().getVec3i(BlockProperty.GLOWING);
+            final Vec3i glowing = block.properties().getVec3i("glowing");
             super.setBlockLightLevel(x, y, z, glowing.x, glowing.y, glowing.z);
             final WorldLevel level = super.world();
             level.blockLightEngine().increase(this, x, y, z, glowing.x, glowing.y, glowing.z);

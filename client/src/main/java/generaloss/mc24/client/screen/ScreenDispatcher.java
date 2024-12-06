@@ -27,8 +27,8 @@ public class ScreenDispatcher implements Disposable {
         return map;
     }
 
-    public IScreen getScreen(String ID) {
-        return map.get(ID);
+    public <S extends IScreen> S get(String ID) {
+        return (S) map.get(ID);
     }
 
     public IScreen getCurrent() {
@@ -40,7 +40,7 @@ public class ScreenDispatcher implements Disposable {
     }
 
     public boolean isCurrent(String ID) {
-        final IScreen screen = this.getScreen(ID);
+        final IScreen screen = this.get(ID);
         return (screen != null && isCurrent(screen));
     }
 
@@ -57,7 +57,7 @@ public class ScreenDispatcher implements Disposable {
 
 
     public ScreenDispatcher show(String ID) {
-        final IScreen screen = this.getScreen(ID);
+        final IScreen screen = this.get(ID);
         if(screen == null)
             return this;
 

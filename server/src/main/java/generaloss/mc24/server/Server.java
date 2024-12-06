@@ -9,10 +9,10 @@ import jpize.util.time.Tickable;
 
 public class Server implements Tickable {
 
-    private int port;
     private final ServerConnections connections;
     private final TcpServer tcpServer;
     private final Registries registries;
+    private final ServerPropertiesHolder properties;
     private final WorldHolder worldHolder;
 
     public Server(Registries registries) {
@@ -23,11 +23,8 @@ public class Server implements Tickable {
             .setOnDisconnect(connections::onDisconnect)
             .setOnReceive(connections::onReceive);
         this.registries = registries;
+        this.properties = new ServerPropertiesHolder();
         this.worldHolder = new WorldHolder();
-    }
-
-    public int getPort() {
-        return port;
     }
 
     public ServerConnections connections() {
@@ -40,6 +37,10 @@ public class Server implements Tickable {
 
     public Registries registries() {
         return registries;
+    }
+
+    public ServerPropertiesHolder properties() {
+        return properties;
     }
 
     public WorldHolder worldHolder() {
@@ -60,7 +61,7 @@ public class Server implements Tickable {
     }
     
     public void run(int port) {
-        this.port = port;
+        properties.set("port", port);
         try{
             tcpServer.run(port);
             System.out.println("Server running on port " + port);

@@ -1,8 +1,9 @@
 package generaloss.mc24.server.network;
 
 import generaloss.mc24.server.Server;
+import generaloss.mc24.server.network.packet2s.Packet2SServerInfoRequest;
 import generaloss.mc24.server.network.protocol.ServerConnection;
-import generaloss.mc24.server.network.protocol.ServerConnectionPing;
+import generaloss.mc24.server.network.protocol.ServerConnectionLogin;
 import jpize.util.net.tcp.TcpConnection;
 import jpize.util.net.tcp.packet.PacketDispatcher;
 
@@ -18,12 +19,14 @@ public class ServerConnections {
     public ServerConnections(Server server) {
         this.server = server;
         this.connections = new HashMap<>();
-        this.packetDispatcher = new PacketDispatcher().register();
+        this.packetDispatcher = new PacketDispatcher().register(
+                Packet2SServerInfoRequest.class
+        );
     }
 
 
     public void onConnect(TcpConnection connection) {
-        connections.put(connection, new ServerConnectionPing(server));
+        connections.put(connection, new ServerConnectionLogin(server, connection));
     }
 
     public void onDisconnect(TcpConnection connection) {

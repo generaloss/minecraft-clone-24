@@ -53,7 +53,7 @@ public class Block implements Identifiable<String> {
         if(jsonObject.has("properties")){
             final JSONObject jsonProperties = jsonObject.getJSONObject("properties");
             for(String propertyName: jsonProperties.keySet()){
-                final BlockProperty property = BlockProperty.byName(propertyName);
+                final BlockProperty property = BlockProperty.get(propertyName);
                 if(property == null){
                     System.err.println("[WARN]: Block property '" + propertyName + "' does not exist ('" + ID + "' block).");
                     continue;
