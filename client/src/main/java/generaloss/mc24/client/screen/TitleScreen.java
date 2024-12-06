@@ -70,7 +70,7 @@ public class TitleScreen extends IScreen {
         music.update();
         // camera
         yaw -= Jpize.getDeltaTime() * 3F;
-        camera.rotation().setRotation(yaw, -15F, 0F);
+        camera.rotation().setRotation(yaw, 15F, 0F);
         camera.update();
         // start session
         if(Key.ENTER.down()){
@@ -90,7 +90,7 @@ public class TitleScreen extends IScreen {
     @Override
     public void render() {
         // skybox
-        // skybox.render(camera);
+        skybox.render(camera);
 
         // overlay
         ScreenQuadShader.bind(overlayTexture);

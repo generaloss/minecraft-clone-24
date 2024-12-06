@@ -31,13 +31,13 @@ public class ResourceFont extends ResourceHandle<String, Font> {
     @Override
     public void load(ResourcePack pack) {
         final Resource resource = pack.getResource(super.getPath());
-        font.loadFnt(resource, false);
+        font.loadFNT(resource, false);
     }
 
     @Override
     public void reload(Collection<ResourcePack> packs) {
         final Resource resource = super.getResourceFromPacks(packs, super.getPath());
-        font.loadFnt(resource, false);
+        font.loadFNT(resource, false);
     }
 
     @Override

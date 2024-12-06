@@ -110,8 +110,10 @@ public class Main extends JpizeApplication {
     @Override
     public void update() {
         // fullscreen
-        if(Key.F11.down())
+        if(Key.F11.down()){
             Jpize.window().toggleFullscreen();
+            player.input().lockInputs();
+        }
 
         // resource pack
         if(Key.F1.up()){
