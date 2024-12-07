@@ -1,7 +1,7 @@
 package generaloss.mc24.server.registry;
 
+import generaloss.mc24.server.IntRegistry;
 import generaloss.mc24.server.block.Block;
-import generaloss.mc24.server.block.BlockProperty;
 import generaloss.mc24.server.block.BlockState;
 import generaloss.mc24.server.resourcepack.ResourceBlock;
 import generaloss.mc24.server.resourcepack.ResourcePack;
@@ -13,65 +13,39 @@ import java.util.Map;
 public class Registries {
 
     private final ResourcePack defaultPack;
-    private final ResourceRegistry<String, ResourceBlock> block;
-    private final IntRegistry<BlockState> blockState;
+
+    public final RegistryBlocks BLOCKS;
+    public final IntRegistry<BlockState> BLOCK_STATES;
 
     public Registries(ResourcePack defaultPack) {
         this.defaultPack = defaultPack;
 
-        this.block = new ResourceRegistry<>();
-        this.blockState = new IntRegistry<>();
+        this.BLOCKS = new RegistryBlocks();
+        this.BLOCK_STATES = new IntRegistry<>();
 
         // register air block
         final Block airBlock = new Block()
                 .setID("air")
-                .buildStates(Map.of(), this);
+                .createBlockStates(Map.of(), this);
         airBlock.properties().set("opacity", 0);
-        block.register(new ResourceBlock(airBlock));
-        System.out.println("Registered 'air' Block and BlockState with ID " + blockState.getID(airBlock.getDefaultState()));
+        BLOCKS.register(new ResourceBlock(airBlock));
+        // System.out.println("Registered 'air' Block and BlockState with ID " + BLOCK_STATES.getID(airBlock.getDefaultState()));
     }
 
     public ResourcePack getDefaultPack() {
         return defaultPack;
     }
 
-
-    public Block getBlock(String ID) {
-        return block.get(ID).getObject();
-    }
-
-    public ResourceBlock registerBlock(String path) {
-        return block.register(new ResourceBlock(path, this));
-    }
-
-    public ResourceBlock registerBlock(ResourceBlock blockResource) {
-        return block.register(blockResource);
-    }
-
-
-    public BlockState registerBlockState(BlockState state) {
-        return blockState.register(state);
-    }
-
-    public BlockState getBlockState(int ID) {
-        return blockState.get(ID);
-    }
-
-    public int getBlockStateID(BlockState state) {
-        return blockState.getID(state);
-    }
-
-
     public void loadResources(ResourcePack defaultPack) {
         final Stopwatch stopwatch = new Stopwatch().start();
-        block.load(defaultPack);
-        System.out.println("[Server] Loaded resources in " + stopwatch.getMillis() + " ms.");
+        BLOCKS.load(defaultPack);
+        System.out.println("[INFO]: Loaded server resources in " + stopwatch.getMillis() + " ms.");
     }
 
     public void reloadResources(Collection<ResourcePack> packs) {
         final Stopwatch stopwatch = new Stopwatch().start();
-        block.reload(packs);
-        System.out.println("[Server] Reloaded resources in " + stopwatch.getMillis() + " ms.");
+        BLOCKS.reload(packs);
+        System.out.println("[INFO]: Reloaded server resources in " + stopwatch.getMillis() + " ms.");
     }
 
     public void loadResources() {

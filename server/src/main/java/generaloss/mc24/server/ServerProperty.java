@@ -1,6 +1,6 @@
 package generaloss.mc24.server;
 
-import generaloss.mc24.server.properties.AbstractProperty;
+import generaloss.mc24.server.property.AbstractProperty;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,6 +26,7 @@ public class ServerProperty extends AbstractProperty {
         register("port", 0);
         register("motd", "A Minecraft Server");
         register("version", "24.11.5");
+        register("dedicated", true);
     }
 
 }

@@ -42,11 +42,11 @@ public class Chunk <W extends World<? extends Chunk<W>>> {
         final int stateID = blockStateIndices.get(x, y, z);
         if(stateID == -1)
             return null;
-        return registries.getBlockState(stateID);
+        return registries.BLOCK_STATES.get(stateID);
     }
 
     public boolean setBlockState(int x, int y, int z, BlockState state) {
-        final int stateID = registries.getBlockStateID(state);
+        final int stateID = registries.BLOCK_STATES.getID(state);
         if(stateID == -1 || blockStateIndices.isOutOfBounds(x, y, z))
             return false;
         blockStateIndices.set(x, y, z, stateID);

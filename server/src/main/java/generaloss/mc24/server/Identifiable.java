@@ -1,4 +1,4 @@
-package generaloss.mc24.server.registry;
+package generaloss.mc24.server;
 
 public interface Identifiable <Key> {
 

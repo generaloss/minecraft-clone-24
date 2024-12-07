@@ -33,25 +33,26 @@ public class TitleScreen extends IScreen {
         // resources
         final ClientRegistries resourceRegistry = context.registries();
 
-        this.overlayTexture = resourceRegistry
-            .registerTexture("menu_panorama_overlay", "textures/gui/title/panorama_overlay.png")
+        this.overlayTexture = resourceRegistry.TEXTURES
+            .register("menu_panorama_overlay", "textures/gui/title/panorama_overlay.png")
             .getObject()
             .setFilters(GlFilter.LINEAR);
 
-        this.skybox = resourceRegistry
-            .registerSkybox("menu_panorama_skybox", "textures/gui/title/panorama_%s.png")
+        this.skybox = resourceRegistry.SKYBOXES
+            .register("menu_panorama_skybox", "textures/gui/title/panorama_%s.png")
             .getObject();
 
-        this.music = resourceRegistry
-            .registerMusic("menu_music", "music/beginning2.ogg")
-            .getObject();
+        this.music = (AlMusic) resourceRegistry.MUSICS
+            .register("menu_music", "music/beginning2.ogg")
+            .getObject()
+            .setLooping(true);
 
         // camera
         this.camera = new PerspectiveCamera(0.01F, 5F, 85F);
     }
 
     public void init() {
-        this.serverAddressField = new TextField(10, 300, super.context().registries().getFont("default"));
+        this.serverAddressField = new TextField(10, 300, super.context().registries().FONTS.get("default"));
         this.serverAddressField.setHint("localhost:22854");
     }
 
@@ -102,7 +103,7 @@ public class TitleScreen extends IScreen {
             Jpize.exit();
     }
 
-    public void onServerInfo(String motd, String version, double ping) {
+    public void onServerInfo(String motd, String version, long ping) {
         serverInfo = "Server info: " + motd + ", " + version + ", " + ping + "ms.";
     }
 
@@ -116,7 +117,7 @@ public class TitleScreen extends IScreen {
         ScreenQuadMesh.render();
 
         // hints
-        final Font font = super.context().registries().getFont("default");
+        final Font font = super.context().registries().FONTS.get("default");
         final FontRenderOptions fontOptions = font.getRenderOptions();
 
         float position = 10F;

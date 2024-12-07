@@ -57,10 +57,8 @@ public class BlockStateContainer implements Iterable<BlockState> {
             states.add(new BlockState(block, Map.of()));
 
         // register states
-        for(BlockState state: states){
-            registries.registerBlockState(state);
-            System.out.println("  Registered BlockState with ID '" + registries.getBlockStateID(state) + "' for block '" + block.getID() + "'");
-        }
+        for(BlockState state: states)
+            registries.BLOCK_STATES.register(state);
     }
 
     private static List<List<?>> cartesianProduct(List<Collection<?>> lists) {

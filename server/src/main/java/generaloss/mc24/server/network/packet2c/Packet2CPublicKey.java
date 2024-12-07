@@ -1,0 +1,40 @@
+package generaloss.mc24.server.network.packet2c;
+
+import generaloss.mc24.server.network.protocol.IClientProtocolLogin;
+import jpize.util.io.ExtDataInputStream;
+import jpize.util.io.ExtDataOutputStream;
+import jpize.util.net.tcp.packet.IPacket;
+import jpize.util.security.PublicRSA;
+
+import java.io.IOException;
+
+public class Packet2CPublicKey extends IPacket<IClientProtocolLogin> {
+
+    private PublicRSA publicKey;
+
+    public Packet2CPublicKey(PublicRSA publicKey) {
+        this.publicKey = publicKey;
+    }
+
+    public Packet2CPublicKey() { }
+
+    public PublicRSA getPublicKey() {
+        return publicKey;
+    }
+
+    @Override
+    public void write(ExtDataOutputStream stream) throws IOException {
+        stream.writeByteArray(publicKey.getKey().getEncoded());
+    }
+
+    @Override
+    public void read(ExtDataInputStream stream) throws IOException {
+        publicKey = new PublicRSA(stream.readByteArray());
+    }
+
+    @Override
+    public void handle(IClientProtocolLogin handler) {
+        handler.handlePublicKey(this);
+    }
+
+}

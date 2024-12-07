@@ -1,6 +1,6 @@
 package generaloss.mc24.server.block;
 
-import generaloss.mc24.server.properties.AbstractProperty;
+import generaloss.mc24.server.property.AbstractProperty;
 import jpize.util.math.vector.Vec3i;
 import org.json.JSONArray;
 

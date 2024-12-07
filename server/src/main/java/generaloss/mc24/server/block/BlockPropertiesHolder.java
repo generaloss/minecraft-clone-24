@@ -1,6 +1,6 @@
 package generaloss.mc24.server.block;
 
-import generaloss.mc24.server.properties.AbstractPropertiesHolder;
+import generaloss.mc24.server.property.AbstractPropertiesHolder;
 
 public class BlockPropertiesHolder extends AbstractPropertiesHolder<BlockProperty> {
 

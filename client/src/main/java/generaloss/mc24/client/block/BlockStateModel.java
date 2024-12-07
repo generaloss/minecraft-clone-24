@@ -3,7 +3,7 @@ package generaloss.mc24.client.block;
 import generaloss.mc24.server.Directory;
 import generaloss.mc24.server.block.Block;
 import generaloss.mc24.server.block.BlockState;
-import generaloss.mc24.server.registry.Registries;
+import generaloss.mc24.server.registry.RegistryBlocks;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -66,12 +66,12 @@ public class BlockStateModel {
     }
 
 
-    public BlockStateModel loadFromJSON(String jsonString, Registries registries) {
+    public BlockStateModel loadFromJSON(String jsonString, RegistryBlocks BLOCKS) {
         final JSONObject jsonObject = new JSONObject(jsonString);
 
         // set block
         final String blockID = jsonObject.getString("block_ID");
-        final Block block = registries.getBlock(blockID);
+        final Block block = BLOCKS.get(blockID);
         if(block == null)
             throw new IllegalStateException("Block model cannot be loaded. Block with ID '" + blockID + "' is not exists.");
         blockState = block.getDefaultState();

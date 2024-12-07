@@ -1,0 +1,16 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="AccountService" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="generaloss.mc24.accountservice.Main" />
+    <module name="account-service" />
+    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/account-service/run" />
+    <extension name="coverage">
+      <pattern>
+        <option name="PATTERN" value="generaloss.mc24.accountservice.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+    </extension>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

@@ -2,10 +2,7 @@ package generaloss.mc24.server;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.IdentityHashMap;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 public class ObjectIntMap<T> implements Iterable<T> {
 
@@ -54,6 +51,10 @@ public class ObjectIntMap<T> implements Iterable<T> {
             return null;
 
         return objectList.get(ID);
+    }
+
+    public Collection<T> getValues() {
+        return objectList;
     }
 
     @Override

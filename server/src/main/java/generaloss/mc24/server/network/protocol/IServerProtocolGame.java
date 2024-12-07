@@ -2,7 +2,7 @@ package generaloss.mc24.server.network.protocol;
 
 import jpize.util.net.tcp.packet.PacketHandler;
 
-public interface ClientPacketHandlerGame extends PacketHandler {
+public interface IServerProtocolGame extends PacketHandler {
 
 
 

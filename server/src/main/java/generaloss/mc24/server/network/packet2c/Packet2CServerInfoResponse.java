@@ -1,14 +1,13 @@
 package generaloss.mc24.server.network.packet2c;
 
-import generaloss.mc24.server.network.protocol.ClientPacketHandler;
-import generaloss.mc24.server.network.protocol.ClientPacketHandlerLogin;
+import generaloss.mc24.server.network.protocol.IClientProtocolLogin;
 import jpize.util.io.ExtDataInputStream;
 import jpize.util.io.ExtDataOutputStream;
 import jpize.util.net.tcp.packet.IPacket;
 
 import java.io.IOException;
 
-public class Packet2CServerInfoResponse extends IPacket<ClientPacketHandlerLogin> {
+public class Packet2CServerInfoResponse extends IPacket<IClientProtocolLogin> {
 
     private String motd;
     private String version;
@@ -50,8 +49,8 @@ public class Packet2CServerInfoResponse extends IPacket<ClientPacketHandlerLogin
     }
 
     @Override
-    public void handle(ClientPacketHandlerLogin handler) {
-        handler.onServerInfoResponse(this);
+    public void handle(IClientProtocolLogin handler) {
+        handler.handleServerInfoResponse(this);
     }
 
 }

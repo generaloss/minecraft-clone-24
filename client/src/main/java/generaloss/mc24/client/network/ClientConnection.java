@@ -1,6 +1,7 @@
 package generaloss.mc24.client.network;
 
 import generaloss.mc24.client.Main;
+import generaloss.mc24.server.network.packet2c.Packet2CPublicKey;
 import generaloss.mc24.server.network.packet2c.Packet2CServerInfoResponse;
 import jpize.util.net.tcp.TcpClient;
 import jpize.util.net.tcp.TcpConnection;
@@ -21,13 +22,14 @@ public class ClientConnection {
             .setOnDisconnect(this::onDisconnect)
             .setOnReceive(this::onReceive);
         this.packetDispatcher = new PacketDispatcher().register(
-                Packet2CServerInfoResponse.class
+            Packet2CServerInfoResponse.class,
+            Packet2CPublicKey.class
         );
     }
 
     public void connect(String host, int port) {
-        protocol = new ClientProtocolLogin(context);
         tcpClient.connect(host, port);
+        protocol = new ClientProtocolLogin(context, tcpClient.getConnection());
         if(!tcpClient.isConnected())
             throw new IllegalStateException("Invalid server address");
     }
@@ -37,11 +39,11 @@ public class ClientConnection {
         protocol = null;
     }
 
-    private void onConnect(TcpConnection connection) { }
+    private void onConnect(TcpConnection tcpConnection) { }
 
-    private void onDisconnect(TcpConnection connection) { }
+    private void onDisconnect(TcpConnection tcpConnection) { }
 
-    private void onReceive(TcpConnection connection, byte[] bytes) {
+    private void onReceive(TcpConnection tcpConnection, byte[] bytes) {
         packetDispatcher.readPacket(bytes, protocol);
         packetDispatcher.handlePackets();
     }

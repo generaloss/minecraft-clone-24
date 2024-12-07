@@ -1,6 +1,6 @@
 package generaloss.mc24.server.resourcepack;
 
-import generaloss.mc24.server.registry.Identifiable;
+import generaloss.mc24.server.Identifiable;
 import jpize.util.Disposable;
 import jpize.util.res.Resource;
 

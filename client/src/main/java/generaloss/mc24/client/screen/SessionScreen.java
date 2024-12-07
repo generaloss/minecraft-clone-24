@@ -34,14 +34,21 @@ public class SessionScreen extends IScreen {
         if(Key.K.down()) {
             final Vec3f pos = super.context().player().camera().position();
             super.context().level().setBlockState(pos.xFloor(), pos.yFloor() - 3, pos.zFloor(),
-                super.context().registries().getBlock("stairs").getDefaultState());
+                super.context().registries().BLOCKS.get("stairs").getDefaultState());
         }
 
         // place torhces
         if(Key.L.down()) {
             final Vec3f pos = super.context().player().camera().position();
             super.context().level().setBlockState(pos.xFloor(), pos.yFloor() - 3, pos.zFloor(),
-                super.context().registries().getBlock("torch").getDefaultState());
+                super.context().registries().BLOCKS.get("torch").getDefaultState());
+        }
+
+        // place torhces
+        if(Key.J.down()) {
+            final Vec3f pos = super.context().player().camera().position();
+            super.context().level().setBlockState(pos.xFloor(), pos.yFloor() - 3, pos.zFloor(),
+                super.context().registries().BLOCKS.get("blue_torch").getDefaultState());
         }
     }
 

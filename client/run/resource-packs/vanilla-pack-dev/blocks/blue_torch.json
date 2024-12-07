@@ -1,0 +1,7 @@
+{
+  "block_ID" : "blue_torch",
+  "properties" : {
+    "opacity" : 0,
+    "glowing" : [1, 2, 15]
+  }
+}

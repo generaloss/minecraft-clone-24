@@ -4,6 +4,7 @@ import generaloss.mc24.client.level.LevelChunk;
 import generaloss.mc24.client.level.WorldLevel;
 import generaloss.mc24.client.network.ClientConnection;
 import generaloss.mc24.client.registry.ClientRegistries;
+import generaloss.mc24.server.network.packet2s.Packet2SLoginRequest;
 import generaloss.mc24.server.resourcepack.ResourcePack;
 import generaloss.mc24.client.screen.TitleScreen;
 import generaloss.mc24.client.screen.ScreenDispatcher;
@@ -35,7 +36,7 @@ public class Main extends JpizeApplication {
     public Main() {
         this.registries = new ClientRegistries(new ResourcePack("vanilla-pack.zip"));
         this.screens = new ScreenDispatcher();
-        this.localServer = new Server(registries);
+        this.localServer = new Server(registries, false);
         this.level = new WorldLevel(this);
         this.player = new ClientPlayer();
         this.connection = new ClientConnection(this);
@@ -68,19 +69,19 @@ public class Main extends JpizeApplication {
 
     @Override
     public void init() {
-        System.out.println("Initializing client");
         localServer.init();
-        // block models
-        for(Resource blockModelRes : registries.getDefaultPack().getResource("models/blocks/").listResources())
-            registries.registerBlockModel(blockModelRes.path());
-        // font
-        registries.registerFont("default", "fonts/default/font.fnt");
+        System.out.println("[INFO]: Init client");
         // audio
         AlDevices.openDevice();
-        // screens
+        // load block models
+        for(Resource blockModelRes : registries.getDefaultPack().getResource("models/blocks/").listResources())
+            registries.BLOCK_MODELS.register(blockModelRes.path());
+        // load font
+        registries.FONTS.register("default", "fonts/default/font.fnt");
+        // register screens
         screens.register(new TitleScreen(this));
         screens.register(new SessionScreen(this));
-        // load resources
+        // load all resources
         registries.loadResources();
         // set menu screen
         screens.show("title");
@@ -91,9 +92,9 @@ public class Main extends JpizeApplication {
         //if(host.equals("localhost"))
         //    localServer.run(port);
 
-        System.out.println("Connecting to server " + host + ":" + port);
+        System.out.println("[INFO]: Connecting to server " + host + ":" + port);
         connection.connect(host, port);
-        connection.sendPacket();
+        connection.sendPacket(new Packet2SLoginRequest("24.11.5"));
 
         player.input().enable();
         level.loadChunks();
@@ -105,7 +106,7 @@ public class Main extends JpizeApplication {
         //localServer.stop();
         player.input().disable();
         level.dispose();
-        System.out.println("Disconnect session");
+        System.out.println("[INFO]: Disconnect session");
     }
 
 
@@ -144,7 +145,7 @@ public class Main extends JpizeApplication {
         screens.update();
 
         // font
-        final Font font = registries.getFont("default");
+        final Font font = registries.FONTS.get("default");
         font.getRenderOptions().scale().set(Jpize.getHeight() / font.getHeight() * 0.03F);
     }
 
@@ -152,7 +153,7 @@ public class Main extends JpizeApplication {
     public void render() {
         Gl.clearColorDepthBuffers();
         screens.render();
-        final Font font = registries.getFont("default");
+        final Font font = registries.FONTS.get("default");
         font.drawText("FPS: " + Jpize.getFPS(), 10F, Jpize.getHeight() - 10F - font.getLineAdvanceScaled());
     }
 

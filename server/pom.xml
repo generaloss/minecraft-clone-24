@@ -30,6 +30,12 @@
             <artifactId>json</artifactId>
             <version>20240303</version>
         </dependency>
+        <!-- account-service -->
+        <dependency>
+            <groupId>io.github.generaloss</groupId>
+            <artifactId>account-service</artifactId>
+            <version>24.11.5</version>
+        </dependency>
     </dependencies>
 
 </project>

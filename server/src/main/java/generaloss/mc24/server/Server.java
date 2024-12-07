@@ -1,29 +1,32 @@
 package generaloss.mc24.server;
 
-import generaloss.mc24.server.network.ServerConnections;
+import generaloss.mc24.server.network.connection.ServerConnections;
 import generaloss.mc24.server.registry.Registries;
+import generaloss.mc24.server.resourcepack.ResourceBlock;
 import generaloss.mc24.server.world.WorldHolder;
 import jpize.util.net.tcp.TcpServer;
 import jpize.util.res.Resource;
 import jpize.util.time.Tickable;
 
+import java.util.Map;
+
 public class Server implements Tickable {
 
+    private final Registries registries;
     private final ServerConnections connections;
     private final TcpServer tcpServer;
-    private final Registries registries;
     private final ServerPropertiesHolder properties;
     private final WorldHolder worldHolder;
 
-    public Server(Registries registries) {
-        System.out.println("Creating server");
+    public Server(Registries registries, boolean dedicated) {
+        this.registries = registries;
+        this.properties = new ServerPropertiesHolder();
+        this.properties.set("dedicated", dedicated);
         this.connections = new ServerConnections(this);
         this.tcpServer = new TcpServer()
             .setOnConnect(connections::onConnect)
             .setOnDisconnect(connections::onDisconnect)
             .setOnReceive(connections::onReceive);
-        this.registries = registries;
-        this.properties = new ServerPropertiesHolder();
         this.worldHolder = new WorldHolder();
     }
 
@@ -54,20 +57,29 @@ public class Server implements Tickable {
 
 
     public void init() {
-        System.out.println("Initializing server");
+        System.out.println("[INFO]: Init server");
+        // load blocks
         for(Resource blockRes: registries.getDefaultPack().getResource("blocks/").listResources())
-            registries.registerBlock(blockRes.path());
-        registries.loadResources();
+            registries.BLOCKS.register(blockRes.path());
+        // create block states
+        for(ResourceBlock blockRes: registries.BLOCKS.getResourcesToLoad())
+            blockRes.getObject().createBlockStates(Map.of(), registries);
+        // load all resources
+        if(properties.getBool("dedicated"))
+            registries.loadResources();
+
+        System.out.println("[INFO]: Loaded " + registries.BLOCKS.size() + " blocks");
+        System.out.println("[INFO]: Created " + registries.BLOCK_STATES.size() + " block states");
     }
     
     public void run(int port) {
         properties.set("port", port);
         try{
             tcpServer.run(port);
-            System.out.println("Server running on port " + port);
+            System.out.println("[INFO]: Server running on port " + port);
             this.startServerThread();
         }catch(Exception e){
-            System.err.println("Error running server: " + e.getMessage());
+            System.err.println("[ERROR]: Error running server: " + e.getMessage());
         }
     }
 
@@ -76,7 +88,7 @@ public class Server implements Tickable {
     }
 
     public void stop() {
-        System.out.println("Server closed.");
+        System.out.println("[INFO]: Server closed.");
         tcpServer.close();
     }
 

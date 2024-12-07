@@ -92,20 +92,20 @@ public class WorldLevel extends World<LevelChunk> implements Disposable {
 
             if(Y > -10){
                 if(Maths.randomBoolean(0.00002F))
-                    chunk.setBlockState(x, y, z, registries.getBlock("torch").getDefaultState());
+                    chunk.setBlockState(x, y, z, registries.BLOCKS.get("torch").getDefaultState());
                 return;
             }
 
             if(noise.get(X, Y, Z) > 0F){
-                chunk.setBlockState(x, y, z, registries.getBlock("stone").getDefaultState());
+                chunk.setBlockState(x, y, z, registries.BLOCKS.get("stone").getDefaultState());
             }else{
                 if(Maths.randomBoolean(0.00002F))
-                    chunk.setBlockState(x, y, z, registries.getBlock("torch").getDefaultState());
+                    chunk.setBlockState(x, y, z, registries.BLOCKS.get("torch").getDefaultState());
             }
         });
         chunk.forEach((x, y, z) -> {
             if(chunk.getBlockState(x, y, z).isBlockID("stone") && (chunk.getBlockState(x, y + 1, z) == null || chunk.getBlockState(x, y + 1, z).isBlockID("air")))
-                chunk.setBlockState(x, y, z, registries.getBlock("grass_block").getDefaultState());
+                chunk.setBlockState(x, y, z, registries.BLOCKS.get("grass_block").getDefaultState());
         });
         super.putChunk(chunk);
     }

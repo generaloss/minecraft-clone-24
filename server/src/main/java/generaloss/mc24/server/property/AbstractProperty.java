@@ -1,4 +1,4 @@
-package generaloss.mc24.server.properties;
+package generaloss.mc24.server.property;
 
 public abstract class AbstractProperty {
 

@@ -1,6 +1,6 @@
 package generaloss.mc24.server.block;
 
-import generaloss.mc24.server.registry.Identifiable;
+import generaloss.mc24.server.Identifiable;
 import generaloss.mc24.server.registry.Registries;
 import org.json.JSONObject;
 
@@ -10,7 +10,7 @@ public class Block implements Identifiable<String> {
 
     private String ID;
     private final BlockPropertiesHolder properties;
-    private BlockStateContainer statesHolder;
+    private BlockStateContainer statesContainer;
 
     public Block() {
         this.properties = new BlockPropertiesHolder();
@@ -33,20 +33,20 @@ public class Block implements Identifiable<String> {
 
 
     public BlockStateContainer states() {
-        return statesHolder;
+        return statesContainer;
     }
 
     public BlockState getDefaultState() {
-        return statesHolder.getDefaultState();
+        return statesContainer.getDefaultState();
     }
 
-    public Block buildStates(Map<String, StateProperty<?>> stateProperties, Registries registries) {
-        statesHolder = new BlockStateContainer(this, stateProperties, registries);
+    public Block createBlockStates(Map<String, StateProperty<?>> stateProperties, Registries registries) {
+        statesContainer = new BlockStateContainer(this, stateProperties, registries);
         return this;
     }
 
 
-    public void loadFromJSON(String jsonString, Registries registries) {
+    public void loadFromJSON(String jsonString) {
         final JSONObject jsonObject = new JSONObject(jsonString);
         this.setID(jsonObject.getString("block_ID"));
 
@@ -62,8 +62,6 @@ public class Block implements Identifiable<String> {
                 properties.set(propertyName, property.loadFromJSON(object));
             }
         }
-
-        this.buildStates(Map.of(), registries);
     }
 
 }

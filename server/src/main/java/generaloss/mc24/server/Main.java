@@ -19,7 +19,7 @@ public class Main {
         config.putIfAbsent("port", 22854);
         config.save(configRes);
 
-        final Server server = new Server(new Registries(new ResourcePack("vanilla-pack.zip")));
+        final Server server = new Server(new Registries(new ResourcePack("vanilla-pack.zip")), true);
         server.init();
         server.run(config.getInt("port"));
         TimeUtils.waitFor(server::isClosed);

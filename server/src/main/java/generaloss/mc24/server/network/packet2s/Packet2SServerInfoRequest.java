@@ -1,13 +1,13 @@
 package generaloss.mc24.server.network.packet2s;
 
-import generaloss.mc24.server.network.protocol.ServerConnection;
+import generaloss.mc24.server.network.protocol.IServerProtocolLogin;
 import jpize.util.io.ExtDataInputStream;
 import jpize.util.io.ExtDataOutputStream;
 import jpize.util.net.tcp.packet.IPacket;
 
 import java.io.IOException;
 
-public class Packet2SServerInfoRequest extends IPacket<ServerConnection> {
+public class Packet2SServerInfoRequest extends IPacket<IServerProtocolLogin> {
 
     private long timestamp;
 
@@ -32,8 +32,8 @@ public class Packet2SServerInfoRequest extends IPacket<ServerConnection> {
     }
 
     @Override
-    public void handle(ServerConnection handler) {
-        handler.onServerInfoRequest(this);
+    public void handle(IServerProtocolLogin handler) {
+        handler.handleServerInfoRequest(this);
     }
 
 }

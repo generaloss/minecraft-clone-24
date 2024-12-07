@@ -67,10 +67,10 @@ public class ScreenDispatcher implements Disposable {
 
         if(!screen.isInitialized()){
             screen.setInitialized();
-            System.out.println("Initialize " + ID + " screen");
+            System.out.println("[INFO]: Init screen '" + ID + "'");
             screen.init();
         }
-        System.out.println("Show " + ID + " screen");
+        System.out.println("[INFO]: Show screen '" + ID + "'");
         screen.show();
         screen.resize(Jpize.getWidth(), Jpize.getHeight());
         return this;

@@ -17,16 +17,20 @@ public class ResourceRegistry <ID, Resource extends ResourceHandle<ID, ?>> imple
         this.map = new HashMap<>();
     }
 
-    public Resource register(Resource object) {
+    public Resource registerResource(Resource object) {
         toLoad.add(object);
         return object;
     }
 
-    public Resource get(ID ID) {
+    public Resource getResource(ID ID) {
         if(!map.containsKey(ID))
             throw new IllegalStateException("Resource with ID '" + ID + "' not loaded.");
 
         return map.get(ID);
+    }
+
+    public <O> O getObject(ID ID) {
+        return (O) this.getResource(ID).getObject();
     }
 
     public void load(ResourcePack defaultPack) {
@@ -45,6 +49,18 @@ public class ResourceRegistry <ID, Resource extends ResourceHandle<ID, ?>> imple
     public void dispose() {
         for(Resource resource : map.values())
             resource.dispose();
+    }
+
+    public Collection<Resource> getResourcesToLoad() {
+        return toLoad;
+    }
+
+    public Collection<Resource> getLoadedResources() {
+        return map.values();
+    }
+
+    public int size() {
+        return Math.max(map.size(), toLoad.size());
     }
 
     @Override

@@ -27,12 +27,12 @@ public class LevelRenderer {
         // registries
         final ClientRegistries resourceRegistry = context.registries();
 
-        this.shader = resourceRegistry
-            .registerShader("level_chunk", "shaders/chunk")
+        this.shader = resourceRegistry.SHADERS
+            .register("level_chunk", "shaders/chunk")
             .getObject();
 
-        this.blockAtlas = resourceRegistry
-            .registerAtlas("blocks", "textures/blocks/", 256, 256)
+        this.blockAtlas = resourceRegistry.ATLASES
+            .register("blocks", "textures/blocks/", 256, 256)
             .getObject().getTexture();
 
         // matrix

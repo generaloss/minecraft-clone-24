@@ -1,7 +1,9 @@
 package generaloss.mc24.server.registry;
 
+import generaloss.mc24.server.Identifiable;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -23,15 +25,20 @@ public class Registry <Key, Value> implements Iterable<Value> {
         return this.register(object.getID(), (Value) object);
     }
 
-    public Value get(Key ID) {
+    public Value getValue(Key ID) {
         if(!map.containsKey(ID))
             throw new IllegalStateException("Block with ID '" + ID + "' not loaded.");
 
         return map.get(ID);
     }
 
+    public Collection<Value> getValues() {
+        return map.values();
+    }
+
     @Override
     public @NotNull Iterator<Value> iterator() {
         return map.values().iterator();
     }
+
 }

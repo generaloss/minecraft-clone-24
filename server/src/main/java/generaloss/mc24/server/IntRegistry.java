@@ -1,6 +1,6 @@
-package generaloss.mc24.server.registry;
+package generaloss.mc24.server;
 
-import generaloss.mc24.server.ObjectIntMap;
+import java.util.Collection;
 
 public class IntRegistry <Value> {
 
@@ -22,6 +22,14 @@ public class IntRegistry <Value> {
     public int getID(Value object) {
         final int ID = identityMap.getID(object);
         return (ID == -1 ? 0 : ID);
+    }
+
+    public int size() {
+        return identityMap.size();
+    }
+
+    public Collection<Value> getValues() {
+        return identityMap.getValues();
     }
 
 }
