@@ -1,7 +1,7 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Test" type="Application" factoryName="Application">
     <option name="MAIN_CLASS_NAME" value="generaloss.Main" />
-    <module name="mc24-client" />
+    <module name="client" />
     <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/client/run" />
     <extension name="coverage">
       <pattern>

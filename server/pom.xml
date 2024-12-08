@@ -9,7 +9,7 @@
         <version>24.12.1</version>
     </parent>
 
-    <artifactId>mc24-server</artifactId>
+    <artifactId>server</artifactId>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>

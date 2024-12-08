@@ -1,0 +1,13 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="account-service:jar">
+    <output-path>$PROJECT_DIR$/account-service/run</output-path>
+    <root id="archive" name="account-service.jar">
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="$PROJECT_DIR$/account-service/META-INF/MANIFEST.MF" />
+      </element>
+      <element id="module-output" name="account-service" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/io/github/generaloss/jpize-utils/24.12.1/jpize-utils-24.12.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/annotations/23.0.0/annotations-23.0.0.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>

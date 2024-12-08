@@ -9,7 +9,7 @@
         <version>24.12.1</version>
     </parent>
 
-    <artifactId>mc24-client</artifactId>
+    <artifactId>client</artifactId>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
@@ -32,7 +32,7 @@
         <!-- server -->
         <dependency>
             <groupId>io.github.generaloss</groupId>
-            <artifactId>mc24-server</artifactId>
+            <artifactId>server</artifactId>
             <version>24.12.1</version>
         </dependency>
 
