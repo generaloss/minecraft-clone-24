@@ -6,7 +6,7 @@
     <parent>
         <groupId>io.github.generaloss</groupId>
         <artifactId>minecraft-clone-24</artifactId>
-        <version>24.11.5</version>
+        <version>24.12.1</version>
     </parent>
 
     <artifactId>mc24-server</artifactId>
@@ -18,12 +18,6 @@
     </properties>
 
     <dependencies>
-        <!-- utils -->
-        <dependency>
-            <groupId>io.github.generaloss</groupId>
-            <artifactId>jpize-utils</artifactId>
-            <version>24.11.5.05</version>
-        </dependency>
         <!-- json -->
         <dependency>
             <groupId>org.json</groupId>
@@ -34,7 +28,7 @@
         <dependency>
             <groupId>io.github.generaloss</groupId>
             <artifactId>account-service</artifactId>
-            <version>24.11.5</version>
+            <version>24.12.1</version>
         </dependency>
     </dependencies>
 
