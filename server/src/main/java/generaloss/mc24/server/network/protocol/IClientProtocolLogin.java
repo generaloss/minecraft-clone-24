@@ -1,13 +1,13 @@
 package generaloss.mc24.server.network.protocol;
 
-import generaloss.mc24.server.network.packet2c.Packet2CPublicKey;
-import generaloss.mc24.server.network.packet2c.Packet2CServerInfoResponse;
+import generaloss.mc24.server.network.packet2c.PublicKeyPacket2C;
+import generaloss.mc24.server.network.packet2c.ServerInfoResponsePacket2C;
 import jpize.util.net.tcp.packet.PacketHandler;
 
 public interface IClientProtocolLogin extends PacketHandler {
 
-    void handleServerInfoResponse(Packet2CServerInfoResponse packet);
+    void handleServerInfoResponse(ServerInfoResponsePacket2C packet);
 
-    void handlePublicKey(Packet2CPublicKey packet);
+    void handlePublicKey(PublicKeyPacket2C packet);
 
 }

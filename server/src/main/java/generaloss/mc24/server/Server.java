@@ -1,10 +1,9 @@
 package generaloss.mc24.server;
 
-import generaloss.mc24.server.network.connection.ServerConnections;
+import generaloss.mc24.server.network.connection.NetServer;
 import generaloss.mc24.server.registry.Registries;
 import generaloss.mc24.server.resourcepack.ResourceBlock;
 import generaloss.mc24.server.world.WorldHolder;
-import jpize.util.net.tcp.TcpServer;
 import jpize.util.res.Resource;
 import jpize.util.time.Tickable;
 
@@ -13,8 +12,7 @@ import java.util.Map;
 public class Server implements Tickable {
 
     private final Registries registries;
-    private final ServerConnections connections;
-    private final TcpServer tcpServer;
+    private final NetServer net;
     private final ServerPropertiesHolder properties;
     private final WorldHolder worldHolder;
 
@@ -22,20 +20,12 @@ public class Server implements Tickable {
         this.registries = registries;
         this.properties = new ServerPropertiesHolder();
         this.properties.set("dedicated", dedicated);
-        this.connections = new ServerConnections(this);
-        this.tcpServer = new TcpServer()
-            .setOnConnect(connections::onConnect)
-            .setOnDisconnect(connections::onDisconnect)
-            .setOnReceive(connections::onReceive);
+        this.net = new NetServer(this);
         this.worldHolder = new WorldHolder();
     }
 
-    public ServerConnections connections() {
-        return connections;
-    }
-
-    public TcpServer tcpServer() {
-        return tcpServer;
+    public NetServer net() {
+        return net;
     }
 
     public Registries registries() {
@@ -52,7 +42,7 @@ public class Server implements Tickable {
 
 
     public boolean isClosed() {
-        return tcpServer.isClosed();
+        return net.tcpServer().isClosed();
     }
 
 
@@ -75,7 +65,7 @@ public class Server implements Tickable {
     public void run(int port) {
         properties.set("port", port);
         try{
-            tcpServer.run(port);
+            net.tcpServer().run(port);
             System.out.println("[INFO]: Server running on port " + port);
             this.startServerThread();
         }catch(Exception e){
@@ -89,7 +79,7 @@ public class Server implements Tickable {
 
     public void stop() {
         System.out.println("[INFO]: Server closed.");
-        tcpServer.close();
+        net.tcpServer().close();
     }
 
     @Override

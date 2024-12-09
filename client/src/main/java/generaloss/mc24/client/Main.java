@@ -4,7 +4,7 @@ import generaloss.mc24.client.level.LevelChunk;
 import generaloss.mc24.client.level.WorldLevel;
 import generaloss.mc24.client.network.ClientConnection;
 import generaloss.mc24.client.registry.ClientRegistries;
-import generaloss.mc24.server.network.packet2s.Packet2SLoginRequest;
+import generaloss.mc24.server.network.packet2s.LoginRequestPacket2S;
 import generaloss.mc24.server.resourcepack.ResourcePack;
 import generaloss.mc24.client.screen.TitleScreen;
 import generaloss.mc24.client.screen.ScreenDispatcher;
@@ -94,7 +94,7 @@ public class Main extends JpizeApplication {
 
         System.out.println("[INFO]: Connecting to server " + host + ":" + port);
         connection.connect(host, port);
-        connection.sendPacket(new Packet2SLoginRequest("24.11.5"));
+        connection.sendPacket(new LoginRequestPacket2S("24.11.5"));
 
         player.input().enable();
         level.loadChunks();

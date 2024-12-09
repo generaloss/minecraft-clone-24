@@ -2,7 +2,7 @@ package generaloss.mc24.client.screen;
 
 import generaloss.mc24.client.Main;
 import generaloss.mc24.client.registry.ClientRegistries;
-import generaloss.mc24.server.network.packet2s.Packet2SServerInfoRequest;
+import generaloss.mc24.server.network.packet2s.ServerInfoRequestPacket2S;
 import jpize.app.Jpize;
 import jpize.audio.util.AlMusic;
 import jpize.gl.Gl;
@@ -91,7 +91,7 @@ public class TitleScreen extends IScreen {
             try{
                 final int port = Integer.parseInt(serverAddress[1]);
                 super.context().connection().connect(serverAddress[0], port);
-                super.context().connection().sendPacket(new Packet2SServerInfoRequest(
+                super.context().connection().sendPacket(new ServerInfoRequestPacket2S(
                         System.currentTimeMillis()
                 ));
             }catch(NumberFormatException | ArrayIndexOutOfBoundsException | IllegalStateException e){

@@ -2,12 +2,12 @@ package generaloss.mc24.server.network.connection;
 
 import generaloss.mc24.server.Server;
 import generaloss.mc24.server.ServerPropertiesHolder;
-import generaloss.mc24.server.network.packet2c.Packet2CPublicKey;
-import generaloss.mc24.server.network.packet2c.Packet2CServerInfoResponse;
-import generaloss.mc24.server.network.packet2s.Packet2SConnectionKey;
-import generaloss.mc24.server.network.packet2s.Packet2SLoginRequest;
-import generaloss.mc24.server.network.packet2s.Packet2SServerInfoRequest;
-import generaloss.mc24.server.network.packet2s.Packet2SSessionID;
+import generaloss.mc24.server.network.packet2c.PublicKeyPacket2C;
+import generaloss.mc24.server.network.packet2c.ServerInfoResponsePacket2C;
+import generaloss.mc24.server.network.packet2s.EncodeKeyPacket2S;
+import generaloss.mc24.server.network.packet2s.LoginRequestPacket2S;
+import generaloss.mc24.server.network.packet2s.ServerInfoRequestPacket2S;
+import generaloss.mc24.server.network.packet2s.SessionIDPacket2S;
 import generaloss.mc24.server.network.protocol.IServerProtocolLogin;
 import jpize.util.net.tcp.TcpConnection;
 import jpize.util.security.KeyAES;
@@ -22,9 +22,9 @@ public class ServerConnectionLogin extends ServerConnection implements IServerPr
 
 
     @Deprecated
-    public void handleServerInfoRequest(Packet2SServerInfoRequest packet) {
+    public void handleServerInfoRequest(ServerInfoRequestPacket2S packet) {
         final ServerPropertiesHolder serverProperties = super.server().properties();
-        super.sendPacket(new Packet2CServerInfoResponse(
+        super.sendPacket(new ServerInfoResponsePacket2C(
             serverProperties.getString("motd"),
             serverProperties.getString("version"),
             packet.getTimestamp()
@@ -32,14 +32,14 @@ public class ServerConnectionLogin extends ServerConnection implements IServerPr
     }
 
     @Override
-    public void handleLoginRequest(Packet2SLoginRequest packet) {
-        final PublicRSA publicKey = super.server().connections().getEncryptionKey().getPublic();
-        super.sendPacket(new Packet2CPublicKey(publicKey));
+    public void handleLoginRequest(LoginRequestPacket2S packet) {
+        final PublicRSA publicKey = super.server().net().getEncryptionKey().getPublic();
+        super.sendPacket(new PublicKeyPacket2C(publicKey));
     }
 
     @Override
-    public void handleConnectionKey(Packet2SConnectionKey packet) {
-        final PrivateRSA privateKey = super.server().connections().getEncryptionKey().getPrivate();
+    public void handleConnectionKey(EncodeKeyPacket2S packet) {
+        final PrivateRSA privateKey = super.server().net().getEncryptionKey().getPrivate();
         final byte[] keyBytes = privateKey.decrypt(packet.getEncryptedKeyBytes());
         final KeyAES key = new KeyAES(keyBytes);
         super.encode(key);
@@ -47,7 +47,7 @@ public class ServerConnectionLogin extends ServerConnection implements IServerPr
     }
 
     @Override
-    public void handleSessionID(Packet2SSessionID packet) {
+    public void handleSessionID(SessionIDPacket2S packet) {
         //! validate session UUID
 
     }
