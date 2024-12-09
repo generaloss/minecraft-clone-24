@@ -23,7 +23,7 @@ public class ClientTest {
 
     private static void hasSession(UUID uuid) {
         // send request
-        final Response response = Request.sendHasSession("localhost", uuid);
+        final Response response = Request.sendHasSession(uuid);
         // print response
         response.readData(stream ->
             System.out.println(response.getCode() + ", " + stream.readBoolean()));
@@ -31,7 +31,7 @@ public class ClientTest {
 
     private static void getSessionInfo(UUID uuid) {
         // send request
-        final Response response = Request.sendGetSessionInfo("localhost", uuid);
+        final Response response = Request.sendGetSessionInfo(uuid);
         // print response
         response.readData(stream ->
             System.out.println(response.getCode() + ", " + stream.readStringUTF() + ", " + stream.readStringUTF()));
@@ -39,7 +39,7 @@ public class ClientTest {
 
     private static void logout(UUID uuid) {
         // send request
-        final Response response = Request.sendLogout("localhost", uuid);
+        final Response response = Request.sendLogout(uuid);
         // print response
 
         response.readData(stream ->
@@ -48,7 +48,7 @@ public class ClientTest {
 
     private static UUID login(String nickname, String password) {
         // send request
-        final Response response = Request.sendLogin("localhost", nickname, password);
+        final Response response = Request.sendLogin(nickname, password);
         // print response
         final AtomicReference<UUID> uuid = new AtomicReference<>();
         response.readData(stream -> {
@@ -60,14 +60,14 @@ public class ClientTest {
 
     private static void createAccount(String nickname, String password) {
         // send request
-        final Response response = Request.sendCreateAccount("localhost", nickname, password);
+        final Response response = Request.sendCreateAccount(nickname, password);
         // print response
         response.readData(stream -> System.out.println(response.getCode() + ", " + stream.readStringUTF()));
     }
 
     private static void deleteAccount(String nickname, String password) {
         // send request
-        final Response response = Request.sendDeleteAccount("localhost", nickname, password);
+        final Response response = Request.sendDeleteAccount(nickname, password);
         // print response
         response.readData(stream -> System.out.println(response.getCode() + ", " + stream.readStringUTF()));
     }

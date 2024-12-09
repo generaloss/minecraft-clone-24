@@ -24,8 +24,8 @@ public class ServerProperty extends AbstractProperty {
 
     static {
         register("port", 0);
-        register("motd", "A Minecraft Server");
-        register("version", "24.11.5");
+        register("motd", Server.DEFAULT_MOTD);
+        register("version", Server.VERSION);
         register("dedicated", true);
     }
 

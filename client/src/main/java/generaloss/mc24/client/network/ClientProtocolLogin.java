@@ -1,5 +1,6 @@
 package generaloss.mc24.client.network;
 
+import generaloss.mc24.accountservice.network.Request;
 import generaloss.mc24.client.Main;
 import generaloss.mc24.client.screen.TitleScreen;
 import generaloss.mc24.server.network.packet2c.PublicKeyPacket2C;
@@ -7,6 +8,7 @@ import generaloss.mc24.server.network.packet2c.ServerInfoResponsePacket2C;
 import generaloss.mc24.server.network.packet2s.EncodeKeyPacket2S;
 import generaloss.mc24.server.network.packet2s.SessionIDPacket2S;
 import generaloss.mc24.server.network.protocol.IClientProtocolLogin;
+import jpize.util.math.Maths;
 import jpize.util.net.tcp.TcpConnection;
 import jpize.util.security.KeyAES;
 
@@ -34,9 +36,14 @@ public class ClientProtocolLogin extends ClientProtocol implements IClientProtoc
         final byte[] encryptedKeyBytes = packet.getPublicKey().encrypt(keyBytes);
         super.sendPacket(new EncodeKeyPacket2S(encryptedKeyBytes));
         super.encode(key);
-        System.out.println("[INFO]: Client connection encrypted with key " + key.getKey().hashCode());
         // send sessionID
-        final UUID sessionID = UUID.randomUUID();
+
+        final String nickname = "best_player_" + Maths.random(10, 99);
+        final String password = "123";
+
+        Request.sendCreateAccount(nickname , password);
+        final UUID sessionID = Request.sendLogin(nickname, password).readUUID();
+
         super.sendPacket(new SessionIDPacket2S(sessionID));
     }
 

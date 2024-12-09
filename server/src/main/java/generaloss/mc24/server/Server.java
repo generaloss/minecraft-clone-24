@@ -11,6 +11,9 @@ import java.util.Map;
 
 public class Server implements Tickable {
 
+    public static final String VERSION = "24.11.5";
+    public static final String DEFAULT_MOTD = "A Minecraft-clone-24 Server";
+
     private final Registries registries;
     private final NetServer net;
     private final ServerPropertiesHolder properties;

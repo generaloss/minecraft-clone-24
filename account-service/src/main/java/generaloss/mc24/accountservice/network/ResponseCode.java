@@ -10,4 +10,8 @@ public enum ResponseCode {
         return this != NO_RESPONSE;
     }
 
+    public boolean noError() {
+        return this == NO_ERROR;
+    }
+
 }

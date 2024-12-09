@@ -1,6 +1,7 @@
 package generaloss.mc24.client.network;
 
 import generaloss.mc24.client.Main;
+import generaloss.mc24.server.network.packet2c.DisconnectPacket2C;
 import generaloss.mc24.server.network.packet2c.PublicKeyPacket2C;
 import generaloss.mc24.server.network.packet2c.ServerInfoResponsePacket2C;
 import jpize.util.net.tcp.TcpClient;
@@ -23,7 +24,8 @@ public class ClientConnection {
             .setOnReceive(this::onReceive);
         this.packetDispatcher = new PacketDispatcher().register(
             ServerInfoResponsePacket2C.class,
-            PublicKeyPacket2C.class
+            PublicKeyPacket2C.class,
+            DisconnectPacket2C.class
         );
     }
 

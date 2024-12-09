@@ -26,6 +26,7 @@ public class TitleScreen extends IScreen {
 
     private TextField serverAddressField;
     private String serverInfo = "Server Info: (press 'I' to ping server)";
+    private String disconnectMessage = "";
 
     public TitleScreen(Main context) {
         super(context, "title");
@@ -107,6 +108,10 @@ public class TitleScreen extends IScreen {
         serverInfo = "Server info: " + motd + ", " + version + ", " + ping + "ms.";
     }
 
+    public void onDisconnect(String message) {
+        disconnectMessage = "Disconnection: " + message;
+    }
+
     @Override
     public void render() {
         // skybox
@@ -134,6 +139,8 @@ public class TitleScreen extends IScreen {
         font.drawText("'ESCAPE' - quit / to main menu", 10F, position);
         position += font.getLineAdvanceScaled();
         font.drawText(serverInfo, 10F, position);
+        position += font.getLineAdvanceScaled();
+        font.drawText(disconnectMessage, 10F, position);
 
         // server address
         serverAddressField.render();

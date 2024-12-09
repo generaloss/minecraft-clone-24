@@ -15,7 +15,6 @@ public class SessionDispatcher {
     }
 
     public UUID logIn(Account account) {
-        System.out.println(sessionIDs.size() + " | " + sessionIDs.containsKey(account));
         if(sessionIDs.containsKey(account))
             return sessionIDs.get(account);
 

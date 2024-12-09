@@ -16,9 +16,18 @@ public abstract class ServerConnection implements IServerProtocol {
         this.tcpConnection = tcpConnection;
     }
 
+    public void setProtocol(IServerProtocol protocol) {
+        tcpConnection.attach(protocol);
+    }
+
     public Server server() {
         return server;
     }
+
+    public TcpConnection tcpConnection() {
+        return tcpConnection;
+    }
+
 
     public void disconnect() {
         tcpConnection.close();
