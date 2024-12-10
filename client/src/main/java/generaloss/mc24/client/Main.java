@@ -4,6 +4,7 @@ import generaloss.mc24.client.level.LevelChunk;
 import generaloss.mc24.client.level.WorldLevel;
 import generaloss.mc24.client.network.ClientConnection;
 import generaloss.mc24.client.registry.ClientRegistries;
+import generaloss.mc24.server.network.AccountSession;
 import generaloss.mc24.server.network.packet2s.LoginRequestPacket2S;
 import generaloss.mc24.server.resourcepack.ResourcePack;
 import generaloss.mc24.client.screen.TitleScreen;
@@ -32,6 +33,7 @@ public class Main extends JpizeApplication {
     private final WorldLevel level;
     private final ClientPlayer player;
     private final ClientConnection connection;
+    private final AccountSession session;
 
     public Main() {
         this.registries = new ClientRegistries(new ResourcePack("vanilla-pack.zip"));
@@ -40,6 +42,7 @@ public class Main extends JpizeApplication {
         this.level = new WorldLevel(this);
         this.player = new ClientPlayer();
         this.connection = new ClientConnection(this);
+        this.session = new AccountSession();
     }
 
     public ClientRegistries registries() {
@@ -64,6 +67,10 @@ public class Main extends JpizeApplication {
 
     public ClientConnection connection() {
         return connection;
+    }
+
+    public AccountSession session() {
+        return session;
     }
 
 

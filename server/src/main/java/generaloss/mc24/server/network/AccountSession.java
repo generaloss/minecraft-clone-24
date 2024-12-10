@@ -2,12 +2,12 @@ package generaloss.mc24.server.network;
 
 import java.util.UUID;
 
-public class NetSession {
+public class AccountSession {
 
-    private final UUID ID;
-    private final String nickname;
+    private UUID ID;
+    private String nickname;
 
-    public NetSession(UUID ID, String nickname) {
+    public void set(UUID ID, String nickname) {
         this.ID = ID;
         this.nickname = nickname;
     }
@@ -18,6 +18,10 @@ public class NetSession {
 
     public String getNickname() {
         return nickname;
+    }
+
+    public boolean isValid() {
+        return ID != null;
     }
 
 }

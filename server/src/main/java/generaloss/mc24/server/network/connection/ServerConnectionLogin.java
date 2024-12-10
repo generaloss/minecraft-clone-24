@@ -4,7 +4,7 @@ import generaloss.mc24.accountservice.network.Request;
 import generaloss.mc24.accountservice.network.Response;
 import generaloss.mc24.server.Server;
 import generaloss.mc24.server.ServerPropertiesHolder;
-import generaloss.mc24.server.network.NetSession;
+import generaloss.mc24.server.network.AccountSession;
 import generaloss.mc24.server.network.packet2c.DisconnectPacket2C;
 import generaloss.mc24.server.network.packet2c.PublicKeyPacket2C;
 import generaloss.mc24.server.network.packet2c.ServerInfoResponsePacket2C;
@@ -68,7 +68,8 @@ public class ServerConnectionLogin extends ServerConnection implements IServerPr
             if(sessionInfoResponse.getCode().noError()) {
                 // set game protocol
                 final String nickname = sessionInfoResponse.readString();
-                final NetSession session = new NetSession(sessionID, nickname);
+                final AccountSession session = new AccountSession();
+                session.set(sessionID, nickname);
                 super.setProtocol(new ServerConnectionGame(super.server(), super.tcpConnection(), session));
             }else{
                 super.sendPacket(new DisconnectPacket2C("session expired"));

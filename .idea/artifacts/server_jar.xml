@@ -6,9 +6,10 @@
         <element id="file-copy" path="$PROJECT_DIR$/server/META-INF/MANIFEST.MF" />
       </element>
       <element id="module-output" name="server" />
+      <element id="module-output" name="account-service" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/io/github/generaloss/jpize-utils/24.12.2/jpize-utils-24.12.2.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/annotations/23.0.0/annotations-23.0.0.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/json/json/20240303/json-20240303.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/io/github/generaloss/jpize-utils/24.12.2/jpize-utils-24.12.2.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>

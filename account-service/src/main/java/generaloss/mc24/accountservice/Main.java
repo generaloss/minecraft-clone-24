@@ -26,6 +26,11 @@ public class Main {
         final FastReader reader = new FastReader();
         // loop
         while(!commandLineCtrl.isCloseRequest() && !Thread.interrupted()) {
+            if(!reader.hasNext()){
+                Thread.yield();
+                continue;
+            }
+
             final String[] command = reader.nextLine().split(" ");
             commandLineCtrl.evalCommand(command);
         }

@@ -16,6 +16,8 @@ import java.util.UUID;
 
 public class Request implements PacketHandler {
 
+    private static final String HOST = "mineclone.ignorelist.com";
+
     private final RequestType requestType;
     private final byte[] requestData;
     private final Response response;
@@ -33,7 +35,7 @@ public class Request implements PacketHandler {
 
         this.tcpClient = new TcpClient();
         this.tcpClient.setOnReceive(this::onReceive);
-        this.tcpClient.connect("localhost", RequestListener.PORT);
+        this.tcpClient.connect(host, RequestListener.PORT);
     }
 
     public boolean isConnectionClosed() {
@@ -67,7 +69,7 @@ public class Request implements PacketHandler {
 
 
     public static Response send(RequestType requestType, DataStreamWriter dataFactory) {
-        final Request request = new Request("localhost", requestType, DataStreamWriter.writeBytes(dataFactory));
+        final Request request = new Request(HOST, requestType, DataStreamWriter.writeBytes(dataFactory));
         TimeUtils.waitFor(request::isConnectionClosed, 1000);
         return request.getResponse();
     }

@@ -1,5 +1,7 @@
 package generaloss.mc24.client.screen;
 
+import generaloss.mc24.accountservice.network.Request;
+import generaloss.mc24.accountservice.network.Response;
 import generaloss.mc24.client.Main;
 import generaloss.mc24.client.registry.ClientRegistries;
 import generaloss.mc24.server.network.packet2s.ServerInfoRequestPacket2S;
@@ -25,8 +27,11 @@ public class TitleScreen extends IScreen {
     private float yaw;
 
     private TextField serverAddressField;
+    private TextField nicknameField;
+    private TextField passwordField;
     private String serverInfo = "Server Info: (press 'I' to ping server)";
     private String disconnectMessage = "";
+    private String accountStatus = "Account status: ";
 
     public TitleScreen(Main context) {
         super(context, "title");
@@ -55,6 +60,12 @@ public class TitleScreen extends IScreen {
     public void init() {
         this.serverAddressField = new TextField(10, 300, super.context().registries().FONTS.get("default"));
         this.serverAddressField.setHint("localhost:22854");
+
+        this.nicknameField = new TextField(10, 400, super.context().registries().FONTS.get("default"));
+        this.nicknameField.setHint("nickname");
+
+        this.passwordField = new TextField(10, 350, super.context().registries().FONTS.get("default"));
+        this.passwordField.setHint("password");
     }
 
     @Override
@@ -78,6 +89,19 @@ public class TitleScreen extends IScreen {
         camera.rotation().setRotation(yaw, 15F, 0F);
         camera.update();
         // start session
+        if(Key.LCTRL.pressed() && Key.R.down()) {
+            final Response response = Request.sendCreateAccount(nicknameField.getText(), passwordField.getText());
+            accountStatus = "Register status: " + response.getCode() + ", " + response.readString();
+        }
+        if(Key.LCTRL.pressed() && Key.L.down()) {
+            final String nickname = nicknameField.getText();
+            final Response response = Request.sendLogin(nickname, passwordField.getText());
+            if(response.getCode().noError()){
+                super.context().session().set(response.readUUID(), nickname);
+                System.out.println("[INFO]: Logged in as '" + nickname + "'");
+            }
+            accountStatus = "Login status: " + response.getCode() + ", " + response.readString();
+        }
         if(Key.ENTER.down()){
             final String[] serverAddress = serverAddressField.getText().split(":");
             try{
@@ -132,18 +156,28 @@ public class TitleScreen extends IScreen {
         position += font.getLineAdvanceScaled();
         font.drawText("'F11' - fullscreen", 10F, position);
         position += font.getLineAdvanceScaled();
-        font.drawText("'K' - place stairs (ingame)", 10F, position);
+        font.drawText("'1' - place stairs (ingame)", 10F, position);
         position += font.getLineAdvanceScaled();
-        font.drawText("'L' - place torches (ingame)", 10F, position);
+        font.drawText("'2' - place torches (ingame)", 10F, position);
+        position += font.getLineAdvanceScaled();
+        font.drawText("'3' - place blue torches (ingame)", 10F, position);
+        position += font.getLineAdvanceScaled();
+        font.drawText("'Ctrl + R' - register account", 10F, position);
+        position += font.getLineAdvanceScaled();
+        font.drawText("'Ctrl + L' - login account", 10F, position);
         position += font.getLineAdvanceScaled();
         font.drawText("'ESCAPE' - quit / to main menu", 10F, position);
         position += font.getLineAdvanceScaled();
         font.drawText(serverInfo, 10F, position);
         position += font.getLineAdvanceScaled();
         font.drawText(disconnectMessage, 10F, position);
+        position += font.getLineAdvanceScaled();
+        font.drawText(accountStatus, 10F, position);
 
         // server address
         serverAddressField.render();
+        nicknameField.render();
+        passwordField.render();
     }
 
     @Override

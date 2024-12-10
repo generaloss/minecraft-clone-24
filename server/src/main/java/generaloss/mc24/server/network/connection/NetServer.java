@@ -29,6 +29,7 @@ public class NetServer {
         );
         this.tcpServer = new TcpServer()
             .setOnConnect(this::onConnect)
+            .setOnDisconnect(this::onDisconnect)
             .setOnReceive(this::onReceive);
     }
 
@@ -43,6 +44,12 @@ public class NetServer {
 
     public void onConnect(TcpConnection tcpConnection) {
         tcpConnection.attach(new ServerConnectionLogin(server, tcpConnection));
+    }
+
+    public void onDisconnect(TcpConnection tcpConnection) {
+        if(tcpConnection.attachment() instanceof ServerConnectionGame protocolGame) {
+            System.out.println("[INFO]: '" + protocolGame.session().getNickname() + "' leave the game.");
+        }
     }
 
     public void onReceive(TcpConnection tcpConnection, byte[] bytes) {
