@@ -39,6 +39,11 @@ public class RequestListener implements Closeable {
         return key;
     }
 
+    public boolean isClosed() {
+        return tcpServer.isClosed();
+    }
+
+
     private void onConnect(TcpConnection tcpConnection) {
         tcpConnection.attach(new Connection(this, tcpConnection));
         tcpConnection.send(new PublicKeyPacket2C(key.getPublic()));

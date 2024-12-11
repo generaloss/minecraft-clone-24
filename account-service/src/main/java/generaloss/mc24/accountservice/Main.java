@@ -25,7 +25,7 @@ public class Main {
         final CommandLineController commandLineCtrl = new CommandLineController();
         final FastReader reader = new FastReader();
         // loop
-        while(!commandLineCtrl.isCloseRequest() && !Thread.interrupted()) {
+        while(!commandLineCtrl.isCloseRequest() && !Thread.interrupted() && !requestListener.isClosed()) {
             if(!reader.hasNext()){
                 Thread.yield();
                 continue;

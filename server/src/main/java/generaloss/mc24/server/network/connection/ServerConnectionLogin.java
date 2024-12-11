@@ -4,6 +4,7 @@ import generaloss.mc24.accountservice.network.Request;
 import generaloss.mc24.accountservice.network.Response;
 import generaloss.mc24.server.Server;
 import generaloss.mc24.server.ServerPropertiesHolder;
+import generaloss.mc24.server.SharedConstants;
 import generaloss.mc24.server.network.AccountSession;
 import generaloss.mc24.server.network.packet2c.DisconnectPacket2C;
 import generaloss.mc24.server.network.packet2c.PublicKeyPacket2C;
@@ -59,12 +60,12 @@ public class ServerConnectionLogin extends ServerConnection implements IServerPr
     @Override
     public void handleSessionID(SessionIDPacket2S packet) {
         // validate session
-        final Response hasSessionResponse = Request.sendHasSession(packet.getSessionID());
+        final Response hasSessionResponse = Request.sendHasSession(SharedConstants.ACCOUNTS_HOST, packet.getSessionID());
         if(!hasSessionResponse.getCode().noError() || !hasSessionResponse.readBoolean()){
             super.sendPacket(new DisconnectPacket2C("session expired"));
         }else{
             final UUID sessionID = packet.getSessionID();
-            final Response sessionInfoResponse = Request.sendGetSessionInfo(sessionID);
+            final Response sessionInfoResponse = Request.sendGetSessionInfo(SharedConstants.ACCOUNTS_HOST, sessionID);
             if(sessionInfoResponse.getCode().noError()) {
                 // set game protocol
                 final String nickname = sessionInfoResponse.readString();

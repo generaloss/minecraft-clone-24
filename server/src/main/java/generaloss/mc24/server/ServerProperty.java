@@ -24,8 +24,8 @@ public class ServerProperty extends AbstractProperty {
 
     static {
         register("port", 0);
-        register("motd", Server.DEFAULT_MOTD);
-        register("version", Server.VERSION);
+        register("motd", SharedConstants.DEFAULT_MOTD);
+        register("version", SharedConstants.VERSION);
         register("dedicated", true);
     }
 

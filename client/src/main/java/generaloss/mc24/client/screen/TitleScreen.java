@@ -4,6 +4,7 @@ import generaloss.mc24.accountservice.network.Request;
 import generaloss.mc24.accountservice.network.Response;
 import generaloss.mc24.client.Main;
 import generaloss.mc24.client.registry.ClientRegistries;
+import generaloss.mc24.server.SharedConstants;
 import generaloss.mc24.server.network.packet2s.ServerInfoRequestPacket2S;
 import jpize.app.Jpize;
 import jpize.audio.util.AlMusic;
@@ -29,7 +30,7 @@ public class TitleScreen extends IScreen {
     private TextField serverAddressField;
     private TextField nicknameField;
     private TextField passwordField;
-    private String serverInfo = "Server Info: (press 'I' to ping server)";
+    private String serverInfo = "Server Info: (press 'Ctrl + I' to ping server)";
     private String disconnectMessage = "";
     private String accountStatus = "Account status: ";
 
@@ -90,12 +91,12 @@ public class TitleScreen extends IScreen {
         camera.update();
         // start session
         if(Key.LCTRL.pressed() && Key.R.down()) {
-            final Response response = Request.sendCreateAccount(nicknameField.getText(), passwordField.getText());
+            final Response response = Request.sendCreateAccount(SharedConstants.ACCOUNTS_HOST, nicknameField.getText(), passwordField.getText());
             accountStatus = "Register status: " + response.getCode() + ", " + response.readString();
         }
         if(Key.LCTRL.pressed() && Key.L.down()) {
             final String nickname = nicknameField.getText();
-            final Response response = Request.sendLogin(nickname, passwordField.getText());
+            final Response response = Request.sendLogin(SharedConstants.ACCOUNTS_HOST, nickname, passwordField.getText());
             if(response.getCode().noError()){
                 super.context().session().set(response.readUUID(), nickname);
                 System.out.println("[INFO]: Logged in as '" + nickname + "'");
@@ -111,7 +112,7 @@ public class TitleScreen extends IScreen {
                 serverInfo = "Server Info: Invalid address (press 'I' to ping server)";
             }
         }
-        if(Key.I.down()) {
+        if(Key.LCTRL.pressed() && Key.I.down()) {
             final String[] serverAddress = serverAddressField.getText().split(":");
             try{
                 final int port = Integer.parseInt(serverAddress[1]);
@@ -120,7 +121,7 @@ public class TitleScreen extends IScreen {
                         System.currentTimeMillis()
                 ));
             }catch(NumberFormatException | ArrayIndexOutOfBoundsException | IllegalStateException e){
-                serverInfo = "Server Info: Invalid address (press 'I' to ping server)";
+                serverInfo = "Server Info: Invalid address (press 'Ctrl + I' to ping server)";
             }
         }
         // exit

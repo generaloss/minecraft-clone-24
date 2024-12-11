@@ -16,8 +16,6 @@ import java.util.UUID;
 
 public class Request implements PacketHandler {
 
-    private static final String HOST = "mineclone.ignorelist.com";
-
     private final RequestType requestType;
     private final byte[] requestData;
     private final Response response;
@@ -68,44 +66,44 @@ public class Request implements PacketHandler {
     }
 
 
-    public static Response send(RequestType requestType, DataStreamWriter dataFactory) {
-        final Request request = new Request(HOST, requestType, DataStreamWriter.writeBytes(dataFactory));
-        TimeUtils.waitFor(request::isConnectionClosed, 1000);
+    public static Response send(String host, RequestType requestType, DataStreamWriter dataFactory) {
+        final Request request = new Request(host, requestType, DataStreamWriter.writeBytes(dataFactory));
+        TimeUtils.waitFor(request::isConnectionClosed, 5000);
         return request.getResponse();
     }
 
 
-    public static Response sendCreateAccount(String nickname, String password) { // bool
-        return Request.send(RequestType.CREATE_ACCOUNT, stream -> {
+    public static Response sendCreateAccount(String host, String nickname, String password) { // bool
+        return Request.send(host, RequestType.CREATE_ACCOUNT, stream -> {
             stream.writeStringUTF(nickname);
             stream.writeStringUTF(password);
         });
     }
 
-    public static Response sendDeleteAccount(String nickname, String password) { // bool
-        return Request.send(RequestType.DELETE_ACCOUNT, stream -> {
+    public static Response sendDeleteAccount(String host, String nickname, String password) { // bool
+        return Request.send(host, RequestType.DELETE_ACCOUNT, stream -> {
             stream.writeStringUTF(nickname);
             stream.writeStringUTF(password);
         });
     }
 
-    public static Response sendLogin(String nickname, String password) { // sessionID
-        return Request.send(RequestType.LOG_IN, stream -> {
+    public static Response sendLogin(String host, String nickname, String password) { // sessionID
+        return Request.send(host, RequestType.LOG_IN, stream -> {
             stream.writeStringUTF(nickname);
             stream.writeStringUTF(password);
         });
     }
 
-    public static Response sendLogout(UUID uuid) { // bool
-        return Request.send(RequestType.LOG_OUT, stream -> stream.writeUUID(uuid));
+    public static Response sendLogout(String host, UUID uuid) { // bool
+        return Request.send(host, RequestType.LOG_OUT, stream -> stream.writeUUID(uuid));
     }
 
-    public static Response sendHasSession(UUID uuid) { // bool
-        return Request.send(RequestType.HAS_SESSION, stream -> stream.writeUUID(uuid));
+    public static Response sendHasSession(String host, UUID uuid) { // bool
+        return Request.send(host, RequestType.HAS_SESSION, stream -> stream.writeUUID(uuid));
     }
 
-    public static Response sendGetSessionInfo(UUID uuid) { // nickname, creation_date
-        return Request.send(RequestType.GET_SESSION_INFO, stream -> stream.writeUUID(uuid));
+    public static Response sendGetSessionInfo(String host, UUID uuid) { // nickname, creation_date
+        return Request.send(host, RequestType.GET_SESSION_INFO, stream -> stream.writeUUID(uuid));
     }
 
 }
