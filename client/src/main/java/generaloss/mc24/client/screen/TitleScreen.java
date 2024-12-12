@@ -89,11 +89,12 @@ public class TitleScreen extends IScreen {
         yaw -= Jpize.getDeltaTime() * 3F;
         camera.rotation().setRotation(yaw, 15F, 0F);
         camera.update();
-        // start session
+        // register
         if(Key.LCTRL.pressed() && Key.R.down()) {
             final Response response = Request.sendCreateAccount(SharedConstants.ACCOUNTS_HOST, nicknameField.getText(), passwordField.getText());
             accountStatus = "Register status: " + response.getCode() + ", " + response.readString();
         }
+        // login
         if(Key.LCTRL.pressed() && Key.L.down()) {
             final String nickname = nicknameField.getText();
             final Response response = Request.sendLogin(SharedConstants.ACCOUNTS_HOST, nickname, passwordField.getText());
@@ -103,6 +104,7 @@ public class TitleScreen extends IScreen {
             }
             accountStatus = "Login status: " + response.getCode() + ", " + response.readString();
         }
+        // join
         if(Key.ENTER.down()){
             final String[] serverAddress = serverAddressField.getText().split(":");
             try{
@@ -112,14 +114,13 @@ public class TitleScreen extends IScreen {
                 serverInfo = "Server Info: Invalid address (press 'Ctrl + I' to ping server)";
             }
         }
+        // ping server
         if(Key.LCTRL.pressed() && Key.I.down()) {
             final String[] serverAddress = serverAddressField.getText().split(":");
             try{
                 final int port = Integer.parseInt(serverAddress[1]);
                 super.context().connection().connect(serverAddress[0], port);
-                super.context().connection().sendPacket(new ServerInfoRequestPacket2S(
-                        System.currentTimeMillis()
-                ));
+                super.context().connection().sendPacket(new ServerInfoRequestPacket2S(System.currentTimeMillis()));
             }catch(NumberFormatException | ArrayIndexOutOfBoundsException | IllegalStateException e){
                 serverInfo = "Server Info: Invalid address (press 'Ctrl + I' to ping server)";
             }
@@ -140,16 +141,17 @@ public class TitleScreen extends IScreen {
     @Override
     public void render() {
         // skybox
-        //skybox.render(camera);
+        skybox.render(camera);
 
         // overlay
         ScreenQuadShader.bind(overlayTexture);
         ScreenQuadMesh.render();
 
-        // hints
+        // font init
         final Font font = super.context().registries().FONTS.get("default");
         final FontRenderOptions fontOptions = font.getRenderOptions();
 
+        // hints
         float position = 10F;
         font.drawText("Press 'ENTER' for start.", 10F, position);
         position += font.getLineAdvanceScaled();
