@@ -109,7 +109,7 @@ public class TitleScreen extends IScreen {
                 final int port = Integer.parseInt(serverAddress[1]);
                 context().connectSession(serverAddress[0], port);
             }catch(NumberFormatException | ArrayIndexOutOfBoundsException | IllegalStateException e){
-                serverInfo = "Server Info: Invalid address (press 'I' to ping server)";
+                serverInfo = "Server Info: Invalid address (press 'Ctrl + I' to ping server)";
             }
         }
         if(Key.LCTRL.pressed() && Key.I.down()) {
@@ -140,7 +140,7 @@ public class TitleScreen extends IScreen {
     @Override
     public void render() {
         // skybox
-        skybox.render(camera);
+        //skybox.render(camera);
 
         // overlay
         ScreenQuadShader.bind(overlayTexture);
