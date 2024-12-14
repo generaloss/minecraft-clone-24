@@ -34,4 +34,8 @@ public class SessionDispatcher {
         return sessionAccounts.get(sessionID);
     }
 
+    public UUID getSessionID(Account account) {
+        return sessionIDs.get(account);
+    }
+
 }

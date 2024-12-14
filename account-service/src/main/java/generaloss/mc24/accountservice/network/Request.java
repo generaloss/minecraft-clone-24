@@ -94,8 +94,11 @@ public class Request implements PacketHandler {
         });
     }
 
-    public static Response sendLogout(String host, UUID uuid) { // bool
-        return Request.send(host, RequestType.LOG_OUT, stream -> stream.writeUUID(uuid));
+    public static Response sendLogout(String host, String nickname, String password) { // bool
+        return Request.send(host, RequestType.LOG_OUT, stream -> {
+            stream.writeStringUTF(nickname);
+            stream.writeStringUTF(password);
+        });
     }
 
     public static Response sendHasSession(String host, UUID uuid) { // bool

@@ -1,6 +1,7 @@
 package generaloss.mc24.accountservice.network;
 
-import generaloss.mc24.accountservice.Main;
+import generaloss.mc24.accountservice.Account;
+import generaloss.mc24.accountservice.SessionDispatcher;
 import generaloss.mc24.accountservice.network.packet.PublicKeyPacket2C;
 import generaloss.mc24.accountservice.network.packet.EncodeKeyPacket2S;
 import generaloss.mc24.accountservice.network.packet.RequestPacket2S;
@@ -8,26 +9,29 @@ import jpize.util.io.ExtDataInputStream;
 import jpize.util.net.tcp.TcpConnection;
 import jpize.util.net.tcp.TcpServer;
 import jpize.util.net.tcp.packet.PacketDispatcher;
+import jpize.util.res.Resource;
 import jpize.util.security.KeyRSA;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.util.UUID;
 
 public class RequestListener implements Closeable {
 
-    public static final int PORT = 8888;
+    public static final int PORT = 54588;
 
-    private final Main context;
     private final KeyRSA key;
+    private final SessionDispatcher sessionDispatcher;
     private final PacketDispatcher packetDispatcher;
     private final TcpServer tcpServer;
 
-    public RequestListener(Main context) {
-        this.context = context;
+    public RequestListener() {
         this.key = new KeyRSA(1024);
-
+        this.sessionDispatcher = new SessionDispatcher();
         this.packetDispatcher = new PacketDispatcher()
             .register(EncodeKeyPacket2S.class, RequestPacket2S.class);
+
+        Resource.external("./accounts/").mkdir();
 
         this.tcpServer = new TcpServer()
             .setOnConnect(this::onConnect)
@@ -64,18 +68,87 @@ public class RequestListener implements Closeable {
     public void onRequest(Connection connection, RequestType type, ExtDataInputStream stream) {
         try{
             switch(type){
-                case CREATE_ACCOUNT   -> context.createAccount(connection, stream);
-                case DELETE_ACCOUNT   -> context.deleteAccount(connection, stream);
-                case LOG_IN           -> context.logInAccount(connection, stream);
-                case LOG_OUT          -> context.logOutAccount(connection, stream);
-                case HAS_SESSION      -> context.hasSession(connection, stream);
-                case GET_SESSION_INFO -> context.getSessionInfo(connection, stream);
+                case CREATE_ACCOUNT   -> this.createAccount(connection, stream);
+                case DELETE_ACCOUNT   -> this.deleteAccount(connection, stream);
+                case LOG_IN           -> this.logInAccount(connection, stream);
+                case LOG_OUT          -> this.logOutAccount(connection, stream);
+                case HAS_SESSION      -> this.hasSession(connection, stream);
+                case GET_SESSION_INFO -> this.getSessionInfo(connection, stream);
             }
         }catch(IOException e){
             connection.sendResponse(ResponseCode.ERROR, "Invalid request format.");
         }catch(IllegalArgumentException e) {
             connection.sendResponse(ResponseCode.ERROR, e.getMessage());
         }
+    }
+
+    public void createAccount(Connection connection, ExtDataInputStream stream) throws IOException, IllegalArgumentException {
+        // (nickname, password) -> (bool)
+        Account.create(stream.readStringUTF(), stream.readStringUTF());
+        connection.sendResponse(ResponseCode.NO_ERROR, "Account created successfully.");
+    }
+
+    public void deleteAccount(Connection connection, ExtDataInputStream stream) throws IOException, IllegalArgumentException {
+        // (nickname, password) -> (bool)
+        final String nickname = stream.readStringUTF();
+        final String password = stream.readStringUTF();
+
+        final Account account = Account.load(nickname);
+        if(!account.getPassword().equals(password))
+            throw new IllegalArgumentException("Wrong username or password.");
+
+        Account.delete(account.getNickname());
+        connection.sendResponse(ResponseCode.NO_ERROR, "Account deleted successfully.");
+    }
+
+    public void logInAccount(Connection connection, ExtDataInputStream stream) throws IOException, IllegalArgumentException {
+        // (nickname, password) -> (sessionID)
+        final String nickname = stream.readStringUTF();
+        final String password = stream.readStringUTF();
+
+        final Account account = Account.load(nickname);
+        if(!account.getPassword().equals(password))
+            throw new IllegalArgumentException("Wrong username or password.");
+
+        final UUID sessionID = sessionDispatcher.logIn(account);
+        connection.sendResponse(ResponseCode.NO_ERROR, sessionID);
+    }
+
+    public void logOutAccount(Connection connection, ExtDataInputStream stream) throws IOException, IllegalArgumentException {
+        // (nickname, password) -> (bool)
+        final String nickname = stream.readStringUTF();
+        final String password = stream.readStringUTF();
+
+        final Account account = Account.load(nickname);
+        if(!account.getPassword().equals(password))
+            throw new IllegalArgumentException("Wrong username or password.");
+
+        final UUID sessionID = sessionDispatcher.getSessionID(account);
+        if(sessionID == null)
+            throw new IllegalArgumentException("Session not found.");
+
+        sessionDispatcher.logOut(sessionID);
+        connection.sendResponse(ResponseCode.NO_ERROR, "Logged out successfully.");
+    }
+
+    public void hasSession(Connection connection, ExtDataInputStream stream) throws IOException, IllegalArgumentException {
+        // (sessionID) -> (bool)
+        final UUID sessionID = stream.readUUID();
+        final Account account = sessionDispatcher.getSessionAccount(sessionID);
+        connection.sendResponse(ResponseCode.NO_ERROR, account != null);
+    }
+
+    public void getSessionInfo(Connection connection, ExtDataInputStream inStream) throws IOException, IllegalArgumentException {
+        // (sessionID) -> (nickname, creation_date)
+        final UUID sessionID = inStream.readUUID();
+        final Account account = sessionDispatcher.getSessionAccount(sessionID);
+        if(account == null)
+            throw new IllegalArgumentException("Session does not exist.");
+
+        connection.sendResponse(ResponseCode.NO_ERROR, outStream -> {
+            outStream.writeStringUTF(account.getNickname());
+            outStream.writeStringUTF(account.getCreationDate());
+        });
     }
 
 }
