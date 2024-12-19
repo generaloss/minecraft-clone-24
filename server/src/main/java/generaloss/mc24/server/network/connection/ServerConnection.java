@@ -2,16 +2,16 @@ package generaloss.mc24.server.network.connection;
 
 import generaloss.mc24.server.Server;
 import generaloss.mc24.server.network.protocol.IServerProtocol;
-import jpize.util.net.tcp.TcpConnection;
+import jpize.util.net.tcp.TCPConnection;
 import jpize.util.net.tcp.packet.IPacket;
-import jpize.util.security.KeyAES;
+import jpize.util.security.AESKey;
 
 public abstract class ServerConnection implements IServerProtocol {
 
     private final Server server;
-    private final TcpConnection tcpConnection;
+    private final TCPConnection tcpConnection;
 
-    public ServerConnection(Server server, TcpConnection tcpConnection) {
+    public ServerConnection(Server server, TCPConnection tcpConnection) {
         this.server = server;
         this.tcpConnection = tcpConnection;
     }
@@ -24,7 +24,7 @@ public abstract class ServerConnection implements IServerProtocol {
         return server;
     }
 
-    public TcpConnection tcpConnection() {
+    public TCPConnection tcpConnection() {
         return tcpConnection;
     }
 
@@ -37,7 +37,7 @@ public abstract class ServerConnection implements IServerProtocol {
         tcpConnection.send(packet);
     }
 
-    public void encode(KeyAES key) {
+    public void encode(AESKey key) {
         tcpConnection.encode(key);
     }
 

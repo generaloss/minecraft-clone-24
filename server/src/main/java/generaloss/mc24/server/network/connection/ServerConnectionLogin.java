@@ -14,8 +14,8 @@ import generaloss.mc24.server.network.packet2s.LoginRequestPacket2S;
 import generaloss.mc24.server.network.packet2s.ServerInfoRequestPacket2S;
 import generaloss.mc24.server.network.packet2s.SessionIDPacket2S;
 import generaloss.mc24.server.network.protocol.IServerProtocolLogin;
-import jpize.util.net.tcp.TcpConnection;
-import jpize.util.security.KeyAES;
+import jpize.util.net.tcp.TCPConnection;
+import jpize.util.security.AESKey;
 import jpize.util.security.PrivateRSA;
 import jpize.util.security.PublicRSA;
 
@@ -23,7 +23,7 @@ import java.util.UUID;
 
 public class ServerConnectionLogin extends ServerConnection implements IServerProtocolLogin {
 
-    public ServerConnectionLogin(Server server, TcpConnection tcpConnection) {
+    public ServerConnectionLogin(Server server, TCPConnection tcpConnection) {
         super(server, tcpConnection);
     }
 
@@ -53,7 +53,7 @@ public class ServerConnectionLogin extends ServerConnection implements IServerPr
     public void handleConnectionKey(EncodeKeyPacket2S packet) {
         final PrivateRSA privateKey = super.server().net().getEncryptionKey().getPrivate();
         final byte[] keyBytes = privateKey.decrypt(packet.getEncryptedKeyBytes());
-        final KeyAES key = new KeyAES(keyBytes);
+        final AESKey key = new AESKey(keyBytes);
         super.encode(key);
     }
 

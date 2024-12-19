@@ -7,14 +7,14 @@ import generaloss.mc24.server.network.packet2c.ServerInfoResponsePacket2C;
 import generaloss.mc24.server.network.packet2s.EncodeKeyPacket2S;
 import generaloss.mc24.server.network.packet2s.SessionIDPacket2S;
 import generaloss.mc24.server.network.protocol.IClientProtocolLogin;
-import jpize.util.net.tcp.TcpConnection;
-import jpize.util.security.KeyAES;
+import jpize.util.net.tcp.TCPConnection;
+import jpize.util.security.AESKey;
 
 import java.util.UUID;
 
 public class ClientProtocolLogin extends ClientProtocol implements IClientProtocolLogin {
 
-    public ClientProtocolLogin(Main context, TcpConnection tcpConnection) {
+    public ClientProtocolLogin(Main context, TCPConnection tcpConnection) {
         super(context, tcpConnection);
     }
 
@@ -29,7 +29,7 @@ public class ClientProtocolLogin extends ClientProtocol implements IClientProtoc
     @Override
     public void handlePublicKey(PublicKeyPacket2C packet) {
         // encode connection
-        final KeyAES key = new KeyAES(128);
+        final AESKey key = new AESKey(128);
         final byte[] keyBytes = key.getKey().getEncoded();
         final byte[] encryptedKeyBytes = packet.getPublicKey().encrypt(keyBytes);
         super.sendPacket(new EncodeKeyPacket2S(encryptedKeyBytes));

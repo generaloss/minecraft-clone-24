@@ -4,16 +4,16 @@ import generaloss.mc24.client.Main;
 import generaloss.mc24.client.screen.TitleScreen;
 import generaloss.mc24.server.network.packet2c.DisconnectPacket2C;
 import generaloss.mc24.server.network.protocol.IClientProtocol;
-import jpize.util.net.tcp.TcpConnection;
+import jpize.util.net.tcp.TCPConnection;
 import jpize.util.net.tcp.packet.IPacket;
-import jpize.util.security.KeyAES;
+import jpize.util.security.AESKey;
 
 public abstract class ClientProtocol implements IClientProtocol {
 
     private final Main context;
-    private final TcpConnection tcpConnection;
+    private final TCPConnection tcpConnection;
 
-    public ClientProtocol(Main context, TcpConnection tcpConnection) {
+    public ClientProtocol(Main context, TCPConnection tcpConnection) {
         this.context = context;
         this.tcpConnection = tcpConnection;
     }
@@ -30,7 +30,7 @@ public abstract class ClientProtocol implements IClientProtocol {
         tcpConnection.send(packet);
     }
 
-    public void encode(KeyAES key) {
+    public void encode(AESKey key) {
         tcpConnection.encode(key);
     }
 

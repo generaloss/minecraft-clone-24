@@ -6,9 +6,9 @@ import generaloss.mc24.accountservice.network.packet.RequestPacket2S;
 import jpize.util.Utils;
 import jpize.util.io.DataStreamWriter;
 import jpize.util.io.ExtDataInputStream;
-import jpize.util.net.tcp.TcpConnection;
+import jpize.util.net.tcp.TCPConnection;
 import jpize.util.net.tcp.packet.PacketHandler;
-import jpize.util.security.KeyAES;
+import jpize.util.security.AESKey;
 import jpize.util.security.PrivateRSA;
 
 import java.util.UUID;
@@ -16,9 +16,9 @@ import java.util.UUID;
 public class Connection implements PacketHandler {
 
     private final RequestListener requestListener;
-    private final TcpConnection tcpConnection;
+    private final TCPConnection tcpConnection;
 
-    protected Connection(RequestListener requestListener, TcpConnection tcpConnection) {
+    protected Connection(RequestListener requestListener, TCPConnection tcpConnection) {
         this.requestListener = requestListener;
         this.tcpConnection = tcpConnection;
     }
@@ -46,7 +46,7 @@ public class Connection implements PacketHandler {
     public void handleConnectionKey(EncodeKeyPacket2S packet) {
         final PrivateRSA privateKey = requestListener.getKey().getPrivate();
         final byte[] keyBytes = privateKey.decrypt(packet.getEncryptedKeyBytes());
-        final KeyAES key = new KeyAES(keyBytes);
+        final AESKey key = new AESKey(keyBytes);
         tcpConnection.encode(key);
     }
 

@@ -5,11 +5,11 @@ import generaloss.mc24.accountservice.network.packet.ResponsePacket2C;
 import generaloss.mc24.accountservice.network.packet.EncodeKeyPacket2S;
 import generaloss.mc24.accountservice.network.packet.RequestPacket2S;
 import jpize.util.io.DataStreamWriter;
-import jpize.util.net.tcp.TcpClient;
-import jpize.util.net.tcp.TcpConnection;
+import jpize.util.net.tcp.TCPClient;
+import jpize.util.net.tcp.TCPConnection;
 import jpize.util.net.tcp.packet.PacketDispatcher;
 import jpize.util.net.tcp.packet.PacketHandler;
-import jpize.util.security.KeyAES;
+import jpize.util.security.AESKey;
 import jpize.util.time.TimeUtils;
 
 import java.util.UUID;
@@ -21,7 +21,7 @@ public class Request implements PacketHandler {
     private final Response response;
 
     private final PacketDispatcher packetDispatcher;
-    private final TcpClient tcpClient;
+    private final TCPClient tcpClient;
 
     private Request(String host, RequestType requestType, byte[] requestData) {
         this.requestType = requestType;
@@ -31,7 +31,7 @@ public class Request implements PacketHandler {
         this.packetDispatcher = new PacketDispatcher();
         this.packetDispatcher.register(PublicKeyPacket2C.class, ResponsePacket2C.class);
 
-        this.tcpClient = new TcpClient();
+        this.tcpClient = new TCPClient();
         this.tcpClient.setOnReceive(this::onReceive);
         this.tcpClient.connect(host, RequestListener.PORT);
     }
@@ -45,13 +45,13 @@ public class Request implements PacketHandler {
     }
 
 
-    private void onReceive(TcpConnection tcpConnection, byte[] bytes) {
+    private void onReceive(TCPConnection tcpConnection, byte[] bytes) {
         packetDispatcher.readPacket(bytes, this);
         packetDispatcher.handlePackets();
     }
 
     public void handlePublicKey(PublicKeyPacket2C packet) {
-        final KeyAES key = new KeyAES(128);
+        final AESKey key = new AESKey(128);
         final byte[] keyBytes = key.getKey().getEncoded();
         final byte[] encryptedKeyBytes = packet.getPublicKey().encrypt(keyBytes);
         tcpClient.send(new EncodeKeyPacket2S(encryptedKeyBytes));

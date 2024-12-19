@@ -6,11 +6,11 @@ import generaloss.mc24.accountservice.network.packet.PublicKeyPacket2C;
 import generaloss.mc24.accountservice.network.packet.EncodeKeyPacket2S;
 import generaloss.mc24.accountservice.network.packet.RequestPacket2S;
 import jpize.util.io.ExtDataInputStream;
-import jpize.util.net.tcp.TcpConnection;
-import jpize.util.net.tcp.TcpServer;
+import jpize.util.net.tcp.TCPConnection;
+import jpize.util.net.tcp.TCPServer;
 import jpize.util.net.tcp.packet.PacketDispatcher;
 import jpize.util.res.Resource;
-import jpize.util.security.KeyRSA;
+import jpize.util.security.RSAKey;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -20,26 +20,26 @@ public class RequestListener implements Closeable {
 
     public static final int PORT = 54588;
 
-    private final KeyRSA key;
+    private final RSAKey key;
     private final SessionDispatcher sessionDispatcher;
     private final PacketDispatcher packetDispatcher;
-    private final TcpServer tcpServer;
+    private final TCPServer tcpServer;
 
     public RequestListener() {
-        this.key = new KeyRSA(1024);
+        this.key = new RSAKey(1024);
         this.sessionDispatcher = new SessionDispatcher();
         this.packetDispatcher = new PacketDispatcher()
             .register(EncodeKeyPacket2S.class, RequestPacket2S.class);
 
         Resource.external("./accounts/").mkdir();
 
-        this.tcpServer = new TcpServer()
+        this.tcpServer = new TCPServer()
             .setOnConnect(this::onConnect)
             .setOnReceive(this::onReceive)
             .run(PORT);
     }
 
-    public KeyRSA getKey() {
+    public RSAKey getKey() {
         return key;
     }
 
@@ -48,12 +48,12 @@ public class RequestListener implements Closeable {
     }
 
 
-    private void onConnect(TcpConnection tcpConnection) {
+    private void onConnect(TCPConnection tcpConnection) {
         tcpConnection.attach(new Connection(this, tcpConnection));
         tcpConnection.send(new PublicKeyPacket2C(key.getPublic()));
     }
 
-    private void onReceive(TcpConnection tcpConnection, byte[] bytes) {
+    private void onReceive(TCPConnection tcpConnection, byte[] bytes) {
         final Connection connection = tcpConnection.attachment();
         packetDispatcher.readPacket(bytes, connection);
         packetDispatcher.handlePackets();
