@@ -108,6 +108,7 @@ public class Main extends JpizeApplication {
     }
 
     public void disconnectSession() {
+        level.dispose();
         connection.disconnect();
         //localServer.stop();
         player.input().disable();

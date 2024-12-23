@@ -39,6 +39,10 @@ public class ChunkPacket2C extends IPacket<IClientProtocolGame> {
         stream.writeLong(positionPacked);
         stream.writeByteArray(blockStateIndices);
         stream.writeByteArray(blockLight);
+        if(blockStateIndices.length != 16 * 16 * 16)
+            System.err.println("bsi: " + blockStateIndices.length);
+        if(blockLight.length != 16 * 16 * 16 * 3)
+            System.err.println("bl: " + blockLight.length);
     }
 
     @Override
@@ -46,6 +50,10 @@ public class ChunkPacket2C extends IPacket<IClientProtocolGame> {
         positionPacked = stream.readLong();
         blockStateIndices = stream.readByteArray();
         blockLight = stream.readByteArray();
+        if(blockStateIndices.length != 16 * 16 * 16)
+            System.err.println("bsi: " + blockStateIndices.length);
+        if(blockLight.length != 16 * 16 * 16 * 3)
+            System.err.println("bl: " + blockLight.length);
     }
 
     @Override

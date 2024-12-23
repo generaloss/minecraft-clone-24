@@ -59,6 +59,10 @@ public abstract class World <C extends Chunk<? extends World<C>>> {
         this.removeChunk(chunk.position());
     }
 
+    public void clearChunks() {
+        chunks.clear();
+    }
+
 
     public C getChunkByBlock(int x, int y, int z) {
         return this.getChunk(

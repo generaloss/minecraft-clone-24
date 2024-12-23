@@ -15,7 +15,7 @@ public class SessionScreen extends IScreen {
 
     @Override
     public void show() {
-        // Gl.clearColor(0.5F, 0.7F, 1F); // blue sky color ingame
+        Gl.clearColor(0.25F, 0.35F, 0.5F); // blue sky color ingame
     }
 
     @Override

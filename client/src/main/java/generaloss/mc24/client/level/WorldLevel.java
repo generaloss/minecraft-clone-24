@@ -45,10 +45,15 @@ public class WorldLevel extends World<LevelChunk> implements Disposable {
     }
 
 
-    @Override
-    public void dispose() {
+    public void reset() {
         for(LevelChunk chunk: this.getChunks())
             chunk.freeMesh();
+        super.clearChunks();
+    }
+
+    @Override
+    public void dispose() {
+        this.reset();
         tesselator.dispose();
     }
 

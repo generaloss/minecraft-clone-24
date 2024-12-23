@@ -28,7 +28,7 @@ public class ChunkGenerator01 implements IChunkGenerator {
             final int worldZ = (chunkLocalZ + z);
 
             if(worldY > -10){
-                if(Maths.randomBoolean(0.00002F))
+                if(Maths.randomBoolean(0.0002F))
                     chunk.setBlockState(x, y, z, blocks.get("torch").getDefaultState());
                 return;
             }
