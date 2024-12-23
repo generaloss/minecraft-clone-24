@@ -1,9 +1,11 @@
 package generaloss.mc24.server.network.connection;
 
 import generaloss.mc24.server.Server;
+import generaloss.mc24.server.block.BlockState;
 import generaloss.mc24.server.chunk.Chunk;
 import generaloss.mc24.server.network.AccountSession;
 import generaloss.mc24.server.network.packet2c.ChunkPacket2C;
+import generaloss.mc24.server.network.packet2s.SetBlockStatePacket2S;
 import generaloss.mc24.server.network.protocol.IServerProtocolGame;
 import generaloss.mc24.server.world.ServerWorld;
 import jpize.util.net.tcp.TCPConnection;
@@ -20,6 +22,10 @@ public class ServerConnectionGame extends ServerConnection implements IServerPro
         System.out.println("[INFO]: '" + session.getNickname() + "' joined the game.");
     }
 
+    public AccountSession session() {
+        return session;
+    }
+
     public void sendAllChunks() {
         final Collection<Chunk<ServerWorld>> chunks = super.server()
                 .worldHolder().getWorld("overworld").getChunks();
@@ -32,8 +38,14 @@ public class ServerConnectionGame extends ServerConnection implements IServerPro
         }
     }
 
-    public AccountSession session() {
-        return session;
+
+    @Override
+    public void handleSetBlockState(SetBlockStatePacket2S packet) {
+        final Server server = super.server();
+        final ServerWorld world = server.worldHolder().getWorld("overworld");
+        final BlockState blockState = server.registries().BLOCK_STATES.get(packet.getBlockStateID());
+        world.setBlockState(packet.getX(), packet.getY(), packet.getZ(), blockState);
+        // add an stack
     }
 
 }

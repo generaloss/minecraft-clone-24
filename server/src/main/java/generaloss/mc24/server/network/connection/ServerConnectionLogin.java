@@ -54,7 +54,7 @@ public class ServerConnectionLogin extends ServerConnection implements IServerPr
         final PrivateRSA privateKey = super.server().net().getEncryptionKey().getPrivate();
         final byte[] keyBytes = privateKey.decrypt(packet.getEncryptedKeyBytes());
         final AESKey key = new AESKey(keyBytes);
-        //!super.encode(key);
+        super.encode(key);
     }
 
     @Override

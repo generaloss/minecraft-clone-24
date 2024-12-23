@@ -3,6 +3,7 @@ package generaloss.mc24.client.level;
 import generaloss.mc24.client.Main;
 import generaloss.mc24.client.chunk.ChunkTesselator;
 import generaloss.mc24.server.chunk.Chunk;
+import generaloss.mc24.server.network.packet2s.SetBlockStatePacket2S;
 import generaloss.mc24.server.world.World;
 import jpize.util.Disposable;
 import jpize.util.camera.PerspectiveCamera;
@@ -22,9 +23,12 @@ public class WorldLevel extends World<LevelChunk> implements Disposable {
             for(Chunk<?> cachedChunk: super.getBlockLightEngine().chunkCache().getChunks())
                 tesselator.tesselate((LevelChunk) cachedChunk);
         });
-        super.registerBlockStateChangedCallback((chunk, x, y, z, state) ->
-            tesselator.tesselate(chunk)
-        );
+        super.registerBlockStateChangedCallback((chunk, x, y, z, state) -> {
+            tesselator.tesselate(chunk);
+            context.connection().sendPacket(new SetBlockStatePacket2S(
+                x, y, z, context.registries().BLOCK_STATES.getID(state)
+            ));
+        });
     }
 
     public Main context() {

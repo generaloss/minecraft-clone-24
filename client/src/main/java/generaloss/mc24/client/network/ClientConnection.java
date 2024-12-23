@@ -49,8 +49,10 @@ public class ClientConnection {
     private void onDisconnect(TCPConnection tcpConnection) { }
 
     private void onReceive(TCPConnection tcpConnection, byte[] bytes) {
-        packetDispatcher.readPacket(bytes, tcpConnection.attachment());
-        packetDispatcher.handlePackets();
+        if(!packetDispatcher.readPacket(bytes, tcpConnection.attachment()))
+            System.err.println("Cannot read packet.");
+        if(packetDispatcher.handlePackets() == 0)
+            System.err.println("Cannot handle packets.");
     }
 
     public void sendPacket(IPacket<?> packet) {

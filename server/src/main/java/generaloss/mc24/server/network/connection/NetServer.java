@@ -1,10 +1,7 @@
 package generaloss.mc24.server.network.connection;
 
 import generaloss.mc24.server.Server;
-import generaloss.mc24.server.network.packet2s.EncodeKeyPacket2S;
-import generaloss.mc24.server.network.packet2s.LoginRequestPacket2S;
-import generaloss.mc24.server.network.packet2s.ServerInfoRequestPacket2S;
-import generaloss.mc24.server.network.packet2s.SessionIDPacket2S;
+import generaloss.mc24.server.network.packet2s.*;
 import generaloss.mc24.server.network.protocol.IServerProtocolGame;
 import jpize.util.net.tcp.TCPConnection;
 import jpize.util.net.tcp.TCPServer;
@@ -25,7 +22,8 @@ public class NetServer {
             ServerInfoRequestPacket2S.class,
             LoginRequestPacket2S.class,
             EncodeKeyPacket2S.class,
-            SessionIDPacket2S.class
+            SessionIDPacket2S.class,
+            SetBlockStatePacket2S.class
         );
         this.tcpServer = new TCPServer()
             .setOnConnect(this::onConnect)
@@ -57,9 +55,12 @@ public class NetServer {
         if(serverConnection == null)
             return;
 
-        packetDispatcher.readPacket(bytes, serverConnection);
+        if(!packetDispatcher.readPacket(bytes, serverConnection))
+            System.err.println("Cannot read packet.");
         try{
-            packetDispatcher.handlePackets();
+            if(packetDispatcher.handlePackets() == 0)
+                System.out.println("Cannot handle packets.");
+
         }catch(ClassCastException e){
             System.err.println("[WARN]: Received illegal packet in current protocol '" + ((serverConnection instanceof IServerProtocolGame) ? "GAME" : "LOGIN") + "'");
             tcpConnection.close();
