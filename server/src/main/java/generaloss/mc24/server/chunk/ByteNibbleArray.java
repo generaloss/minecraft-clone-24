@@ -4,8 +4,12 @@ public class ByteNibbleArray {
 
     private final byte[] array;
 
+    public ByteNibbleArray(byte[] array) {
+        this.array = array;
+    }
+
     public ByteNibbleArray() {
-        this.array = new byte[Chunk.VOLUME];
+        this(new byte[Chunk.VOLUME]);
     }
 
     public byte[] array() {

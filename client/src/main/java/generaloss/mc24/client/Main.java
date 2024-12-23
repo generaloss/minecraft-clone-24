@@ -77,7 +77,7 @@ public class Main extends JpizeApplication {
     @Override
     public void init() {
         localServer.init();
-        System.out.println("[INFO]: Init client");
+        System.out.println("[INFO]: Initialize client");
         // audio
         AlDevices.openDevice();
         // load block models
@@ -103,9 +103,8 @@ public class Main extends JpizeApplication {
         connection.connect(host, port);
         connection.sendPacket(new LoginRequestPacket2S("24.11.5"));
 
-        // player.input().enable();
-        // level.loadChunks();
-        // screens.show("session");
+        player.input().enable();
+        screens.show("session");
     }
 
     public void disconnectSession() {

@@ -32,16 +32,16 @@ public class BlockLightEngine <W extends World<C>, C extends Chunk<? extends W>>
         return chunkCache;
     }
 
-    public void increase(C chunk, int x, int y, int z, int r, int g, int b) {
+    public void increase(Chunk<?> chunk, int x, int y, int z, int r, int g, int b) {
         if(chunk == null)
             return;
         if(r > 0) increaseQueue.add(new Entry(x, y, z, 0, r));
         if(g > 0) increaseQueue.add(new Entry(x, y, z, 1, g));
         if(b > 0) increaseQueue.add(new Entry(x, y, z, 2, b));
         if(!increaseQueue.isEmpty())
-            chunkCache.cacheNeighborsFor(chunk);
+            chunkCache.cacheNeighborsFor((C) chunk);
         this.processIncrease();
-        this.invokeIncreasedCallbacks(chunk, x, y, z, r, g, b);
+        this.invokeIncreasedCallbacks((C) chunk, x, y, z, r, g, b);
     }
 
     public void processIncrease() {

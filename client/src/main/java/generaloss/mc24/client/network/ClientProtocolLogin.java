@@ -37,6 +37,8 @@ public class ClientProtocolLogin extends ClientProtocol implements IClientProtoc
         // send sessionID
         final UUID sessionID = super.context().session().getID();
         super.sendPacket(new SessionIDPacket2S(sessionID == null ? UUID.randomUUID() : sessionID));
+        // set game protocol
+        super.setProtocol(new ClientProtocolGame(super.context(), super.tcpConnection()));
     }
 
 }

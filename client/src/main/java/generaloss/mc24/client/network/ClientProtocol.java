@@ -22,8 +22,13 @@ public abstract class ClientProtocol implements IClientProtocol {
         return context;
     }
 
-    public void disconnect() {
-        tcpConnection.close();
+    public TCPConnection tcpConnection() {
+        return tcpConnection;
+    }
+
+
+    public void setProtocol(IClientProtocol protocol) {
+        tcpConnection.attach(protocol);
     }
 
     public void sendPacket(IPacket<?> packet) {
@@ -32,6 +37,10 @@ public abstract class ClientProtocol implements IClientProtocol {
 
     public void encode(AESKey key) {
         tcpConnection.encode(key);
+    }
+
+    public void disconnect() {
+        tcpConnection.close();
     }
 
 

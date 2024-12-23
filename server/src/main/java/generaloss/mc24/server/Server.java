@@ -26,8 +26,6 @@ public class Server implements Tickable {
         this.properties.set("dedicated", dedicated);
         this.net = new NetServer(this);
         this.worldHolder = new WorldHolder();
-
-        this.worldHolder.putWorld(new ServerWorld(this, "overworld", new ChunkGenerator01()));
     }
 
     public NetServer net() {
@@ -53,7 +51,7 @@ public class Server implements Tickable {
 
 
     public void init() {
-        System.out.println("[INFO]: Init server");
+        System.out.println("[INFO]: Initialize server");
         // load blocks
         for(Resource blockRes: registries.getDefaultPack().getResource("blocks/").listResources())
             registries.BLOCKS.register(blockRes.path());
@@ -66,6 +64,9 @@ public class Server implements Tickable {
 
         System.out.println("[INFO]: Loaded " + registries.BLOCKS.size() + " blocks");
         System.out.println("[INFO]: Created " + registries.BLOCK_STATES.size() + " block states");
+
+        if(properties.getBool("dedicated"))
+            worldHolder.putWorld(new ServerWorld(this, "overworld", new ChunkGenerator01()));
     }
     
     public void run(int port) {

@@ -6,7 +6,7 @@
     <parent>
         <groupId>io.github.generaloss</groupId>
         <artifactId>minecraft-clone-24</artifactId>
-        <version>24.12.6</version>
+        <version>24.12.6.010101</version>
     </parent>
 
     <artifactId>client</artifactId>
@@ -22,18 +22,18 @@
         <dependency>
             <groupId>io.github.generaloss</groupId>
             <artifactId>jpize-core</artifactId>
-            <version>24.12.6</version>
+            <version>24.12.6.0101</version>
         </dependency>
         <dependency>
             <groupId>io.github.generaloss</groupId>
             <artifactId>jpize-audio</artifactId>
-            <version>24.12.6</version>
+            <version>24.12.6.0101</version>
         </dependency>
         <!-- server -->
         <dependency>
             <groupId>io.github.generaloss</groupId>
             <artifactId>server</artifactId>
-            <version>24.12.6</version>
+            <version>24.12.6.010101</version>
         </dependency>
 
     </dependencies>

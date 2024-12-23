@@ -6,6 +6,7 @@ import generaloss.mc24.server.chunk.ChunkPos;
 import jpize.util.math.Maths;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class World <C extends Chunk<? extends World<C>>> {
 
@@ -15,7 +16,7 @@ public abstract class World <C extends Chunk<? extends World<C>>> {
     private final List<BlockLightChangedCallback<World<C>, C>> blockLightChangedCallbacks;
 
     public World() {
-        this.chunks = new HashMap<>();
+        this.chunks = new ConcurrentHashMap<>();
         this.blockLightEngine = new BlockLightEngine<>(this);
         this.blockStateChangedCallbacks = new ArrayList<>();
         this.blockLightChangedCallbacks = new ArrayList<>();

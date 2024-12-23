@@ -1,6 +1,7 @@
 package generaloss.mc24.client.network;
 
 import generaloss.mc24.client.Main;
+import generaloss.mc24.server.network.packet2c.ChunkPacket2C;
 import generaloss.mc24.server.network.packet2c.DisconnectPacket2C;
 import generaloss.mc24.server.network.packet2c.PublicKeyPacket2C;
 import generaloss.mc24.server.network.packet2c.ServerInfoResponsePacket2C;
@@ -14,7 +15,6 @@ public class ClientConnection {
     protected final Main context;
     private final TCPClient tcpClient;
     private final PacketDispatcher packetDispatcher;
-    private ClientProtocol protocol;
 
     public ClientConnection(Main context) {
         this.context = context;
@@ -25,20 +25,23 @@ public class ClientConnection {
         this.packetDispatcher = new PacketDispatcher().register(
             ServerInfoResponsePacket2C.class,
             PublicKeyPacket2C.class,
-            DisconnectPacket2C.class
+            DisconnectPacket2C.class,
+            ChunkPacket2C.class
         );
     }
 
     public void connect(String host, int port) {
         tcpClient.connect(host, port);
-        protocol = new ClientProtocolLogin(context, tcpClient.connection());
         if(!tcpClient.isConnected())
             throw new IllegalStateException("Invalid server address");
+
+        final TCPConnection tcpConnection = tcpClient.connection();
+        final ClientProtocolLogin protocol = new ClientProtocolLogin(context, tcpConnection);
+        tcpConnection.attach(protocol);
     }
 
     public void disconnect() {
         tcpClient.disconnect();
-        protocol = null;
     }
 
     private void onConnect(TCPConnection tcpConnection) { }
@@ -46,7 +49,7 @@ public class ClientConnection {
     private void onDisconnect(TCPConnection tcpConnection) { }
 
     private void onReceive(TCPConnection tcpConnection, byte[] bytes) {
-        packetDispatcher.readPacket(bytes, protocol);
+        packetDispatcher.readPacket(bytes, tcpConnection.attachment());
         packetDispatcher.handlePackets();
     }
 
