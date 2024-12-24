@@ -1,10 +1,7 @@
 package generaloss.mc24.client.network;
 
 import generaloss.mc24.client.Main;
-import generaloss.mc24.server.network.packet2c.ChunkPacket2C;
-import generaloss.mc24.server.network.packet2c.DisconnectPacket2C;
-import generaloss.mc24.server.network.packet2c.PublicKeyPacket2C;
-import generaloss.mc24.server.network.packet2c.ServerInfoResponsePacket2C;
+import generaloss.mc24.server.network.packet2c.*;
 import jpize.util.net.tcp.TCPClient;
 import jpize.util.net.tcp.TCPConnection;
 import jpize.util.net.tcp.packet.IPacket;
@@ -26,7 +23,8 @@ public class ClientConnection {
             ServerInfoResponsePacket2C.class,
             PublicKeyPacket2C.class,
             DisconnectPacket2C.class,
-            ChunkPacket2C.class
+            ChunkPacket2C.class,
+            SetBlockStatePacket2C.class
         );
     }
 

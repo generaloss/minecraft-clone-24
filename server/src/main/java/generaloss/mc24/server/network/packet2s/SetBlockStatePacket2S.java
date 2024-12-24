@@ -1,5 +1,6 @@
 package generaloss.mc24.server.network.packet2s;
 
+import generaloss.mc24.server.chunk.ChunkPos;
 import generaloss.mc24.server.network.protocol.IServerProtocolGame;
 import jpize.util.io.ExtDataInputStream;
 import jpize.util.io.ExtDataOutputStream;
@@ -9,29 +10,35 @@ import java.io.IOException;
 
 public class SetBlockStatePacket2S extends IPacket<IServerProtocolGame> {
 
-    private int x, y, z;
+    private long chunkPositionPacked;
+    private int localX, localY, localZ;
     private int blockStateID;
 
-    public SetBlockStatePacket2S(int x, int y, int z, int blockStateID) {
-        this.x = x;
-        this.y = y;
-        this.z = z;
+    public SetBlockStatePacket2S(ChunkPos chunkPosition, int localX, int localY, int localZ, int blockStateID) {
+        this.chunkPositionPacked = chunkPosition.pack();
+        this.localX = localX;
+        this.localY = localY;
+        this.localZ = localZ;
         this.blockStateID = blockStateID;
     }
 
     public SetBlockStatePacket2S() { }
 
 
-    public int getX() {
-        return x;
+    public long getChunkPositionPacked() {
+        return chunkPositionPacked;
     }
 
-    public int getY() {
-        return y;
+    public int getLocalX() {
+        return localX;
     }
 
-    public int getZ() {
-        return z;
+    public int getLocalY() {
+        return localY;
+    }
+
+    public int getLocalZ() {
+        return localZ;
     }
 
     public int getBlockStateID() {
@@ -41,14 +48,16 @@ public class SetBlockStatePacket2S extends IPacket<IServerProtocolGame> {
 
     @Override
     public void write(ExtDataOutputStream stream) throws IOException {
-        stream.writeInts(x, y, z, blockStateID);
+        stream.writeLong(chunkPositionPacked);
+        stream.writeInts(localX, localY, localZ, blockStateID);
     }
 
     @Override
     public void read(ExtDataInputStream stream) throws IOException {
-        x = stream.readInt();
-        y = stream.readInt();
-        z = stream.readInt();
+        chunkPositionPacked = stream.readLong();
+        localX = stream.readInt();
+        localY = stream.readInt();
+        localZ = stream.readInt();
         blockStateID = stream.readInt();
     }
 

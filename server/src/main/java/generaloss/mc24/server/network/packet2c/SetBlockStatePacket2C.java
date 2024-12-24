@@ -1,6 +1,5 @@
 package generaloss.mc24.server.network.packet2c;
 
-import generaloss.mc24.server.chunk.ChunkPos;
 import generaloss.mc24.server.network.protocol.IClientProtocolGame;
 import jpize.util.io.ExtDataInputStream;
 import jpize.util.io.ExtDataOutputStream;
@@ -14,8 +13,8 @@ public class SetBlockStatePacket2C extends IPacket<IClientProtocolGame> {
     private int localX, localY, localZ;
     private int blockStateID;
 
-    public SetBlockStatePacket2C(ChunkPos chunkPosition, int localX, int localY, int localZ, int blockStateID) {
-        this.chunkPositionPacked = chunkPosition.pack();
+    public SetBlockStatePacket2C(long chunkPositionPacked, int localX, int localY, int localZ, int blockStateID) {
+        this.chunkPositionPacked = chunkPositionPacked;
         this.localX = localX;
         this.localY = localY;
         this.localZ = localZ;

@@ -91,7 +91,7 @@ public abstract class World <C extends Chunk<? extends World<C>>> {
         final int localZ = (z & Chunk.SIZE_BOUND);
         final boolean success = chunk.setBlockState(localX, localY, localZ, state);
         if(success)
-            this.invokeBlockPlacedCallbacks(chunk, localX, localY, localZ, state);
+            this.invokeBlockStateChangedCallbacks(chunk, localX, localY, localZ, state);
         return success;
     }
 
@@ -126,7 +126,7 @@ public abstract class World <C extends Chunk<? extends World<C>>> {
         final int localZ = (z & Chunk.SIZE_BOUND);
         final boolean success = chunk.setBlockLightLevel(localX, localY, localZ, r, g, b);
         if(success)
-            this.invokeBlockLightCallbacks(chunk, localX, localY, localZ, r, g, b);
+            this.invokeBlockLightChangedCallbacks(chunk, localX, localY, localZ, r, g, b);
         return success;
     }
 
@@ -139,7 +139,7 @@ public abstract class World <C extends Chunk<? extends World<C>>> {
         blockStateChangedCallbacks.remove(callback);
     }
 
-    private void invokeBlockPlacedCallbacks(C chunk, int x, int y, int z, BlockState state) {
+    private void invokeBlockStateChangedCallbacks(C chunk, int x, int y, int z, BlockState state) {
         for(BlockStateChangedCallback<World<C>, C> callback: blockStateChangedCallbacks)
             callback.invoke(chunk, x, y, z, state);
     }
@@ -153,7 +153,7 @@ public abstract class World <C extends Chunk<? extends World<C>>> {
         blockLightChangedCallbacks.remove(callback);
     }
 
-    private void invokeBlockLightCallbacks(C chunk, int x, int y, int z, int r, int g, int b) {
+    private void invokeBlockLightChangedCallbacks(C chunk, int x, int y, int z, int r, int g, int b) {
         for(BlockLightChangedCallback<World<C>, C> callback: blockLightChangedCallbacks)
             callback.invoke(chunk, x, y, z, r, g, b);
     }

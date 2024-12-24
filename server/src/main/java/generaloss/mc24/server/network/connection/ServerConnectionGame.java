@@ -5,6 +5,7 @@ import generaloss.mc24.server.block.BlockState;
 import generaloss.mc24.server.chunk.Chunk;
 import generaloss.mc24.server.network.AccountSession;
 import generaloss.mc24.server.network.packet2c.ChunkPacket2C;
+import generaloss.mc24.server.network.packet2c.SetBlockStatePacket2C;
 import generaloss.mc24.server.network.packet2s.SetBlockStatePacket2S;
 import generaloss.mc24.server.network.protocol.IServerProtocolGame;
 import generaloss.mc24.server.world.ServerWorld;
@@ -44,8 +45,13 @@ public class ServerConnectionGame extends ServerConnection implements IServerPro
         final Server server = super.server();
         final ServerWorld world = server.worldHolder().getWorld("overworld");
         final BlockState blockState = server.registries().BLOCK_STATES.get(packet.getBlockStateID());
-        world.setBlockState(packet.getX(), packet.getY(), packet.getZ(), blockState);
+        world.setBlockState(packet.getLocalX(), packet.getLocalY(), packet.getLocalZ(), blockState);
         // add an stack
+        super.server().net().tcpServer().broadcast(super.tcpConnection(), new SetBlockStatePacket2C(
+            packet.getChunkPositionPacked(),
+            packet.getLocalX(), packet.getLocalY(), packet.getLocalZ(),
+            packet.getBlockStateID()
+        ));
     }
 
 }
