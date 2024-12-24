@@ -33,7 +33,7 @@ public class ClientProtocolLogin extends ClientProtocol implements IClientProtoc
         final byte[] keyBytes = key.getKey().getEncoded();
         final byte[] encryptedKeyBytes = packet.getPublicKey().encrypt(keyBytes);
         super.sendPacket(new EncodeKeyPacket2S(encryptedKeyBytes));
-        super.encode(key);
+        //!super.encode(key);
         // send sessionID
         final UUID sessionID = super.context().session().getID();
         super.sendPacket(new SessionIDPacket2S(sessionID == null ? UUID.randomUUID() : sessionID));
