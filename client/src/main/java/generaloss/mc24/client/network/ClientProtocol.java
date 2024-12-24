@@ -4,6 +4,7 @@ import generaloss.mc24.client.Main;
 import generaloss.mc24.client.screen.TitleScreen;
 import generaloss.mc24.server.network.packet2c.DisconnectPacket2C;
 import generaloss.mc24.server.network.protocol.IClientProtocol;
+import jpize.app.Jpize;
 import jpize.util.net.tcp.TCPConnection;
 import jpize.util.net.tcp.packet.IPacket;
 import jpize.util.security.AESKey;
@@ -47,7 +48,7 @@ public abstract class ClientProtocol implements IClientProtocol {
     public void handleDisconnect(DisconnectPacket2C packet) {
         tcpConnection.close();
         final TitleScreen screen = context.screens().get("title");
-        screen.onDisconnect(packet.getMessage());
+        Jpize.syncExecutor().exec(() -> screen.onDisconnect(packet.getMessage()));
     }
 
 }

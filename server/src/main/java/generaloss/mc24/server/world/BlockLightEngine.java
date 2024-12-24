@@ -1,7 +1,6 @@
 package generaloss.mc24.server.world;
 
 import generaloss.mc24.server.Directory;
-import generaloss.mc24.server.block.BlockProperty;
 import generaloss.mc24.server.block.BlockState;
 import generaloss.mc24.server.chunk.Chunk;
 import generaloss.mc24.server.chunk.ChunkCache;
@@ -16,7 +15,7 @@ public class BlockLightEngine <W extends World<C>, C extends Chunk<? extends W>>
 
     private record Entry(int x, int y, int z, int channel, int level) { }
 
-    public static final int MAX_LEVEL = 15;
+    public static final int MAX_LEVEL = Chunk.SIZE_BOUND;
 
     private final Queue<Entry> increaseQueue;
     private final ChunkCache<W, C> chunkCache;

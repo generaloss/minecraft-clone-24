@@ -50,9 +50,10 @@ public class WorldLevel extends World<LevelChunk> implements Disposable {
 
 
     public void reset() {
+        super.clearChunks();
+        tesselator.reset();
         for(LevelChunk chunk: this.getChunks())
             chunk.freeMesh();
-        super.clearChunks();
     }
 
     @Override
