@@ -27,9 +27,11 @@ public class ClientProtocolGame extends ClientProtocol implements IClientProtoco
     @Override
     public void handleSetBlockState(SetBlockStatePacket2C packet) {
         final BlockState blockState = super.context().registries().BLOCK_STATES.get(packet.getBlockStateID());
-        super.context().level().getChunk(packet.getChunkPositionPacked()).setBlockState(
+        final LevelChunk chunk = super.context().level().getChunk(packet.getChunkPositionPacked());
+        chunk.setBlockState(
             packet.getLocalX(), packet.getLocalY(), packet.getLocalZ(), blockState
         );
+        chunk.world().tesselator().tesselate(chunk);
     }
 
 }

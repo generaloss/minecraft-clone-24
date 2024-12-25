@@ -57,11 +57,18 @@ public class ChunkTesselator implements Disposable {
     public void update() {
         final Stopwatch timer = new Stopwatch().start();
         while(!taskQueue.isEmpty()) {
-            this.processTesselate(taskQueue.poll());
+            final LevelChunk chunk = taskQueue.poll();
+            if(chunk == null)
+                continue;
+            this.processTesselate(chunk);
 
             if(timer.getMillis() > Jpize.getDeltaTime() * 500)
                 break;
         }
+    }
+
+    public void reset() {
+        taskQueue.clear();
     }
 
     private BlockState getCachedBlockState(int i, int j, int k) {

@@ -135,6 +135,8 @@ public class TitleScreen extends IScreen {
     }
 
     public void onDisconnect(String message) {
+        super.context().disconnectSession();
+        super.context().screens().show("title");
         disconnectMessage = "Disconnection: " + message;
     }
 

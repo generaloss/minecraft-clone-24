@@ -108,11 +108,10 @@ public class Main extends JpizeApplication {
     }
 
     public void disconnectSession() {
-        level.dispose();
         connection.disconnect();
         //localServer.stop();
         player.input().disable();
-        level.dispose();
+        level.reset();
         System.out.println("[INFO]: Disconnect session");
     }
 
@@ -171,6 +170,7 @@ public class Main extends JpizeApplication {
 
     @Override
     public void dispose() {
+        level.dispose();
         screens.dispose();
         registries.dispose();
         AlDevices.dispose();

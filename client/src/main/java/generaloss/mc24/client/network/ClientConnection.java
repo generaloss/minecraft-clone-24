@@ -42,7 +42,9 @@ public class ClientConnection {
         tcpClient.disconnect();
     }
 
-    private void onConnect(TCPConnection tcpConnection) { }
+    private void onConnect(TCPConnection tcpConnection) {
+        tcpConnection.setTcpNoDelay(true);
+    }
 
     private void onDisconnect(TCPConnection tcpConnection) { }
 

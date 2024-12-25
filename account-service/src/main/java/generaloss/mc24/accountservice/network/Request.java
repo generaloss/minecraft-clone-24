@@ -51,7 +51,7 @@ public class Request implements PacketHandler {
     }
 
     public void handlePublicKey(PublicKeyPacket2C packet) {
-        final AESKey key = new AESKey(128);
+        final AESKey key = new AESKey(256);
         final byte[] keyBytes = key.getKey().getEncoded();
         final byte[] encryptedKeyBytes = packet.getPublicKey().encrypt(keyBytes);
         tcpClient.send(new EncodeKeyPacket2S(encryptedKeyBytes));

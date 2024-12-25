@@ -1,6 +1,5 @@
 package generaloss.mc24.server.chunk;
 
-import generaloss.mc24.server.block.Block;
 import generaloss.mc24.server.block.BlockState;
 import generaloss.mc24.server.registry.Registries;
 import generaloss.mc24.server.world.World;
