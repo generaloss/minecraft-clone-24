@@ -8,9 +8,6 @@
       <element id="module-output" name="client" />
       <element id="module-output" name="server" />
       <element id="module-output" name="account-service" />
-      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/io/github/generaloss/jpize-audio/24.12.6.0301/jpize-audio-24.12.6.0301.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/io/github/generaloss/jpize-core/24.12.6.0302/jpize-core-24.12.6.0302.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/io/github/generaloss/jpize-utils/24.12.6.03/jpize-utils-24.12.6.03.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/javazoom/jlayer/1.0.1/jlayer-1.0.1.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jcraft/jorbis/0.0.17/jorbis-0.0.17.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/annotations/23.0.0/annotations-23.0.0.jar" path-in-jar="/" />
@@ -30,6 +27,9 @@
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/lwjgl/lwjgl/3.3.5/lwjgl-3.3.5.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/lwjgl/lwjgl/3.3.5/lwjgl-3.3.5-natives-linux.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/lwjgl/lwjgl/3.3.5/lwjgl-3.3.5-natives-windows.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/io/github/generaloss/jpize-audio/24.12.8/jpize-audio-24.12.8.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/io/github/generaloss/jpize-core/24.12.8/jpize-core-24.12.8.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/io/github/generaloss/jpize-utils/24.12.8/jpize-utils-24.12.8.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>

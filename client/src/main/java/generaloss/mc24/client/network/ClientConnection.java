@@ -29,9 +29,11 @@ public class ClientConnection {
     }
 
     public void connect(String host, int port) {
-        tcpClient.connect(host, port);
-        if(!tcpClient.isConnected())
-            throw new IllegalStateException("Invalid server address");
+        try{
+            tcpClient.connect(host, port);
+        }catch(Exception e) {
+            throw new IllegalStateException("Invalid server address: " + e.getMessage());
+        }
 
         final TCPConnection tcpConnection = tcpClient.connection();
         final ClientProtocolLogin protocol = new ClientProtocolLogin(context, tcpConnection);

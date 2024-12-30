@@ -35,7 +35,7 @@ public class ClientPlayer {
         camera.rotation().setRotation(rotationInput.getTarget());
         motionInput.update(rotationInput.getTarget().getYaw());
 
-        velocity.add(motionInput.getMotionDirected().mul(Jpize.getDeltaTime()));
+        velocity.add(motionInput.getMotionDirected().mul(Jpize.getDeltaTime() * 0.2));
         velocity.mul(0.97F);
 
         camera.position().add(velocity);

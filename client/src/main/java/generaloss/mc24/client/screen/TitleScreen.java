@@ -52,7 +52,8 @@ public class TitleScreen extends IScreen {
         this.music = (AlMusic) resourceRegistry.MUSICS
             .register("menu_music", "music/beginning2.ogg")
             .getObject()
-            .setLooping(true);
+            .setLooping(true)
+            .setGain(0.1);
 
         // camera
         this.camera = new PerspectiveCamera(0.01F, 5F, 85F);

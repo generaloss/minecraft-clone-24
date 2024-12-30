@@ -28,7 +28,7 @@ public class ChunkGenerator01 implements IChunkGenerator {
             final int worldZ = (chunkLocalZ + z);
 
             if(worldY > -10){
-                if(Maths.randomBoolean(0.0002F))
+                if(Maths.randomBoolean(0.002F))
                     chunk.setBlockState(x, y, z, blocks.get("torch").getDefaultState());
                 return;
             }
@@ -36,7 +36,7 @@ public class ChunkGenerator01 implements IChunkGenerator {
             if(noise.get(worldX, worldY, worldZ) > 0F){
                 chunk.setBlockState(x, y, z, blocks.get("stone").getDefaultState());
             }else{
-                if(Maths.randomBoolean(0.00002F))
+                if(Maths.randomBoolean(0.0002F))
                     chunk.setBlockState(x, y, z, blocks.get("torch").getDefaultState());
             }
         });

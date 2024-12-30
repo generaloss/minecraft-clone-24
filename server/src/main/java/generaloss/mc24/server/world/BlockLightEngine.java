@@ -6,10 +6,10 @@ import generaloss.mc24.server.chunk.Chunk;
 import generaloss.mc24.server.chunk.ChunkCache;
 import jpize.util.math.vector.Vec3i;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class BlockLightEngine <W extends World<C>, C extends Chunk<? extends W>> {
 
@@ -22,9 +22,9 @@ public class BlockLightEngine <W extends World<C>, C extends Chunk<? extends W>>
     private final List<BlockLightIncreasedCallback<W, C>> blockLightIncreasedCallbacks;
 
     public BlockLightEngine(W world) {
-        this.increaseQueue = new LinkedList<>();
+        this.increaseQueue = new ConcurrentLinkedQueue<>();
         this.chunkCache = new ChunkCache<>(world);
-        this.blockLightIncreasedCallbacks = new ArrayList<>();
+        this.blockLightIncreasedCallbacks = new CopyOnWriteArrayList<>();
     }
 
     public ChunkCache<W, C> chunkCache() {
@@ -34,11 +34,16 @@ public class BlockLightEngine <W extends World<C>, C extends Chunk<? extends W>>
     public void increase(Chunk<?> chunk, int x, int y, int z, int r, int g, int b) {
         if(chunk == null)
             return;
+
+        chunk.setBlockLightLevel(x, y, z, r, g, b);
+
         if(r > 0) increaseQueue.add(new Entry(x, y, z, 0, r));
         if(g > 0) increaseQueue.add(new Entry(x, y, z, 1, g));
         if(b > 0) increaseQueue.add(new Entry(x, y, z, 2, b));
+
         if(!increaseQueue.isEmpty())
             chunkCache.cacheNeighborsFor((C) chunk);
+
         this.processIncrease();
         this.invokeIncreasedCallbacks((C) chunk, x, y, z, r, g, b);
     }

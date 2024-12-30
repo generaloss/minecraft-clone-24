@@ -29,14 +29,10 @@ public class ServerConnectionGame extends ServerConnection implements IServerPro
 
     public void sendAllChunks() {
         final Collection<Chunk<ServerWorld>> chunks = super.server()
-                .worldHolder().getWorld("overworld").getChunks();
+            .worldHolder().getWorld("overworld").getChunks();
 
-        int i = 0;
-        for(Chunk<ServerWorld> chunk : chunks){
+        for(Chunk<ServerWorld> chunk : chunks)
             super.sendPacket(new ChunkPacket2C(chunk));
-            i++;
-            System.out.println(i + " chunk sent");
-        }
     }
 
 

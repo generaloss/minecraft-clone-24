@@ -65,7 +65,6 @@ public class Chunk <W extends World<? extends Chunk<W>>> {
         blockStateIndices.set(x, y, z, stateID);
         // glowing
         final Vec3i glowing = state.getBlock().properties().getVec3i("glowing");
-        this.setBlockLightLevel(x, y, z, glowing.x, glowing.y, glowing.z);
         world.getBlockLightEngine().increase(this, x, y, z, glowing.x, glowing.y, glowing.z);
         return true;
     }

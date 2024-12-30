@@ -47,7 +47,7 @@ public class TextField {
 
     public void render() {
         final float height = font.getLineAdvanceScaled();
-        final float width = font.getTextWidth("W".repeat(20));
+        final float width = font.getTextWidth("W".repeat(30));
 
         if(MouseBtn.pressedAny(MouseBtn.values())) {
             input.enable(Intersector.isPointOnRect(Jpize.getX(), Jpize.getY(), x, y, width, height));

@@ -45,9 +45,9 @@ public class WorldChunkLoader {
 
     private void update() {
         System.out.println("Preparing spawn area..");
-        for(int y = -4 * 4; y < 0; y++){
+        for(int y = -4; y < 0; y++){
             this.loadChunk(0, y, 0);
-            for(int r = 0; r < 3 * 4; r++){
+            for(int r = 0; r < 3; r++){
                 for(int i = -r; i <= r; i++)
                     this.loadChunk(i, y, r);
                 for(int i = -r + 1; i <= r; i++)

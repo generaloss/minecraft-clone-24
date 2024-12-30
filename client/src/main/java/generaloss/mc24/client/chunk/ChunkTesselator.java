@@ -62,7 +62,8 @@ public class ChunkTesselator implements Disposable {
                 continue;
             this.processTesselate(chunk);
 
-            if(timer.getMillis() > Jpize.getDeltaTime() * 500)
+            System.out.println(timer.getMillis());
+            if(timer.getMillis() > Jpize.getDeltaTime() * 0.1 || true)
                 break;
         }
     }
