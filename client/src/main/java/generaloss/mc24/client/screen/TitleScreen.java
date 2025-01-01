@@ -84,6 +84,8 @@ public class TitleScreen extends IScreen {
     @Override
     public void hide() {
         music.pause();
+        nicknameField.disableInput();
+        passwordField.disableInput();
         serverAddressField.disableInput();
     }
 

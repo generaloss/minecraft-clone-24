@@ -3,12 +3,12 @@ package generaloss.mc24.accountservice.network.packet;
 import generaloss.mc24.accountservice.network.Request;
 import jpize.util.io.ExtDataInputStream;
 import jpize.util.io.ExtDataOutputStream;
-import jpize.util.net.tcp.packet.IPacket;
+import jpize.util.net.tcp.packet.NetPacket;
 import jpize.util.security.PublicRSA;
 
 import java.io.IOException;
 
-public class PublicKeyPacket2C extends IPacket<Request> {
+public class PublicKeyPacket2C extends NetPacket<Request> {
 
     private PublicRSA publicKey;
 

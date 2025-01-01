@@ -29,7 +29,7 @@
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/lwjgl/lwjgl/3.3.5/lwjgl-3.3.5-natives-windows.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/io/github/generaloss/jpize-audio/24.12.8/jpize-audio-24.12.8.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/io/github/generaloss/jpize-core/24.12.8/jpize-core-24.12.8.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/io/github/generaloss/jpize-utils/24.12.8/jpize-utils-24.12.8.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/io/github/generaloss/jpize-utils/25.1.2/jpize-utils-25.1.2.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>

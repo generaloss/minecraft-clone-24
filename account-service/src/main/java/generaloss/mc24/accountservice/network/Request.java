@@ -7,20 +7,20 @@ import generaloss.mc24.accountservice.network.packet.RequestPacket2S;
 import jpize.util.io.DataStreamWriter;
 import jpize.util.net.tcp.TCPClient;
 import jpize.util.net.tcp.TCPConnection;
-import jpize.util.net.tcp.packet.PacketDispatcher;
-import jpize.util.net.tcp.packet.PacketHandler;
+import jpize.util.net.tcp.packet.NetPacketDispatcher;
+import jpize.util.net.tcp.packet.INetPacketHandler;
 import jpize.util.security.AESKey;
 import jpize.util.time.TimeUtils;
 
 import java.util.UUID;
 
-public class Request implements PacketHandler {
+public class Request implements INetPacketHandler {
 
     private final RequestType requestType;
     private final byte[] requestData;
     private final Response response;
 
-    private final PacketDispatcher packetDispatcher;
+    private final NetPacketDispatcher packetDispatcher;
     private final TCPClient tcpClient;
 
     private Request(String host, RequestType requestType, byte[] requestData) {
@@ -28,7 +28,7 @@ public class Request implements PacketHandler {
         this.requestData = requestData;
         this.response = new Response();
 
-        this.packetDispatcher = new PacketDispatcher();
+        this.packetDispatcher = new NetPacketDispatcher();
         this.packetDispatcher.register(PublicKeyPacket2C.class, ResponsePacket2C.class);
 
         this.tcpClient = new TCPClient();

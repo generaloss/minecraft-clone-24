@@ -4,14 +4,14 @@ import generaloss.mc24.client.Main;
 import generaloss.mc24.server.network.packet2c.*;
 import jpize.util.net.tcp.TCPClient;
 import jpize.util.net.tcp.TCPConnection;
-import jpize.util.net.tcp.packet.IPacket;
-import jpize.util.net.tcp.packet.PacketDispatcher;
+import jpize.util.net.tcp.packet.NetPacket;
+import jpize.util.net.tcp.packet.NetPacketDispatcher;
 
 public class ClientConnection {
 
     protected final Main context;
     private final TCPClient tcpClient;
-    private final PacketDispatcher packetDispatcher;
+    private final NetPacketDispatcher packetDispatcher;
 
     public ClientConnection(Main context) {
         this.context = context;
@@ -19,7 +19,7 @@ public class ClientConnection {
             .setOnConnect(this::onConnect)
             .setOnDisconnect(this::onDisconnect)
             .setOnReceive(this::onReceive);
-        this.packetDispatcher = new PacketDispatcher().register(
+        this.packetDispatcher = new NetPacketDispatcher().register(
             ServerInfoResponsePacket2C.class,
             PublicKeyPacket2C.class,
             DisconnectPacket2C.class,
@@ -58,7 +58,7 @@ public class ClientConnection {
             System.err.println("Cannot handle packets.");
     }
 
-    public void sendPacket(IPacket<?> packet) {
+    public void sendPacket(NetPacket<?> packet) {
         tcpClient.send(packet);
     }
 

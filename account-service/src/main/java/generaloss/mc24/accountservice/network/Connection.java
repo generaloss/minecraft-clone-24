@@ -7,13 +7,13 @@ import jpize.util.Utils;
 import jpize.util.io.DataStreamWriter;
 import jpize.util.io.ExtDataInputStream;
 import jpize.util.net.tcp.TCPConnection;
-import jpize.util.net.tcp.packet.PacketHandler;
+import jpize.util.net.tcp.packet.INetPacketHandler;
 import jpize.util.security.AESKey;
 import jpize.util.security.PrivateRSA;
 
 import java.util.UUID;
 
-public class Connection implements PacketHandler {
+public class Connection implements INetPacketHandler {
 
     private final RequestListener requestListener;
     private final TCPConnection tcpConnection;
@@ -28,7 +28,7 @@ public class Connection implements PacketHandler {
     }
 
     public void sendResponse(ResponseCode code, DataStreamWriter dataFactory) {
-        tcpConnection.send(new ResponsePacket2C(code, DataStreamWriter.writeBytes(dataFactory)));
+        this.sendResponse(code, DataStreamWriter.writeBytes(dataFactory));
     }
 
     public void sendResponse(ResponseCode code, boolean response) {

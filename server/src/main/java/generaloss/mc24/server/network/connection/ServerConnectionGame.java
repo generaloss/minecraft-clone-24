@@ -31,10 +31,9 @@ public class ServerConnectionGame extends ServerConnection implements IServerPro
         final Collection<Chunk<ServerWorld>> chunks = super.server()
             .worldHolder().getWorld("overworld").getChunks();
 
-        try{
-            for(Chunk<ServerWorld> chunk: chunks)
-                super.sendPacket(new ChunkPacket2C(chunk));
-        }catch(Exception ignored){ }
+        for(Chunk<ServerWorld> chunk: chunks)
+            if(!super.sendPacket(new ChunkPacket2C(chunk)))
+                break;
     }
 
 

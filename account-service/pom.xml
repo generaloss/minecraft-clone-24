@@ -22,7 +22,7 @@
         <dependency>
             <groupId>io.github.generaloss</groupId>
             <artifactId>jpize-utils</artifactId>
-            <version>24.12.8</version>
+            <version>25.1.2</version>
         </dependency>
     </dependencies>
 

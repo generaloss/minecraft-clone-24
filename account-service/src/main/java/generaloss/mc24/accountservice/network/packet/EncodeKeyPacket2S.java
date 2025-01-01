@@ -3,11 +3,11 @@ package generaloss.mc24.accountservice.network.packet;
 import generaloss.mc24.accountservice.network.Connection;
 import jpize.util.io.ExtDataInputStream;
 import jpize.util.io.ExtDataOutputStream;
-import jpize.util.net.tcp.packet.IPacket;
+import jpize.util.net.tcp.packet.NetPacket;
 
 import java.io.IOException;
 
-public class EncodeKeyPacket2S extends IPacket<Connection> {
+public class EncodeKeyPacket2S extends NetPacket<Connection> {
 
     private byte[] encryptedKeyBytes;
 

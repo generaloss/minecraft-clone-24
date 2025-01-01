@@ -3,11 +3,11 @@ package generaloss.mc24.server.network.packet2c;
 import generaloss.mc24.server.network.protocol.IClientProtocolLogin;
 import jpize.util.io.ExtDataInputStream;
 import jpize.util.io.ExtDataOutputStream;
-import jpize.util.net.tcp.packet.IPacket;
+import jpize.util.net.tcp.packet.NetPacket;
 
 import java.io.IOException;
 
-public class ServerInfoResponsePacket2C extends IPacket<IClientProtocolLogin> {
+public class ServerInfoResponsePacket2C extends NetPacket<IClientProtocolLogin> {
 
     private String motd;
     private String version;

@@ -4,11 +4,11 @@ import generaloss.mc24.server.chunk.*;
 import generaloss.mc24.server.network.protocol.IClientProtocolGame;
 import jpize.util.io.ExtDataInputStream;
 import jpize.util.io.ExtDataOutputStream;
-import jpize.util.net.tcp.packet.IPacket;
+import jpize.util.net.tcp.packet.NetPacket;
 
 import java.io.IOException;
 
-public class ChunkPacket2C extends IPacket<IClientProtocolGame> {
+public class ChunkPacket2C extends NetPacket<IClientProtocolGame> {
 
     private long positionPacked;
     private byte[] blockstateIndices;

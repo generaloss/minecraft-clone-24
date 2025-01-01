@@ -3,12 +3,12 @@ package generaloss.mc24.server.network.packet2s;
 import generaloss.mc24.server.network.protocol.IServerProtocolLogin;
 import jpize.util.io.ExtDataInputStream;
 import jpize.util.io.ExtDataOutputStream;
-import jpize.util.net.tcp.packet.IPacket;
+import jpize.util.net.tcp.packet.NetPacket;
 
 import java.io.IOException;
 import java.util.UUID;
 
-public class SessionIDPacket2S extends IPacket<IServerProtocolLogin> {
+public class SessionIDPacket2S extends NetPacket<IServerProtocolLogin> {
 
     private UUID sessionID;
 

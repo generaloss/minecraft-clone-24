@@ -6,20 +6,20 @@ import generaloss.mc24.server.network.protocol.IServerProtocolGame;
 import generaloss.mc24.server.player.ServerPlayer;
 import jpize.util.net.tcp.TCPConnection;
 import jpize.util.net.tcp.TCPServer;
-import jpize.util.net.tcp.packet.PacketDispatcher;
+import jpize.util.net.tcp.packet.NetPacketDispatcher;
 import jpize.util.security.RSAKey;
 
 public class NetServer {
 
     private final Server server;
     private final RSAKey encryptionKey;
-    private final PacketDispatcher packetDispatcher;
+    private final NetPacketDispatcher packetDispatcher;
     private final TCPServer tcpServer;
 
     public NetServer(Server server) {
         this.server = server;
         this.encryptionKey = new RSAKey(1024);
-        this.packetDispatcher = new PacketDispatcher().register(
+        this.packetDispatcher = new NetPacketDispatcher().register(
             ServerInfoRequestPacket2S.class,
             LoginRequestPacket2S.class,
             EncodeKeyPacket2S.class,

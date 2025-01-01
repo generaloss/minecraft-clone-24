@@ -3,11 +3,11 @@ package generaloss.mc24.server.network.packet2c;
 import generaloss.mc24.server.network.protocol.IClientProtocolGame;
 import jpize.util.io.ExtDataInputStream;
 import jpize.util.io.ExtDataOutputStream;
-import jpize.util.net.tcp.packet.IPacket;
+import jpize.util.net.tcp.packet.NetPacket;
 
 import java.io.IOException;
 
-public class SetBlockStatePacket2C extends IPacket<IClientProtocolGame> {
+public class SetBlockStatePacket2C extends NetPacket<IClientProtocolGame> {
 
     private long chunkPositionPacked;
     private int localX, localY, localZ;

@@ -3,7 +3,7 @@ package generaloss.mc24.server.network.connection;
 import generaloss.mc24.server.Server;
 import generaloss.mc24.server.network.protocol.IServerProtocol;
 import jpize.util.net.tcp.TCPConnection;
-import jpize.util.net.tcp.packet.IPacket;
+import jpize.util.net.tcp.packet.NetPacket;
 import jpize.util.security.AESKey;
 
 public abstract class ServerConnection implements IServerProtocol {
@@ -33,8 +33,8 @@ public abstract class ServerConnection implements IServerProtocol {
         tcpConnection.close();
     }
 
-    public void sendPacket(IPacket<?> packet) {
-        tcpConnection.send(packet);
+    public boolean sendPacket(NetPacket<?> packet) {
+        return tcpConnection.send(packet);
     }
 
     public void encode(AESKey key) {
