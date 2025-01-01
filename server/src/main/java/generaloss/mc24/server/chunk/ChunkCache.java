@@ -1,10 +1,13 @@
 package generaloss.mc24.server.chunk;
 
+import generaloss.mc24.server.block.Block;
 import generaloss.mc24.server.block.BlockState;
 import generaloss.mc24.server.world.World;
 import jpize.util.math.Mathc;
 import jpize.util.math.Maths;
 import jpize.util.math.vector.Vec3i;
+
+import java.util.function.Consumer;
 
 public class ChunkCache <W extends World<C>, C extends Chunk<? extends W>> {
 
@@ -20,13 +23,22 @@ public class ChunkCache <W extends World<C>, C extends Chunk<? extends W>> {
         this.norBlockPos = new Vec3i();
     }
 
-    public Chunk<?>[] getChunks() {
-        return chunks;
+    public C getCenterChunk() {
+        return (C) chunks[CENTER_CHUNK_INDEX];
+    }
+
+    public void forEach(Consumer<C> consumer) {
+        for(Chunk<?> chunk: chunks)
+            consumer.accept((C) chunk);
     }
 
 
+    private int index(int i, int j, int k) {
+        return (i * 9 + j * 3 + k);
+    }
+
     public Chunk<?> get(int i, int j, int k) {
-        return chunks[(i + 1) * 9 + (j + 1) * 3 + (k + 1)];
+        return chunks[this.index(i + 1, j + 1, k + 1)];
     }
 
 
@@ -36,15 +48,17 @@ public class ChunkCache <W extends World<C>, C extends Chunk<? extends W>> {
 
         final ChunkPos position = chunk.position();
 
-        for(int i = 0; i < 3; i++){
-            for(int j = 0; j < 3; j++){
-                for(int k = 0; k < 3; k++){
-                    if(i == 1 && j == 1 && k == 1){
-                        chunks[CENTER_CHUNK_INDEX] = chunk;
+        for(int i = 0; i < 3; i++) {
+            for(int j = 0; j < 3; j++) {
+                for(int k = 0; k < 3; k++) {
+                    final int index = this.index(i, j, k);
+                    if(index == CENTER_CHUNK_INDEX) {
+                        chunks[index] = chunk;
                         continue;
                     }
+
                     final C neighbor = world.getChunk(position.getNeighborPacked(i - 1, j - 1, k - 1));
-                    chunks[i * 9 + j * 3 + k] = neighbor;
+                    chunks[index] = neighbor;
                 }
             }
         }
@@ -69,15 +83,15 @@ public class ChunkCache <W extends World<C>, C extends Chunk<? extends W>> {
     public BlockState getBlockState(int x, int y, int z) {
         final C chunk = this.findForBlock(x, y, z);
         if(chunk == null)
-            return null;
+            return Block.VOID.getDefaultState();
         return chunk.getBlockState(norBlockPos.x, norBlockPos.y, norBlockPos.z);
     }
 
-    public boolean setBlockState(int x, int y, int z, BlockState blockState) {
+    public boolean setBlockState(int x, int y, int z, BlockState blockstate) {
         final C chunk = this.findForBlock(x, y, z);
         if(chunk == null)
             return false;
-        return chunk.setBlockState(norBlockPos.x, norBlockPos.y, norBlockPos.z, blockState);
+        return chunk.setBlockState(norBlockPos.x, norBlockPos.y, norBlockPos.z, blockstate);
     }
 
     public byte getBlockLightLevel(int x, int y, int z, int channel) {

@@ -2,6 +2,7 @@ package generaloss.mc24.client.network;
 
 import generaloss.mc24.client.Main;
 import generaloss.mc24.client.screen.TitleScreen;
+import generaloss.mc24.server.network.AccountSession;
 import generaloss.mc24.server.network.packet2c.PublicKeyPacket2C;
 import generaloss.mc24.server.network.packet2c.ServerInfoResponsePacket2C;
 import generaloss.mc24.server.network.packet2s.EncodeKeyPacket2S;
@@ -35,7 +36,8 @@ public class ClientProtocolLogin extends ClientProtocol implements IClientProtoc
         super.sendPacket(new EncodeKeyPacket2S(encryptedKeyBytes));
         super.encode(key);
         // send sessionID
-        final UUID sessionID = super.context().session().getID();
+        final AccountSession session = super.context().session();
+        final UUID sessionID = (session == null ? null : session.getID());
         super.sendPacket(new SessionIDPacket2S(sessionID == null ? UUID.randomUUID() : sessionID));
         // set game protocol
         super.setProtocol(new ClientProtocolGame(super.context(), super.tcpConnection()));

@@ -1,5 +1,6 @@
 package generaloss.mc24.server.chunkload;
 
+import generaloss.mc24.server.chunk.Chunk;
 import generaloss.mc24.server.chunk.ChunkPos;
 import generaloss.mc24.server.chunk.ServerChunk;
 import generaloss.mc24.server.world.ServerWorld;
@@ -12,15 +13,13 @@ public class WorldChunkLoader {
 
     private final ServerWorld world;
     private final List<IChunkLoadEntry> loadEntriesList;
-    private final ChunkLoadPoint spawnLoadEntry;
 
     public WorldChunkLoader(ServerWorld world) {
         this.world = world;
         this.loadEntriesList = new CopyOnWriteArrayList<>();
-        // spawn
-        this.spawnLoadEntry = new ChunkLoadPoint();
-        this.addLoaderEntry(this.spawnLoadEntry);
-        // load
+        // spawn loader
+        this.addLoaderEntry(world.getSpawnPoint());
+        // load chunks
         this.update();
     }
 
@@ -38,16 +37,11 @@ public class WorldChunkLoader {
     }
 
 
-    public ChunkLoadPoint getSpawnLoadEntry() {
-        return spawnLoadEntry;
-    }
-
-
     private void update() {
-        System.out.println("Preparing spawn area..");
-        for(int y = -4; y < 0; y++){
+        System.out.println("[INFO]: Preparing spawn area..");
+        for(int y = -6; y < 1; y++){
             this.loadChunk(0, y, 0);
-            for(int r = 0; r < 3; r++){
+            for(int r = 0; r < 6; r++){
                 for(int i = -r; i <= r; i++)
                     this.loadChunk(i, y, r);
                 for(int i = -r + 1; i <= r; i++)
@@ -58,7 +52,13 @@ public class WorldChunkLoader {
                     this.loadChunk(-r, y, i);
             }
         }
-        System.out.println(world.getChunks().size() + " chunks generated");
+        for(Chunk<ServerWorld> chunk: world.getChunks()) {
+            if(chunk instanceof ServerChunk serverChunk) {
+                world.getChunkGenerator().generateDecoration(serverChunk);
+                serverChunk.markLoaded();
+            }
+        }
+        System.out.println("[INFO]: " + world.getChunks().size() + " chunks loaded.");
     }
 
     private void loadChunk(int chunkX, int chunkY, int chunkZ) {

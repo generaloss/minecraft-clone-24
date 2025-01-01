@@ -1,11 +1,8 @@
 package generaloss.mc24.client.level;
 
 import generaloss.mc24.client.chunk.ChunkMesh;
-import generaloss.mc24.server.block.Block;
-import generaloss.mc24.server.block.BlockState;
 import generaloss.mc24.server.chunk.Chunk;
 import generaloss.mc24.server.network.packet2c.ChunkPacket2C;
-import jpize.util.math.vector.Vec3i;
 
 public class LevelChunk extends Chunk<WorldLevel> {
 
@@ -13,7 +10,7 @@ public class LevelChunk extends Chunk<WorldLevel> {
 
     public LevelChunk(WorldLevel level, ChunkPacket2C packet) {
         super(
-            level, packet.getPosition(), packet.getBlockStateIndices(),
+            level, packet.getPosition(), packet.getBlockstateIndices(),
             packet.getBlockLight(), level.context().registries()
         );
     }

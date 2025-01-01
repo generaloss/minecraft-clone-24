@@ -23,12 +23,11 @@ public class Registries {
         this.BLOCKS = new RegistryBlocks();
         this.BLOCK_STATES = new IntRegistry<>();
 
-        // register air block
-        final Block airBlock = new Block()
-                .setID("air")
-                .createBlockStates(Map.of(), this);
-        airBlock.properties().set("opacity", 0);
-        BLOCKS.register(new ResourceBlock(airBlock));
+        // register core blocks
+        Block.AIR.createBlockstates(Map.of(), this);
+        Block.VOID.createBlockstates(Map.of(), this);
+        BLOCKS.register(new ResourceBlock(Block.AIR));
+        BLOCKS.register(new ResourceBlock(Block.VOID));
         // System.out.println("Registered 'air' Block and BlockState with ID " + BLOCK_STATES.getID(airBlock.getDefaultState()));
     }
 

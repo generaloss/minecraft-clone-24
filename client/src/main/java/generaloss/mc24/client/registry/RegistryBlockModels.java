@@ -23,8 +23,8 @@ public class RegistryBlockModels extends ResourceRegistry<BlockState, ResourceBl
         return super.registerResource(new ResourceBlockStateModel(path, BLOCKS));
     }
 
-    public ResourceBlockStateModel register(ResourceBlockStateModel blockStateModelResource) {
-        return super.registerResource(blockStateModelResource);
+    public ResourceBlockStateModel register(ResourceBlockStateModel blockstateModelResource) {
+        return super.registerResource(blockstateModelResource);
     }
 
 }

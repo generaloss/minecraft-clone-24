@@ -29,8 +29,11 @@ public class BlockState {
         return block.getID();
     }
 
-    public boolean isBlockID(String string) {
-        return this.getBlockID().equals(string);
+    public boolean isBlockID(String... identifiers) {
+        for(String identifier: identifiers)
+            if(this.getBlockID().equals(identifier))
+                return true;
+        return false;
     }
 
 

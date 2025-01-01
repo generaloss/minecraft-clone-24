@@ -8,12 +8,19 @@ import java.util.*;
 
 public class Block implements Identifiable<String> {
 
+    public static final Block AIR = new Block().setID("air");
+    public static final Block VOID = new Block().setID("void");
+    static{
+        AIR.properties().set("opacity", 0);
+    }
+
     private String ID;
     private final BlockPropertiesHolder properties;
-    private BlockStateContainer statesContainer;
+    private final BlockStateContainer statesContainer;
 
     public Block() {
         this.properties = new BlockPropertiesHolder();
+        this.statesContainer = new BlockStateContainer(this);
     }
 
     @Override
@@ -40,8 +47,8 @@ public class Block implements Identifiable<String> {
         return statesContainer.getDefaultState();
     }
 
-    public Block createBlockStates(Map<String, StateProperty<?>> stateProperties, Registries registries) {
-        statesContainer = new BlockStateContainer(this, stateProperties, registries);
+    public Block createBlockstates(Map<String, StateProperty<?>> stateProperties, Registries registries) {
+        statesContainer.create(stateProperties, registries);
         return this;
     }
 

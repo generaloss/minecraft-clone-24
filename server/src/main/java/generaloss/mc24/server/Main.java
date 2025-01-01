@@ -2,9 +2,9 @@ package generaloss.mc24.server;
 
 import generaloss.mc24.server.registry.Registries;
 import generaloss.mc24.server.resourcepack.ResourcePack;
+import jpize.util.io.FastReader;
 import jpize.util.res.ExternalResource;
 import jpize.util.res.Resource;
-import jpize.util.time.TimeUtils;
 
 public class Main {
 
@@ -22,7 +22,15 @@ public class Main {
         final Server server = new Server(new Registries(new ResourcePack("vanilla-pack.zip")), true);
         server.init();
         server.run(config.getInt("port"));
-        TimeUtils.waitFor(server::isClosed);
+
+        final FastReader reader = new FastReader();
+        while(!Thread.interrupted() && !server.isClosed()) {
+            final String line = reader.nextLine();
+            if(line.equals("quit"))
+                break;
+        }
+        server.stop();
+        reader.close();
     }
 
 }

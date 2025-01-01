@@ -3,6 +3,7 @@ package generaloss.mc24.server.network.connection;
 import generaloss.mc24.server.Server;
 import generaloss.mc24.server.network.packet2s.*;
 import generaloss.mc24.server.network.protocol.IServerProtocolGame;
+import generaloss.mc24.server.player.ServerPlayer;
 import jpize.util.net.tcp.TCPConnection;
 import jpize.util.net.tcp.TCPServer;
 import jpize.util.net.tcp.packet.PacketDispatcher;
@@ -47,7 +48,8 @@ public class NetServer {
 
     public void onDisconnect(TCPConnection tcpConnection) {
         if(tcpConnection.attachment() instanceof ServerConnectionGame protocolGame) {
-            System.out.println("[INFO]: '" + protocolGame.session().getNickname() + "' leave the game.");
+            final ServerPlayer player = protocolGame.player();
+            server.players().removePlayer(player);
         }
     }
 

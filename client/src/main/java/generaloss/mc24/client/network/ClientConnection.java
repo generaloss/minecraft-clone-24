@@ -24,7 +24,8 @@ public class ClientConnection {
             PublicKeyPacket2C.class,
             DisconnectPacket2C.class,
             ChunkPacket2C.class,
-            SetBlockStatePacket2C.class
+            SetBlockStatePacket2C.class,
+            AbilitiesPacket2C.class
         );
     }
 
@@ -32,7 +33,7 @@ public class ClientConnection {
         try{
             tcpClient.connect(host, port);
         }catch(Exception e) {
-            throw new IllegalStateException("Invalid server address: " + e.getMessage());
+            throw new IllegalStateException("Failed to connect to server: " + e.getMessage());
         }
 
         final TCPConnection tcpConnection = tcpClient.connection();

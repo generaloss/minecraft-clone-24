@@ -4,24 +4,20 @@ import java.util.UUID;
 
 public class AccountSession {
 
-    private UUID ID;
-    private String nickname;
+    private final UUID ID;
+    private final String username;
 
-    public void set(UUID ID, String nickname) {
+    public AccountSession(UUID ID, String username) {
         this.ID = ID;
-        this.nickname = nickname;
+        this.username = username;
     }
 
     public UUID getID() {
         return ID;
     }
 
-    public String getNickname() {
-        return nickname;
-    }
-
-    public boolean isValid() {
-        return ID != null;
+    public String getUsername() {
+        return username;
     }
 
 }

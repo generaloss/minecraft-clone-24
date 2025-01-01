@@ -1,6 +1,7 @@
 package generaloss.mc24.server;
 
 import generaloss.mc24.server.network.connection.NetServer;
+import generaloss.mc24.server.player.PlayerList;
 import generaloss.mc24.server.registry.Registries;
 import generaloss.mc24.server.resourcepack.ResourceBlock;
 import generaloss.mc24.server.world.ServerWorld;
@@ -18,6 +19,7 @@ public class Server implements Tickable {
     private final NetServer net;
     private final ServerPropertiesHolder properties;
     private final WorldHolder worldHolder;
+    private final PlayerList players;
     private Thread thread;
 
     public Server(Registries registries, boolean dedicated) {
@@ -26,6 +28,7 @@ public class Server implements Tickable {
         this.properties.set("dedicated", dedicated);
         this.net = new NetServer(this);
         this.worldHolder = new WorldHolder();
+        this.players = new PlayerList(this);
     }
 
     public NetServer net() {
@@ -44,6 +47,10 @@ public class Server implements Tickable {
         return worldHolder;
     }
 
+    public PlayerList players() {
+        return players;
+    }
+
 
     public boolean isClosed() {
         return net.tcpServer().isClosed();
@@ -57,7 +64,7 @@ public class Server implements Tickable {
             registries.BLOCKS.register(blockRes.path());
         // create block states
         for(ResourceBlock blockRes: registries.BLOCKS.getResourcesToLoad())
-            blockRes.getObject().createBlockStates(Map.of(), registries);
+            blockRes.getObject().createBlockstates(Map.of(), registries);
         // load all resources
         if(properties.getBool("dedicated"))
             registries.loadResources();

@@ -11,14 +11,14 @@ public class SetBlockStatePacket2C extends IPacket<IClientProtocolGame> {
 
     private long chunkPositionPacked;
     private int localX, localY, localZ;
-    private int blockStateID;
+    private int blockstateID;
 
-    public SetBlockStatePacket2C(long chunkPositionPacked, int localX, int localY, int localZ, int blockStateID) {
+    public SetBlockStatePacket2C(long chunkPositionPacked, int localX, int localY, int localZ, int blockstateID) {
         this.chunkPositionPacked = chunkPositionPacked;
         this.localX = localX;
         this.localY = localY;
         this.localZ = localZ;
-        this.blockStateID = blockStateID;
+        this.blockstateID = blockstateID;
     }
 
     public SetBlockStatePacket2C() { }
@@ -41,14 +41,14 @@ public class SetBlockStatePacket2C extends IPacket<IClientProtocolGame> {
     }
 
     public int getBlockStateID() {
-        return blockStateID;
+        return blockstateID;
     }
 
 
     @Override
     public void write(ExtDataOutputStream stream) throws IOException {
         stream.writeLong(chunkPositionPacked);
-        stream.writeInts(localX, localY, localZ, blockStateID);
+        stream.writeInts(localX, localY, localZ, blockstateID);
     }
 
     @Override
@@ -57,7 +57,7 @@ public class SetBlockStatePacket2C extends IPacket<IClientProtocolGame> {
         localX = stream.readInt();
         localY = stream.readInt();
         localZ = stream.readInt();
-        blockStateID = stream.readInt();
+        blockstateID = stream.readInt();
     }
 
     @Override

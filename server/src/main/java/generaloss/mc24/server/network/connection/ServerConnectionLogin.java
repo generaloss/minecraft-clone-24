@@ -68,12 +68,10 @@ public class ServerConnectionLogin extends ServerConnection implements IServerPr
             final Response sessionInfoResponse = Request.sendGetSessionInfo(SharedConstants.ACCOUNTS_HOST, sessionID);
             if(sessionInfoResponse.getCode().noError()) {
                 // set game protocol
-                final String nickname = sessionInfoResponse.readString();
-                final AccountSession session = new AccountSession();
-                session.set(sessionID, nickname);
+                final String username = sessionInfoResponse.readString();
+                final AccountSession session = new AccountSession(sessionID, username);
                 final ServerConnectionGame gameProtocol = new ServerConnectionGame(super.server(), super.tcpConnection(), session);
                 super.setProtocol(gameProtocol);
-                gameProtocol.sendAllChunks();
             }else{
                 super.sendPacket(new DisconnectPacket2C("session expired"));
             }

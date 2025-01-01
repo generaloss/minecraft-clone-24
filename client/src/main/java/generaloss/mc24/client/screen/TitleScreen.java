@@ -5,6 +5,7 @@ import generaloss.mc24.accountservice.network.Response;
 import generaloss.mc24.client.Main;
 import generaloss.mc24.client.registry.ClientRegistries;
 import generaloss.mc24.server.SharedConstants;
+import generaloss.mc24.server.network.AccountSession;
 import generaloss.mc24.server.network.packet2s.ServerInfoRequestPacket2S;
 import jpize.app.Jpize;
 import jpize.audio.util.AlMusic;
@@ -16,6 +17,7 @@ import jpize.glfw.input.Key;
 import jpize.util.camera.PerspectiveCamera;
 import jpize.util.font.Font;
 import jpize.util.font.FontRenderOptions;
+import jpize.util.mesh.TextureBatch;
 import jpize.util.postprocess.ScreenQuadMesh;
 import jpize.util.postprocess.ScreenQuadShader;
 
@@ -27,6 +29,7 @@ public class TitleScreen extends IScreen {
     private final AlMusic music;
     private float yaw;
 
+    private final TextureBatch batch;
     private TextField serverAddressField;
     private TextField nicknameField;
     private TextField passwordField;
@@ -36,6 +39,8 @@ public class TitleScreen extends IScreen {
 
     public TitleScreen(Main context) {
         super(context, "title");
+
+        this.batch = new TextureBatch();
 
         // resources
         final ClientRegistries resourceRegistry = context.registries();
@@ -60,14 +65,14 @@ public class TitleScreen extends IScreen {
     }
 
     public void init() {
-        this.serverAddressField = new TextField(10, 300, super.context().registries().FONTS.get("default"));
-        this.serverAddressField.setHint("localhost:22854");
-
-        this.nicknameField = new TextField(10, 400, super.context().registries().FONTS.get("default"));
+        this.nicknameField = new TextField(10, 650, super.context().registries().FONTS.get("default"));
         this.nicknameField.setHint("nickname");
 
-        this.passwordField = new TextField(10, 350, super.context().registries().FONTS.get("default"));
+        this.passwordField = new TextField(10, 600, super.context().registries().FONTS.get("default"));
         this.passwordField.setHint("password");
+
+        this.serverAddressField = new TextField(10, 550, super.context().registries().FONTS.get("default"));
+        this.serverAddressField.setHint("localhost:22854");
     }
 
     @Override
@@ -100,7 +105,8 @@ public class TitleScreen extends IScreen {
             final String nickname = nicknameField.getText();
             final Response response = Request.sendLogin(SharedConstants.ACCOUNTS_HOST, nickname, passwordField.getText());
             if(response.getCode().noError()){
-                super.context().session().set(response.readUUID(), nickname);
+                final AccountSession session = new AccountSession(response.readUUID(), nickname);
+                super.context().setSession(session);
                 System.out.println("[INFO]: Logged in as '" + nickname + "'");
             }
             accountStatus = "Login status: " + response.getCode() + ", " + response.readString();
@@ -126,6 +132,9 @@ public class TitleScreen extends IScreen {
                 serverInfo = "Server Info: Invalid address (press 'Ctrl + I' to ping server)";
             }
         }
+        // server ip
+        if(Key.LCTRL.pressed() && Key.S.down())
+            serverAddressField.setText("mineclone.ignorelist.com:22854");
         // exit
         if(Key.ESCAPE.down())
             Jpize.exit();
@@ -154,36 +163,40 @@ public class TitleScreen extends IScreen {
         final Font font = super.context().registries().FONTS.get("default");
         final FontRenderOptions fontOptions = font.getRenderOptions();
 
+        batch.setup();
+
         // hints
         float position = 10F;
-        font.drawText("Press 'ENTER' for start.", 10F, position);
+        font.drawText(batch, "Press 'ENTER' to join the server.", 10F, position);
         position += font.getLineAdvanceScaled();
-        font.drawText("'F1', 'F2', 'F3' - changes resourcepack", 10F, position);
+        font.drawText(batch, "'F1', 'F2', 'F3' - changes resourcepack", 10F, position);
         position += font.getLineAdvanceScaled();
-        font.drawText("'F11' - fullscreen", 10F, position);
+        font.drawText(batch, "'F11' - fullscreen", 10F, position);
         position += font.getLineAdvanceScaled();
-        font.drawText("'1' - place stairs (ingame)", 10F, position);
+        font.drawText(batch, "Numbers - select block (ingame)", 10F, position);
         position += font.getLineAdvanceScaled();
-        font.drawText("'2' - place torches (ingame)", 10F, position);
+        font.drawText(batch, "'Ctrl' - sprint (ingame)", 10F, position);
         position += font.getLineAdvanceScaled();
-        font.drawText("'3' - place blue torches (ingame)", 10F, position);
+        font.drawText(batch, "'Ctrl + R' - register account", 10F, position);
         position += font.getLineAdvanceScaled();
-        font.drawText("'Ctrl + R' - register account", 10F, position);
+        font.drawText(batch, "'Ctrl + L' - login account", 10F, position);
         position += font.getLineAdvanceScaled();
-        font.drawText("'Ctrl + L' - login account", 10F, position);
+        font.drawText(batch, "'Ctrl + S' - paste server IP", 10F, position);
         position += font.getLineAdvanceScaled();
-        font.drawText("'ESCAPE' - quit / to main menu", 10F, position);
+        font.drawText(batch, "'ESCAPE' - quit / to main menu", 10F, position);
         position += font.getLineAdvanceScaled();
-        font.drawText(serverInfo, 10F, position);
+        font.drawText(batch, serverInfo, 10F, position);
         position += font.getLineAdvanceScaled();
-        font.drawText(disconnectMessage, 10F, position);
+        font.drawText(batch, disconnectMessage, 10F, position);
         position += font.getLineAdvanceScaled();
-        font.drawText(accountStatus, 10F, position);
+        font.drawText(batch, accountStatus, 10F, position);
 
         // server address
-        serverAddressField.render();
-        nicknameField.render();
-        passwordField.render();
+        serverAddressField.render(batch);
+        nicknameField.render(batch);
+        passwordField.render(batch);
+
+        batch.render();
     }
 
     @Override

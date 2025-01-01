@@ -1,0 +1,7 @@
+{
+  "block_ID" : "redstone_torch",
+  "properties" : {
+    "opacity" : 0,
+    "glowing" : [10, 5, 0]
+  }
+}

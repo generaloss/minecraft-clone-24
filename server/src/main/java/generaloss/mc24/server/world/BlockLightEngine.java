@@ -35,6 +35,10 @@ public class BlockLightEngine <W extends World<C>, C extends Chunk<? extends W>>
         if(chunk == null)
             return;
 
+        if(chunk.getBlockLightLevel(x, y, z, 0) >= r &&
+            chunk.getBlockLightLevel(x, y, z, 1) >= g && chunk.getBlockLightLevel(x, y, z, 2) >= b)
+            return;
+
         chunk.setBlockLightLevel(x, y, z, r, g, b);
 
         if(r > 0) increaseQueue.add(new Entry(x, y, z, 0, r));
@@ -67,11 +71,8 @@ public class BlockLightEngine <W extends World<C>, C extends Chunk<? extends W>>
                 if(neighborLightLevel >= level - 1)
                     continue;
 
-                final BlockState neighborBlockState = chunkCache.getBlockState(nx, ny, nz);
-                if(neighborBlockState == null)
-                    continue;
-
-                final int neighborBlockOpacity = neighborBlockState.properties().getInt("opacity");
+                final BlockState neighborBlockstate = chunkCache.getBlockState(nx, ny, nz);
+                final int neighborBlockOpacity = neighborBlockstate.properties().getInt("opacity");
                 final int targetLightLevel = (level - Math.max(1, neighborBlockOpacity));
 
                 if(targetLightLevel > neighborLightLevel){

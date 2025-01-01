@@ -10,10 +10,9 @@ public class BlockStateContainer implements Iterable<BlockState> {
     private final Block block;
     private final List<BlockState> states;
 
-    public BlockStateContainer(Block block, Map<String, StateProperty<?>> properties, Registries registries) {
+    public BlockStateContainer(Block block) {
         this.block = block;
         this.states = new ArrayList<>();
-        this.create(properties, registries);
     }
 
 

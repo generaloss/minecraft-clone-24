@@ -1,5 +1,6 @@
 package generaloss.mc24.server.world;
 
+import generaloss.mc24.server.block.Block;
 import generaloss.mc24.server.block.BlockState;
 import generaloss.mc24.server.chunk.Chunk;
 import generaloss.mc24.server.chunk.ChunkPos;
@@ -12,13 +13,13 @@ public abstract class World <C extends Chunk<? extends World<C>>> {
 
     private final Map<Long, C> chunks;
     private final BlockLightEngine<World<C>, C> blockLightEngine;
-    private final List<BlockStateChangedCallback<World<C>, C>> blockStateChangedCallbacks;
+    private final List<BlockStateChangedCallback<World<C>, C>> blockstateChangedCallbacks;
     private final List<BlockLightChangedCallback<World<C>, C>> blockLightChangedCallbacks;
 
     public World() {
         this.chunks = new ConcurrentHashMap<>();
         this.blockLightEngine = new BlockLightEngine<>(this);
-        this.blockStateChangedCallbacks = new ArrayList<>();
+        this.blockstateChangedCallbacks = new ArrayList<>();
         this.blockLightChangedCallbacks = new ArrayList<>();
     }
 
@@ -40,7 +41,7 @@ public abstract class World <C extends Chunk<? extends World<C>>> {
     }
 
     public C getChunk(ChunkPos position) {
-        return this.getChunk(position.getX(), position.getY(), position.getZ());
+        return this.getChunk(position.pack());
     }
 
     public void putChunk(C chunk) {
@@ -75,7 +76,7 @@ public abstract class World <C extends Chunk<? extends World<C>>> {
     public BlockState getBlockState(int x, int y, int z) {
         final C chunk = this.getChunkByBlock(x, y, z);
         if(chunk == null)
-            return null;
+            return Block.VOID.getDefaultState();
         final int localX = (x & Chunk.SIZE_BOUND);
         final int localY = (y & Chunk.SIZE_BOUND);
         final int localZ = (z & Chunk.SIZE_BOUND);
@@ -91,7 +92,7 @@ public abstract class World <C extends Chunk<? extends World<C>>> {
         final int localZ = (z & Chunk.SIZE_BOUND);
         final boolean success = chunk.setBlockState(localX, localY, localZ, state);
         if(success)
-            this.invokeBlockStateChangedCallbacks(chunk, localX, localY, localZ, state);
+            this.invokeBlockstateChangedCallbacks(chunk, localX, localY, localZ, state);
         return success;
     }
 
@@ -131,16 +132,16 @@ public abstract class World <C extends Chunk<? extends World<C>>> {
     }
 
 
-    public void registerBlockStateChangedCallback(BlockStateChangedCallback<World<C>, C> callback) {
-        blockStateChangedCallbacks.add(callback);
+    public void registerBlockstateChangedCallback(BlockStateChangedCallback<World<C>, C> callback) {
+        blockstateChangedCallbacks.add(callback);
     }
 
-    public void unregisterBlockStateChangedCallback(BlockStateChangedCallback<World<C>, C> callback) {
-        blockStateChangedCallbacks.remove(callback);
+    public void unregisterBlockstateChangedCallback(BlockStateChangedCallback<World<C>, C> callback) {
+        blockstateChangedCallbacks.remove(callback);
     }
 
-    private void invokeBlockStateChangedCallbacks(C chunk, int x, int y, int z, BlockState state) {
-        for(BlockStateChangedCallback<World<C>, C> callback: blockStateChangedCallbacks)
+    private void invokeBlockstateChangedCallbacks(C chunk, int x, int y, int z, BlockState state) {
+        for(BlockStateChangedCallback<World<C>, C> callback: blockstateChangedCallbacks)
             callback.invoke(chunk, x, y, z, state);
     }
 

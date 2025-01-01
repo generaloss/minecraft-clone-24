@@ -4,6 +4,7 @@ import generaloss.mc24.client.level.LevelChunk;
 import generaloss.mc24.client.level.WorldLevel;
 import generaloss.mc24.client.network.ClientConnection;
 import generaloss.mc24.client.registry.ClientRegistries;
+import generaloss.mc24.client.screen.JoiningServerScreen;
 import generaloss.mc24.server.network.AccountSession;
 import generaloss.mc24.server.network.packet2s.LoginRequestPacket2S;
 import generaloss.mc24.server.resourcepack.ResourcePack;
@@ -33,16 +34,15 @@ public class Main extends JpizeApplication {
     private final WorldLevel level;
     private final ClientPlayer player;
     private final ClientConnection connection;
-    private final AccountSession session;
+    private AccountSession session;
 
     public Main() {
         this.registries = new ClientRegistries(new ResourcePack("vanilla-pack.zip"));
         this.screens = new ScreenDispatcher();
         this.localServer = new Server(registries, false);
         this.level = new WorldLevel(this);
-        this.player = new ClientPlayer();
+        this.player = new ClientPlayer(this);
         this.connection = new ClientConnection(this);
-        this.session = new AccountSession();
     }
 
     public ClientRegistries registries() {
@@ -69,8 +69,13 @@ public class Main extends JpizeApplication {
         return connection;
     }
 
+
     public AccountSession session() {
         return session;
+    }
+
+    public void setSession(AccountSession session) {
+        this.session = session;
     }
 
 
@@ -88,6 +93,7 @@ public class Main extends JpizeApplication {
         // register screens
         screens.register(new TitleScreen(this));
         screens.register(new SessionScreen(this));
+        screens.register(new JoiningServerScreen(this));
         // load all resources
         registries.loadResources();
         // set menu screen
@@ -98,13 +104,12 @@ public class Main extends JpizeApplication {
     public void connectSession(String host, int port) {
         //if(host.equals("localhost"))
         //    localServer.run(port);
-
         System.out.println("[INFO]: Connecting to server " + host + ":" + port);
         connection.connect(host, port);
-        connection.sendPacket(new LoginRequestPacket2S("24.11.5"));
 
-        player.input().enable();
-        screens.show("session");
+        screens.show("joining_server");
+
+        connection.sendPacket(new LoginRequestPacket2S("24.11.5"));
     }
 
     public void disconnectSession() {
@@ -129,21 +134,24 @@ public class Main extends JpizeApplication {
             registries.reloadResources(List.of(registries.getDefaultPack()));
             for(LevelChunk chunk: level.getChunks()){
                 chunk.freeMesh();
-                level.tesselator().tesselate(chunk);
+                level.tesselators().tesselate(chunk);
+                System.out.println("tesselate: resource pack");
             }
         }else if(Key.F2.up()){
             final ResourcePack testPack1 = new ResourcePack("test-pack-1.zip");
             registries.reloadResources(List.of(testPack1, registries.getDefaultPack()));
             for(LevelChunk chunk: level.getChunks()){
                 chunk.freeMesh();
-                level.tesselator().tesselate(chunk);
+                level.tesselators().tesselate(chunk);
+                System.out.println("tesselate: resource pack");
             }
         }else if(Key.F3.up()){
             final ResourcePack testPack2 = new ResourcePack("test-pack-2.zip");
             registries.reloadResources(List.of(testPack2, registries.getDefaultPack()));
             for(LevelChunk chunk: level.getChunks()){
                 chunk.freeMesh();
-                level.tesselator().tesselate(chunk);
+                level.tesselators().tesselate(chunk);
+                System.out.println("tesselate: resource pack");
             }
         }
 

@@ -1,8 +1,9 @@
 package generaloss.mc24.client.level;
 
 import generaloss.mc24.client.Main;
-import generaloss.mc24.client.chunk.ChunkTesselator;
+import generaloss.mc24.client.chunk.tesselator.ChunkTesselatorPool;
 import generaloss.mc24.server.chunk.Chunk;
+import generaloss.mc24.server.chunk.ChunkPos;
 import generaloss.mc24.server.network.packet2s.SetBlockStatePacket2S;
 import generaloss.mc24.server.world.World;
 import jpize.util.Disposable;
@@ -11,23 +12,61 @@ import jpize.util.camera.PerspectiveCamera;
 public class WorldLevel extends World<LevelChunk> implements Disposable {
 
     private final Main context;
-    private final ChunkTesselator tesselator;
+    private final ChunkTesselatorPool tesselators;
     private final LevelRenderer renderer;
 
     public WorldLevel(Main context) {
         this.context = context;
-        this.tesselator = new ChunkTesselator(context, this);
+        this.tesselators = new ChunkTesselatorPool(16, context, this);
         this.renderer = new LevelRenderer(context, this);
-        // callbacks
+
+        // light callback
         super.getBlockLightEngine().registerIncreasedCallback((chunk, x, y, z, r, g, b) -> {
-            for(Chunk<?> cachedChunk: super.getBlockLightEngine().chunkCache().getChunks())
-                tesselator.tesselate((LevelChunk) cachedChunk);
+            // tesselate all cached chunks
+            super.getBlockLightEngine().chunkCache().forEach(cachedChunk -> {
+                tesselators.tesselate(cachedChunk);
+                System.out.println("tesselate: increased light");
+            });
         });
-        super.registerBlockStateChangedCallback((chunk, localX, localY, localZ, state) -> {
-            tesselator.tesselate(chunk);
+
+        // blockstate callback
+        super.registerBlockstateChangedCallback((chunk, localX, localY, localZ, blockstate) -> {
+            // send packet
             context.connection().sendPacket(new SetBlockStatePacket2S(
-                chunk.position(), localX, localY, localZ, context.registries().BLOCK_STATES.getID(state)
+                chunk.position(), localX, localY, localZ, context.registries().BLOCK_STATES.getID(blockstate)
             ));
+
+            // tesselate chunk
+            System.out.println("tesselate: changed blockstate");
+            tesselators.tesselate(chunk);
+
+            // tesselate neighbor chunks
+            final int chunkX = (localX == 0 ? -1 : (localX == Chunk.SIZE_BOUND ? 1 : 0));
+            final int chunkY = (localY == 0 ? -1 : (localY == Chunk.SIZE_BOUND ? 1 : 0));
+            final int chunkZ = (localZ == 0 ? -1 : (localZ == Chunk.SIZE_BOUND ? 1 : 0));
+            final int count = (Math.abs(chunkX) + Math.abs(chunkY) + Math.abs(chunkZ));
+            if(count > 0) {
+                tesselators.tesselate(this.getChunk(chunk.position().getNeighborPacked(chunkX, chunkY, chunkZ)));
+            }
+            if(count > 1) {
+                if(chunkX == 0){
+                    tesselators.tesselate(this.getChunk(chunk.position().getNeighborPacked(0, chunkY, 0)));
+                    tesselators.tesselate(this.getChunk(chunk.position().getNeighborPacked(0, 0, chunkZ)));
+                }else if(chunkY == 0){
+                    tesselators.tesselate(this.getChunk(chunk.position().getNeighborPacked(chunkX, 0, 0)));
+                    tesselators.tesselate(this.getChunk(chunk.position().getNeighborPacked(0, 0, chunkZ)));
+                }else if(chunkZ == 0){
+                    tesselators.tesselate(this.getChunk(chunk.position().getNeighborPacked(chunkX, 0, 0)));
+                    tesselators.tesselate(this.getChunk(chunk.position().getNeighborPacked(0, chunkY, 0)));
+                }else{
+                    tesselators.tesselate(this.getChunk(chunk.position().getNeighborPacked(0, chunkY, chunkZ)));
+                    tesselators.tesselate(this.getChunk(chunk.position().getNeighborPacked(chunkX, 0, chunkZ)));
+                    tesselators.tesselate(this.getChunk(chunk.position().getNeighborPacked(chunkX, chunkY, 0)));
+                    tesselators.tesselate(this.getChunk(chunk.position().getNeighborPacked(0, 0, chunkZ)));
+                    tesselators.tesselate(this.getChunk(chunk.position().getNeighborPacked(0, chunkY, 0)));
+                    tesselators.tesselate(this.getChunk(chunk.position().getNeighborPacked(chunkX, 0, 0)));
+                }
+            }
         });
     }
 
@@ -35,13 +74,30 @@ public class WorldLevel extends World<LevelChunk> implements Disposable {
         return context;
     }
 
-    public ChunkTesselator tesselator() {
-        return tesselator;
+    public ChunkTesselatorPool tesselators() {
+        return tesselators;
+    }
+
+
+    @Override
+    public void putChunk(LevelChunk chunk) {
+        super.putChunk(chunk);
+        tesselators.tesselate(chunk);
+
+        final ChunkPos position = chunk.position();
+        tesselators.tesselate(super.getChunk(position.getNeighborPacked( 1,  0,  0)));
+        tesselators.tesselate(super.getChunk(position.getNeighborPacked( 0,  1,  0)));
+        tesselators.tesselate(super.getChunk(position.getNeighborPacked( 0,  0,  1)));
+        tesselators.tesselate(super.getChunk(position.getNeighborPacked(-1,  0,  0)));
+        tesselators.tesselate(super.getChunk(position.getNeighborPacked( 0, -1,  0)));
+        tesselators.tesselate(super.getChunk(position.getNeighborPacked( 0,  0, -1)));
+
+        System.out.println("tesselate: level got new chunk");
     }
 
 
     public void update() {
-        tesselator.update();
+        tesselators.update();
     }
 
     public void render(PerspectiveCamera camera) {
@@ -51,7 +107,7 @@ public class WorldLevel extends World<LevelChunk> implements Disposable {
 
     public void reset() {
         super.clearChunks();
-        tesselator.reset();
+        tesselators.reset();
         for(LevelChunk chunk: this.getChunks())
             chunk.freeMesh();
     }
@@ -59,7 +115,7 @@ public class WorldLevel extends World<LevelChunk> implements Disposable {
     @Override
     public void dispose() {
         this.reset();
-        tesselator.dispose();
+        tesselators.dispose();
     }
 
 }

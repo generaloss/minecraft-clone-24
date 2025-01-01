@@ -12,14 +12,14 @@ public class SetBlockStatePacket2S extends IPacket<IServerProtocolGame> {
 
     private long chunkPositionPacked;
     private int localX, localY, localZ;
-    private int blockStateID;
+    private int blockstateID;
 
-    public SetBlockStatePacket2S(ChunkPos chunkPosition, int localX, int localY, int localZ, int blockStateID) {
+    public SetBlockStatePacket2S(ChunkPos chunkPosition, int localX, int localY, int localZ, int blockstateID) {
         this.chunkPositionPacked = chunkPosition.pack();
         this.localX = localX;
         this.localY = localY;
         this.localZ = localZ;
-        this.blockStateID = blockStateID;
+        this.blockstateID = blockstateID;
     }
 
     public SetBlockStatePacket2S() { }
@@ -42,14 +42,14 @@ public class SetBlockStatePacket2S extends IPacket<IServerProtocolGame> {
     }
 
     public int getBlockStateID() {
-        return blockStateID;
+        return blockstateID;
     }
 
 
     @Override
     public void write(ExtDataOutputStream stream) throws IOException {
         stream.writeLong(chunkPositionPacked);
-        stream.writeInts(localX, localY, localZ, blockStateID);
+        stream.writeInts(localX, localY, localZ, blockstateID);
     }
 
     @Override
@@ -58,7 +58,7 @@ public class SetBlockStatePacket2S extends IPacket<IServerProtocolGame> {
         localX = stream.readInt();
         localY = stream.readInt();
         localZ = stream.readInt();
-        blockStateID = stream.readInt();
+        blockstateID = stream.readInt();
     }
 
     @Override

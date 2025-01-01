@@ -14,7 +14,7 @@ import java.util.Map;
 
 public class BlockStateModel {
 
-    private BlockState blockState;
+    private BlockState blockstate;
     private boolean dontHidesSameBlockFaces;
     private final Map<Directory, List<BlockFace>> faceGroups;
     private final Map<Directory, Boolean> hideOppositeFacesMap;
@@ -25,7 +25,7 @@ public class BlockStateModel {
     }
 
     public BlockState getBlockState() {
-        return blockState;
+        return blockstate;
     }
 
 
@@ -74,7 +74,7 @@ public class BlockStateModel {
         final Block block = BLOCKS.get(blockID);
         if(block == null)
             throw new IllegalStateException("Block model cannot be loaded. Block with ID '" + blockID + "' is not exists.");
-        blockState = block.getDefaultState();
+        blockstate = block.getDefaultState();
 
         // set 'dont hides same block faces'
         this.setDontHidesSameBlockFaces(jsonObject.getBoolean("dont_hides_same_block_faces"));
