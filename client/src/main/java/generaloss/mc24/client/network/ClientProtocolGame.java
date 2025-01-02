@@ -22,7 +22,6 @@ public class ClientProtocolGame extends ClientProtocol implements IClientProtoco
         final WorldLevel level = super.context().level();
         final LevelChunk chunk = new LevelChunk(level, packet);
         level.putChunk(chunk);
-        System.out.println(level.getChunks().size() + " created chunk: " + chunk.position());
     }
 
     @Override
@@ -32,7 +31,6 @@ public class ClientProtocolGame extends ClientProtocol implements IClientProtoco
         chunk.setBlockState(
             packet.getLocalX(), packet.getLocalY(), packet.getLocalZ(), blockstate
         );
-        System.out.println("tesselate: handle set blockstate");
     }
 
     @Override

@@ -15,6 +15,7 @@ public class JoiningServerScreen extends IScreen {
     private final TextureBatch batch;
     private final Region regionBG;
     private final Texture2D background;
+    private String status;
 
     public JoiningServerScreen(Main context) {
         super(context, "joining_server");
@@ -27,17 +28,22 @@ public class JoiningServerScreen extends IScreen {
             .getObject();
     }
 
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
     @Override
     public void show() {
         Gl.clearColor(0, 0, 0);
+        this.setStatus("Joining server...");
     }
 
     @Override
     public void update() {
-        // exit to title screen
+        // exit to main_menu screen
         if(Key.ESCAPE.down()){
             super.context().disconnectSession();
-            super.context().screens().show("title");
+            super.context().screens().show("main_menu");
         }
     }
 
@@ -53,7 +59,7 @@ public class JoiningServerScreen extends IScreen {
 
         // status
         final Font font = super.context().registries().FONTS.get("default");
-        final String text = "Joining the server..";
+        final String text = status;
         final Vec2f textBounds = font.getTextBounds(text);
         final float textX = (Jpize.getWidth() - textBounds.x) * 0.5F;
         final float textY = (Jpize.getHeight() - textBounds.y) * 0.5F;

@@ -1,7 +1,7 @@
 package generaloss.mc24.client.network;
 
 import generaloss.mc24.client.Main;
-import generaloss.mc24.client.screen.TitleScreen;
+import generaloss.mc24.client.screen.MainMenuScreen;
 import generaloss.mc24.server.network.AccountSession;
 import generaloss.mc24.server.network.packet2c.PublicKeyPacket2C;
 import generaloss.mc24.server.network.packet2c.ServerInfoResponsePacket2C;
@@ -22,7 +22,7 @@ public class ClientProtocolLogin extends ClientProtocol implements IClientProtoc
     @Override
     public void handleServerInfoResponse(ServerInfoResponsePacket2C packet) {
         final long ping = (System.currentTimeMillis() - packet.getTimestamp());
-        final TitleScreen screen = super.context().screens().get("title");
+        final MainMenuScreen screen = super.context().screens().get("main_menu");
         screen.onServerInfo(packet.getMotd(), packet.getVersion(), ping);
         super.disconnect();
     }

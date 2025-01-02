@@ -1,4 +1,4 @@
-package generaloss.mc24.client.chunk;
+package generaloss.mc24.client.chunkmesh;
 
 import generaloss.mc24.client.level.LevelChunk;
 import generaloss.mc24.client.level.WorldLevel;

@@ -1,7 +1,7 @@
 package generaloss.mc24.client.level;
 
 import generaloss.mc24.client.Main;
-import generaloss.mc24.client.chunk.ChunkMesh;
+import generaloss.mc24.client.chunkmesh.ChunkMesh;
 import generaloss.mc24.client.registry.ClientRegistries;
 import generaloss.mc24.server.chunk.ChunkPos;
 import jpize.gl.shader.Shader;

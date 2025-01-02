@@ -25,9 +25,11 @@ public class Main {
 
         final FastReader reader = new FastReader();
         while(!Thread.interrupted() && !server.isClosed()) {
-            final String line = reader.nextLine();
-            if(line.equals("quit"))
-                break;
+            if(reader.hasNext()){
+                final String line = reader.nextLine();
+                if(line.equals("quit"))
+                    break;
+            }
         }
         server.stop();
         reader.close();

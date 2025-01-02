@@ -35,7 +35,7 @@ public class SessionScreen extends IScreen {
 
     @Override
     public void show() {
-        Gl.clearColor(0.25F, 0.35F, 0.5F); // blue sky color ingame
+        Gl.clearColor(0.25F, 0.35F, 0.5F); // sky color
         final PerspectiveCamera camera = super.context().player().camera();
         camera.resize(Jpize.getWidth(), Jpize.getHeight());
         super.context().player().input().enable();
@@ -43,10 +43,10 @@ public class SessionScreen extends IScreen {
 
     @Override
     public void update() {
-        // exit to title screen
+        // exit to main_menu screen
         if(Key.ESCAPE.down()){
             super.context().disconnectSession();
-            super.context().screens().show("title");
+            super.context().screens().show("main_menu");
         }
 
         // tesselate chunk meshes

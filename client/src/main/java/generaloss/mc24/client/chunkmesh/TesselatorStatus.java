@@ -1,4 +1,4 @@
-package generaloss.mc24.client.chunk.tesselator;
+package generaloss.mc24.client.chunkmesh;
 
 public enum TesselatorStatus {
 

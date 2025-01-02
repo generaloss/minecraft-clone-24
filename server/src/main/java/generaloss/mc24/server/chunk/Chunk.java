@@ -17,14 +17,14 @@ public class Chunk <W extends World<? extends Chunk<W>>> {
     private final W world;
     private final ChunkPos position;
     private final Registries registries;
-    private final ByteNibbleArray blockstateIndices;
+    private final ByteNibbleArray blockstateIDs;
     private final ByteMultiNibbleArray blockLight;
 
-    public Chunk(W world, ChunkPos position, ByteNibbleArray blockstateIndices,
+    public Chunk(W world, ChunkPos position, ByteNibbleArray blockstateIDs,
                  ByteMultiNibbleArray blockLight, Registries registries) {
         this.world = world;
         this.position = position;
-        this.blockstateIndices = blockstateIndices;
+        this.blockstateIDs = blockstateIDs;
         this.blockLight = blockLight;
         this.registries = registries;
     }
@@ -42,8 +42,12 @@ public class Chunk <W extends World<? extends Chunk<W>>> {
         return position;
     }
 
-    public ByteNibbleArray getBlockStateIndices() {
-        return blockstateIndices;
+    public Registries registries() {
+        return registries;
+    }
+
+    public ByteNibbleArray getBlockStateIDs() {
+        return blockstateIDs;
     }
 
     public ByteMultiNibbleArray getBlockLight() {
@@ -52,45 +56,53 @@ public class Chunk <W extends World<? extends Chunk<W>>> {
 
 
     public BlockState getBlockState(int x, int y, int z) {
-        if(blockstateIndices.isOutOfBounds(x, y, z))
+        if(blockstateIDs.isOutOfBounds(x, y, z))
             return Block.VOID.getDefaultState();
-        final int stateID = blockstateIndices.get(x, y, z);
+        final int stateID = blockstateIDs.get(x, y, z);
         if(stateID == -1)
             return Block.VOID.getDefaultState();
         return registries.BLOCK_STATES.get(stateID);
     }
 
     public boolean setBlockState(int x, int y, int z, BlockState state) {
+        // get & validate stateID
         final int stateID = registries.BLOCK_STATES.getID(state);
-        if(stateID == -1 || blockstateIndices.isOutOfBounds(x, y, z))
+        if(stateID == -1 || blockstateIDs.isOutOfBounds(x, y, z))
             return false;
-        blockstateIndices.set(x, y, z, stateID);
-        // glowing
+
+        // get previous state
+        //final BlockState previousState = registries.BLOCK_STATES.get(blockstateIndices.get(x, y, z));
+
+        // set state ID
+        blockstateIDs.set(x, y, z, stateID);
+
+        // remove black area
         if(state.getBlock().properties().getInt("opacity") == BlockLightEngine.MAX_LEVEL){
             this.setBlockLightLevel(x, y, z, 0, 0, 0);
         }
+
+        // increase glowing
         final Vec3i glowing = state.getBlock().properties().getVec3i("glowing");
-        if(!glowing.isZero())
-            world.getBlockLightEngine().increase(this, x, y, z, glowing.x, glowing.y, glowing.z);
+        world.getBlockLightEngine().increase(this, x, y, z, glowing.x, glowing.y, glowing.z);
         return true;
     }
 
 
     public byte getBlockLightLevel(int x, int y, int z, int channel) {
-        if(blockstateIndices.isOutOfBounds(x, y, z))
+        if(blockLight.isOutOfBounds(channel, x, y, z))
             return 0;
         return blockLight.get(channel, x, y, z);
     }
 
     public boolean setBlockLightLevel(int x, int y, int z, int channel, int level) {
-        if(blockstateIndices.isOutOfBounds(x, y, z))
+        if(blockLight.isOutOfBounds(channel, x, y, z))
             return false;
         blockLight.set(channel, x, y, z, level);
         return true;
     }
 
     public boolean setBlockLightLevel(int x, int y, int z, int r, int g, int b) {
-        if(blockstateIndices.isOutOfBounds(x, y, z))
+        if(blockstateIDs.isOutOfBounds(x, y, z))
             return false;
         blockLight.set(0, x, y, z, r);
         blockLight.set(1, x, y, z, g);

@@ -1,12 +1,9 @@
-package generaloss.mc24.client.chunk.tesselator;
+package generaloss.mc24.client.chunkmesh;
 
 import generaloss.mc24.client.Main;
 import generaloss.mc24.client.block.BlockFace;
 import generaloss.mc24.client.block.BlockStateModel;
 import generaloss.mc24.client.block.BlockVertex;
-import generaloss.mc24.client.chunk.BlockAndLightCache;
-import generaloss.mc24.client.chunk.ChunkMesh;
-import generaloss.mc24.client.chunk.ChunkMeshCache;
 import generaloss.mc24.server.Directory;
 import generaloss.mc24.server.block.*;
 import generaloss.mc24.client.level.LevelChunk;
@@ -98,47 +95,66 @@ public class ChunkTesselator {
             ) / 4F / BlockLightEngine.MAX_LEVEL;
             default -> {
                 final float[][][] blockVertices = new float[2][2][2];
+
                 for(int i = 0; i < 2; i++) {
+                    final int i0 = (i - 1);
+
                     for(int j = 0; j < 2; j++) {
+                        final int j0 = (j - 1);
+
                         for(int k = 0; k < 2; k++) {
-                            blockVertices[i][j][k] += blockAndLightCache.getLightLevel(i - 1, j - 1, k - 1, channel);
-                            blockVertices[i][j][k] += blockAndLightCache.getLightLevel(i    , j - 1, k - 1, channel);
-                            blockVertices[i][j][k] += blockAndLightCache.getLightLevel(i - 1, j    , k - 1, channel);
-                            blockVertices[i][j][k] += blockAndLightCache.getLightLevel(i - 1, j - 1, k    , channel);
-                            blockVertices[i][j][k] += blockAndLightCache.getLightLevel(i    , j    , k - 1, channel);
-                            blockVertices[i][j][k] += blockAndLightCache.getLightLevel(i - 1, j    , k    , channel);
-                            blockVertices[i][j][k] += blockAndLightCache.getLightLevel(i    , j - 1, k    , channel);
-                            blockVertices[i][j][k] += blockAndLightCache.getLightLevel(i    , j    , k    , channel);
+                            final int k0 = (k - 1);
+
+                            blockVertices[i][j][k] += blockAndLightCache.getLightLevel(i0, j0, k0, channel);
+                            blockVertices[i][j][k] += blockAndLightCache.getLightLevel(i , j0, k0, channel);
+                            blockVertices[i][j][k] += blockAndLightCache.getLightLevel(i0, j , k0, channel);
+                            blockVertices[i][j][k] += blockAndLightCache.getLightLevel(i , j , k0, channel);
+                            blockVertices[i][j][k] += blockAndLightCache.getLightLevel(i0, j0, k , channel);
+                            blockVertices[i][j][k] += blockAndLightCache.getLightLevel(i , j0, k , channel);
+                            blockVertices[i][j][k] += blockAndLightCache.getLightLevel(i0, j , k , channel);
+                            blockVertices[i][j][k] += blockAndLightCache.getLightLevel(i , j , k , channel);
                         }
                     }
                 }
                 for(int i = 0; i < 2; i++)
                     for(int j = 0; j < 2; j++)
                         for(int k = 0; k < 2; k++)
-                            blockVertices[i][j][k] /= 4F;
+                            blockVertices[i][j][k] /= 8F;
 
-                final float x0 = blockVertices[0][0][0] * (1F - vertexX) + blockVertices[1][0][0] * vertexX;
-                final float x1 = blockVertices[0][1][0] * (1F - vertexX) + blockVertices[1][1][0] * vertexX;
+                final float vertexInvX = (1F - vertexX);
+                final float vertexInvY = (1F - vertexY);
+                final float vertexInvZ = (1F - vertexZ);
 
-                final float y0 = x0 * (1F - vertexY) + x1 * vertexY;
+                // final float x_y1_z1 = (blockVertices[0][0][0] * vertexInvX  +  blockVertices[1][0][0] * vertexX);
+                // final float x_y2_z1 = (blockVertices[0][1][0] * vertexInvX  +  blockVertices[1][1][0] * vertexX);
+                // final float x_y_z1 = (x_y1_z1 * vertexInvY  +  x_y2_z1 * vertexY);
+                // final float x_y1_z2 = (blockVertices[0][0][1] * vertexInvX  +  blockVertices[1][0][1] * vertexX);
+                // final float x_y2_z2 = (blockVertices[0][1][1] * vertexInvX  +  blockVertices[1][1][1] * vertexX);
+                // final float x_y_z2 = (x_y1_z2 * vertexInvY  +  x_y2_z2 * vertexY);
+                // final float x_y_z = (x_y_z1 * vertexInvZ  +  x_y_z2 * vertexZ);
 
-                final float x2 = blockVertices[0][0][1] * (1F - vertexX) + blockVertices[1][0][1] * vertexX;
-                final float x3 = blockVertices[0][1][1] * (1F - vertexX) + blockVertices[1][1][1] * vertexX;
+                if(a) {
+                    System.out.println("[" + vertexX + ", " + vertexY + ", " + vertexZ + "] = " + blockVertices[0][0][0] + " | " + blockVertices[0][1][0]);
+                }
 
-                final float y1 = x2 * (1F - vertexY) + x3 * vertexY;
+                final float x_y_z = (blockVertices[0][0][0] * vertexInvY  +  blockVertices[0][1][0] * vertexY);
+                // final float x_y_z = (x_y_z * vertexInvY  +  x_y_z * vertexY);
+                // final float x_y_z = (blockVertices[0][0][0] * vertexInvX  +  blockVertices[0][0][0] * vertexX);
 
-                final float z0 = y0 * (1F - vertexZ) + y1 * vertexZ;
-
-                yield z0 / 2F / BlockLightEngine.MAX_LEVEL;
+                yield x_y_z / BlockLightEngine.MAX_LEVEL;
             }
         };
     }
 
+    private boolean a;
+
     private void addFaces(int x, int y, int z, BlockStateModel model, Directory directory) {
+        a = model.getBlockState().isBlockID("stairs");
         for(BlockFace face: model.getFacesGroup(directory)){
 
             // cache ambient occlusion
             final BlockVertex[] vertices = face.getVertices();
+
             for(int vertexIndex = 0; vertexIndex < vertices.length; vertexIndex++){
                 final BlockVertex vertex = vertices[vertexIndex];
                 for(int channel = 0; channel < 3; channel++)
@@ -185,8 +201,10 @@ public class ChunkTesselator {
         }
     }
 
+    private final Stopwatch stopwatch = new Stopwatch().start();
+
     private void tesselate(LevelChunk chunk) {
-        final Stopwatch stopwatch = new Stopwatch().start();
+        stopwatch.reset();
 
         // cache neighbor chunks
         chunkCache.cacheNeighborsFor(chunk);
@@ -272,7 +290,6 @@ public class ChunkTesselator {
                 if((blockstateSouth == blockstate && modelSouth.isDontHidesSameBlockFaces()) || modelSouth.isNotHidesOppositeFace(Directory.SOUTH))
                     this.addFaces(x, y, z, model, Directory.SOUTH);
             }
-
         });
 
         System.out.println("[INFO]: Mesh build time: " + stopwatch.getMillis());

@@ -1,7 +1,6 @@
-package generaloss.mc24.client.chunk.tesselator;
+package generaloss.mc24.client.chunkmesh;
 
 import generaloss.mc24.client.Main;
-import generaloss.mc24.client.chunk.ChunkMeshCache;
 import generaloss.mc24.client.level.LevelChunk;
 import generaloss.mc24.client.level.WorldLevel;
 import jpize.util.Disposable;

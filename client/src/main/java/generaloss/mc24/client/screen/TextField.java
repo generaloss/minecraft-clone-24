@@ -20,7 +20,7 @@ public class TextField {
         this.x = x;
         this.y = y;
         this.font = font;
-        this.input = new TextInput().setMaxLines(1);
+        this.input = new TextInput().setMaxLines(1).setTabSpaces(0);
     }
 
     public void setHint(String hint) {
@@ -36,13 +36,15 @@ public class TextField {
         input.setLine(text);
     }
 
-    public boolean isInputEnabled() {
+
+    public boolean isFocused() {
         return input.isEnabled();
     }
 
-    public void disableInput() {
-        input.disable();
+    public void setFocused(boolean focused) {
+        input.enable(focused);
     }
+
 
     public void render(TextureBatch batch) {
         final float height = font.getLineAdvanceScaled();
@@ -51,7 +53,7 @@ public class TextField {
         batch.drawBlackRect(x, y, width, height, 0.5F);
 
         if(MouseBtn.pressedAny(MouseBtn.values())){
-            input.enable(Intersector.isPointOnRect(Jpize.getX(), Jpize.getY(), x, y, width, height));
+            this.setFocused(Intersector.isPointOnRect(Jpize.getX(), Jpize.getY(), x, y, width, height));
             time = 0;
         }
 
@@ -68,7 +70,7 @@ public class TextField {
         font.getRenderOptions().color().reset();
 
         time += Jpize.getDeltaTime();
-        if(input.isEnabled() && time * 2 % 2 < 1) {
+        if(this.isFocused() && time * 2 % 2 < 1) {
             final float offsetX = font.getTextWidth(text.substring(0, input.getX()));
             batch.drawRect(x + offsetX, y, 3F, font.getHeightScaled(), 1F, 1F, 1F);
         }

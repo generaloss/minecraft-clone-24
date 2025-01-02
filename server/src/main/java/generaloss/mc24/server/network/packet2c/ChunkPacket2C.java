@@ -11,12 +11,12 @@ import java.io.IOException;
 public class ChunkPacket2C extends NetPacket<IClientProtocolGame> {
 
     private long positionPacked;
-    private byte[] blockstateIndices;
+    private byte[] blockstateIDs;
     private byte[] blockLight;
 
     public ChunkPacket2C(Chunk<?> chunk) {
         this.positionPacked = chunk.position().pack();
-        this.blockstateIndices = chunk.getBlockStateIndices().array();
+        this.blockstateIDs = chunk.getBlockStateIDs().array();
         this.blockLight = chunk.getBlockLight().array();
     }
 
@@ -26,8 +26,8 @@ public class ChunkPacket2C extends NetPacket<IClientProtocolGame> {
         return new ChunkPos(positionPacked);
     }
 
-    public ByteNibbleArray getBlockstateIndices() {
-        return new ByteNibbleArray(blockstateIndices);
+    public ByteNibbleArray getBlockstateIDs() {
+        return new ByteNibbleArray(blockstateIDs);
     }
 
     public ByteMultiNibbleArray getBlockLight() {
@@ -37,10 +37,10 @@ public class ChunkPacket2C extends NetPacket<IClientProtocolGame> {
     @Override
     public void write(ExtDataOutputStream stream) throws IOException {
         stream.writeLong(positionPacked);
-        stream.writeByteArray(blockstateIndices);
+        stream.writeByteArray(blockstateIDs);
         stream.writeByteArray(blockLight);
-        if(blockstateIndices.length != Chunk.SIZE * Chunk.SIZE * Chunk.SIZE)
-            System.err.println("bsi: " + blockstateIndices.length);
+        if(blockstateIDs.length != Chunk.SIZE * Chunk.SIZE * Chunk.SIZE)
+            System.err.println("bsi: " + blockstateIDs.length);
         if(blockLight.length != Chunk.SIZE * Chunk.SIZE * Chunk.SIZE * 3)
             System.err.println("bl: " + blockLight.length);
     }
@@ -48,10 +48,10 @@ public class ChunkPacket2C extends NetPacket<IClientProtocolGame> {
     @Override
     public void read(ExtDataInputStream stream) throws IOException {
         positionPacked = stream.readLong();
-        blockstateIndices = stream.readByteArray();
+        blockstateIDs = stream.readByteArray();
         blockLight = stream.readByteArray();
-        if(blockstateIndices.length != Chunk.SIZE * Chunk.SIZE * Chunk.SIZE)
-            System.err.println("bsi: " + blockstateIndices.length);
+        if(blockstateIDs.length != Chunk.SIZE * Chunk.SIZE * Chunk.SIZE)
+            System.err.println("bsi: " + blockstateIDs.length);
         if(blockLight.length != Chunk.SIZE * Chunk.SIZE * Chunk.SIZE * 3)
             System.err.println("bl: " + blockLight.length);
     }

@@ -1,7 +1,7 @@
 package generaloss.mc24.client.level;
 
 import generaloss.mc24.client.Main;
-import generaloss.mc24.client.chunk.tesselator.ChunkTesselatorPool;
+import generaloss.mc24.client.chunkmesh.ChunkTesselatorPool;
 import generaloss.mc24.server.chunk.Chunk;
 import generaloss.mc24.server.chunk.ChunkPos;
 import generaloss.mc24.server.network.packet2s.SetBlockStatePacket2S;
@@ -23,10 +23,7 @@ public class WorldLevel extends World<LevelChunk> implements Disposable {
         // light callback
         super.getBlockLightEngine().registerIncreasedCallback((chunk, x, y, z, r, g, b) -> {
             // tesselate all cached chunks
-            super.getBlockLightEngine().chunkCache().forEach(cachedChunk -> {
-                tesselators.tesselate(cachedChunk);
-                System.out.println("tesselate: increased light");
-            });
+            super.getBlockLightEngine().chunkCache().forEach(tesselators::tesselate);
         });
 
         // blockstate callback
@@ -37,7 +34,6 @@ public class WorldLevel extends World<LevelChunk> implements Disposable {
             ));
 
             // tesselate chunk
-            System.out.println("tesselate: changed blockstate");
             tesselators.tesselate(chunk);
 
             // tesselate neighbor chunks
@@ -91,8 +87,6 @@ public class WorldLevel extends World<LevelChunk> implements Disposable {
         tesselators.tesselate(super.getChunk(position.getNeighborPacked(-1,  0,  0)));
         tesselators.tesselate(super.getChunk(position.getNeighborPacked( 0, -1,  0)));
         tesselators.tesselate(super.getChunk(position.getNeighborPacked( 0,  0, -1)));
-
-        System.out.println("tesselate: level got new chunk");
     }
 
 

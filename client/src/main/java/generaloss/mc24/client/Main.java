@@ -8,7 +8,7 @@ import generaloss.mc24.client.screen.JoiningServerScreen;
 import generaloss.mc24.server.network.AccountSession;
 import generaloss.mc24.server.network.packet2s.LoginRequestPacket2S;
 import generaloss.mc24.server.resourcepack.ResourcePack;
-import generaloss.mc24.client.screen.TitleScreen;
+import generaloss.mc24.client.screen.MainMenuScreen;
 import generaloss.mc24.client.screen.ScreenDispatcher;
 import generaloss.mc24.client.player.ClientPlayer;
 import generaloss.mc24.client.screen.SessionScreen;
@@ -91,13 +91,13 @@ public class Main extends JpizeApplication {
         // load font
         registries.FONTS.register("default", "fonts/default/font.fnt");
         // register screens
-        screens.register(new TitleScreen(this));
+        screens.register(new MainMenuScreen(this));
         screens.register(new SessionScreen(this));
         screens.register(new JoiningServerScreen(this));
         // load all resources
         registries.loadResources();
         // set menu screen
-        screens.show("title");
+        screens.show("main_menu");
     }
 
 
@@ -135,7 +135,6 @@ public class Main extends JpizeApplication {
             for(LevelChunk chunk: level.getChunks()){
                 chunk.freeMesh();
                 level.tesselators().tesselate(chunk);
-                System.out.println("tesselate: resource pack");
             }
         }else if(Key.F2.up()){
             final ResourcePack testPack1 = new ResourcePack("test-pack-1.zip");
@@ -143,7 +142,6 @@ public class Main extends JpizeApplication {
             for(LevelChunk chunk: level.getChunks()){
                 chunk.freeMesh();
                 level.tesselators().tesselate(chunk);
-                System.out.println("tesselate: resource pack");
             }
         }else if(Key.F3.up()){
             final ResourcePack testPack2 = new ResourcePack("test-pack-2.zip");
@@ -151,7 +149,6 @@ public class Main extends JpizeApplication {
             for(LevelChunk chunk: level.getChunks()){
                 chunk.freeMesh();
                 level.tesselators().tesselate(chunk);
-                System.out.println("tesselate: resource pack");
             }
         }
 

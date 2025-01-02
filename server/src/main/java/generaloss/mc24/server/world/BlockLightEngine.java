@@ -32,22 +32,22 @@ public class BlockLightEngine <W extends World<C>, C extends Chunk<? extends W>>
     }
 
     public void increase(Chunk<?> chunk, int x, int y, int z, int r, int g, int b) {
-        if(chunk == null)
+        if(chunk == null || r == 0 || g == 0 || b == 0)
             return;
 
-        if(chunk.getBlockLightLevel(x, y, z, 0) >= r &&
-            chunk.getBlockLightLevel(x, y, z, 1) >= g && chunk.getBlockLightLevel(x, y, z, 2) >= b)
+        final int prevR = chunk.getBlockLightLevel(x, y, z, 0);
+        final int prevG = chunk.getBlockLightLevel(x, y, z, 1);
+        final int prevB = chunk.getBlockLightLevel(x, y, z, 2);
+        if(r <= prevR && g <= prevG && b <= prevB)
             return;
 
         chunk.setBlockLightLevel(x, y, z, r, g, b);
 
-        if(r > 0) increaseQueue.add(new Entry(x, y, z, 0, r));
-        if(g > 0) increaseQueue.add(new Entry(x, y, z, 1, g));
-        if(b > 0) increaseQueue.add(new Entry(x, y, z, 2, b));
+        if(r > prevG) increaseQueue.add(new Entry(x, y, z, 0, r));
+        if(g > prevG) increaseQueue.add(new Entry(x, y, z, 1, g));
+        if(b > prevB) increaseQueue.add(new Entry(x, y, z, 2, b));
 
-        if(!increaseQueue.isEmpty())
-            chunkCache.cacheNeighborsFor((C) chunk);
-
+        chunkCache.cacheNeighborsFor((C) chunk);
         this.processIncrease();
         this.invokeIncreasedCallbacks((C) chunk, x, y, z, r, g, b);
     }

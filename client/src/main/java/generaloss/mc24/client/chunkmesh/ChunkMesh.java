@@ -1,4 +1,4 @@
-package generaloss.mc24.client.chunk;
+package generaloss.mc24.client.chunkmesh;
 
 import generaloss.mc24.client.block.BlockVertex;
 import jpize.gl.tesselation.GlPrimitive;

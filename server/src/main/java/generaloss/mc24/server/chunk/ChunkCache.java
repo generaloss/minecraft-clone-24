@@ -84,7 +84,8 @@ public class ChunkCache <W extends World<C>, C extends Chunk<? extends W>> {
         final C chunk = this.findForBlock(x, y, z);
         if(chunk == null)
             return Block.VOID.getDefaultState();
-        return chunk.getBlockState(norBlockPos.x, norBlockPos.y, norBlockPos.z);
+        final byte stateID = chunk.getBlockStateIDs().get(norBlockPos.x, norBlockPos.y, norBlockPos.z);
+        return chunk.registries().BLOCK_STATES.get(stateID);
     }
 
     public boolean setBlockState(int x, int y, int z, BlockState blockstate) {

@@ -21,7 +21,10 @@ import jpize.util.mesh.TextureBatch;
 import jpize.util.postprocess.ScreenQuadMesh;
 import jpize.util.postprocess.ScreenQuadShader;
 
-public class TitleScreen extends IScreen {
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+public class MainMenuScreen extends IScreen {
 
     private final Texture2D overlayTexture;
     private final Skybox skybox;
@@ -36,9 +39,10 @@ public class TitleScreen extends IScreen {
     private String serverInfo = "Server Info: (press 'Ctrl + I' to ping server)";
     private String disconnectMessage = "";
     private String accountStatus = "Account status: ";
+    private final ExecutorService executors;
 
-    public TitleScreen(Main context) {
-        super(context, "title");
+    public MainMenuScreen(Main context) {
+        super(context, "main_menu");
 
         this.batch = new TextureBatch();
 
@@ -62,6 +66,8 @@ public class TitleScreen extends IScreen {
 
         // camera
         this.camera = new PerspectiveCamera(0.01F, 5F, 85F);
+        // executor service
+        this.executors = Executors.newWorkStealingPool();
     }
 
     public void init() {
@@ -84,9 +90,9 @@ public class TitleScreen extends IScreen {
     @Override
     public void hide() {
         music.pause();
-        nicknameField.disableInput();
-        passwordField.disableInput();
-        serverAddressField.disableInput();
+        nicknameField.setFocused(false);
+        passwordField.setFocused(false);
+        serverAddressField.setFocused(false);
     }
 
     @Override
@@ -99,19 +105,23 @@ public class TitleScreen extends IScreen {
         camera.update();
         // register
         if(Key.LCTRL.pressed() && Key.R.down()) {
-            final Response response = Request.sendCreateAccount(SharedConstants.ACCOUNTS_HOST, nicknameField.getText(), passwordField.getText());
-            accountStatus = "Register status: " + response.getCode() + ", " + response.readString();
+            executors.execute(() -> {
+                final Response response = Request.sendCreateAccount(SharedConstants.ACCOUNTS_HOST, nicknameField.getText(), passwordField.getText());
+                accountStatus = "Register status: " + response.getCode() + ", " + response.readString();
+            });
         }
         // login
         if(Key.LCTRL.pressed() && Key.L.down()) {
-            final String nickname = nicknameField.getText();
-            final Response response = Request.sendLogin(SharedConstants.ACCOUNTS_HOST, nickname, passwordField.getText());
-            if(response.getCode().noError()){
-                final AccountSession session = new AccountSession(response.readUUID(), nickname);
-                super.context().setSession(session);
-                System.out.println("[INFO]: Logged in as '" + nickname + "'");
-            }
-            accountStatus = "Login status: " + response.getCode() + ", " + response.readString();
+            executors.execute(() -> {
+                final String nickname = nicknameField.getText();
+                final Response response = Request.sendLogin(SharedConstants.ACCOUNTS_HOST, nickname, passwordField.getText());
+                if(response.getCode().noError()){
+                    final AccountSession session = new AccountSession(response.readUUID(), nickname);
+                    super.context().setSession(session);
+                    System.out.println("[INFO]: Logged in as '" + nickname + "'");
+                }
+                accountStatus = "Login status: " + response.getCode() + ", " + response.readString();
+            });
         }
         // join
         if(Key.ENTER.down()){
@@ -140,6 +150,21 @@ public class TitleScreen extends IScreen {
         // exit
         if(Key.ESCAPE.down())
             Jpize.exit();
+        // tab fields
+        if(Key.TAB.down()) {
+            if(nicknameField.isFocused()){
+                nicknameField.setFocused(false);
+                passwordField.setFocused(true);
+
+            }else if(passwordField.isFocused()){
+                passwordField.setFocused(false);
+                serverAddressField.setFocused(true);
+
+            }else if(serverAddressField.isFocused()){
+                serverAddressField.setFocused(false);
+                nicknameField.setFocused(true);
+            }
+        }
     }
 
     public void onServerInfo(String motd, String version, long ping) {
@@ -148,7 +173,7 @@ public class TitleScreen extends IScreen {
 
     public void onDisconnect(String message) {
         super.context().disconnectSession();
-        super.context().screens().show("title");
+        super.context().screens().show("main_menu");
         disconnectMessage = "Disconnection: " + message;
     }
 
