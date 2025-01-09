@@ -1,5 +1,6 @@
 package generaloss.mc24.client.block;
 
+import jpize.util.math.matrix.Matrix4f;
 import jpize.util.math.vector.Vec3f;
 
 public class BlockVertex {
@@ -35,6 +36,21 @@ public class BlockVertex {
 
     public float[] array() {
         return array;
+    }
+
+
+    public void rotate(Vec3f rotationOrigin, Matrix4f rotationMat, Matrix4f blockRotationMat, boolean uvLock) {
+        final Vec3f vertex = new Vec3f(this.getX(), this.getY(), this.getZ())
+
+            .sub(rotationOrigin)
+            .mulMat4(rotationMat)
+            .add(rotationOrigin)
+
+            .sub(0.5F)
+            .mulMat4(blockRotationMat)
+            .add(0.5F);
+
+        this.setPosition(vertex.x, vertex.y, vertex.z);
     }
 
 
@@ -92,6 +108,12 @@ public class BlockVertex {
         array[COLOR_OFFSET + 1] = g;
         array[COLOR_OFFSET + 2] = b;
         array[COLOR_OFFSET + 3] = a;
+    }
+
+    public void setColor(float r, float g, float b) {
+        array[COLOR_OFFSET + 0] = r;
+        array[COLOR_OFFSET + 1] = g;
+        array[COLOR_OFFSET + 2] = b;
     }
 
 

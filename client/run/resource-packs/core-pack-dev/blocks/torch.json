@@ -1,0 +1,10 @@
+{
+  "properties" : {
+    "opacity" : 0,
+    "glowing" : [15, 15, 12]
+  },
+  "variant_properties": [],
+  "variants": {
+    "": {"model": "models/block/torch.json"}
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "parent": "models/block/template_campfire.json",
+  "textures": {
+    "fire": "campfire_fire.png",
+    "lit_log": "campfire_log_lit.png"
+  }
+}

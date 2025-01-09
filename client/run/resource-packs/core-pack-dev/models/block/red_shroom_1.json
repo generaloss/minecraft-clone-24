@@ -1,0 +1,48 @@
+{
+	"textures": {
+		"0": "red_shroom_1.png",
+		"particle": "red_shroom_1.png"
+	},
+	"elements": [
+		{
+			"from": [0, 0, 0],
+			"to": [16, 24, 16],
+			"rotation": {"angle": 0, "axis": "y", "origin": [7, 0, 7]},
+			"faces": {
+				"south": {"uv": [3, 10, 4, 12], "texture": "#0"},
+				"east": {"uv": [10, 3, 11, 5], "texture": "#0"},
+				"north": {"uv": [4, 10, 5, 12], "texture": "#0"},
+				"west": {"uv": [10, 5, 11, 7], "texture": "#0"},
+				"up": {"uv": [11, 8, 10, 7], "texture": "#0"},
+				"down": {"uv": [1, 11, 0, 12], "texture": "#0", "cullface": "down"}
+			}
+		},
+		{
+			"from": [-11, 24, -11],
+			"to": [27, 31, 27],
+			"rotation": {"angle": 0, "axis": "y", "origin": [7, 2, 7]},
+			"faces": {
+				"south": {"uv": [5, 0, 10, 2], "texture": "#0"},
+				"east": {"uv": [5, 2, 10, 4], "texture": "#0"},
+				"north": {"uv": [5, 4, 10, 6], "texture": "#0"},
+				"west": {"uv": [5, 6, 10, 8], "texture": "#0"},
+				"up": {"uv": [5, 5, 0, 0], "texture": "#0"},
+				"down": {"uv": [5, 5, 0, 10], "texture": "#0"}
+			}
+		},
+		{
+			"from": [-10, 31, -10],
+			"to": [26, 32, 26],
+			"rotation": {"angle": 0, "axis": "y", "origin": [7, 4, 7]},
+			"faces": {
+				"south": {"uv": [0, 10, 3, 11], "texture": "#0"},
+				"east": {"uv": [10, 0, 13, 1], "texture": "#0"},
+				"north": {"uv": [10, 1, 13, 2], "texture": "#0"},
+				"west": {"uv": [10, 2, 13, 3], "texture": "#0"},
+				"up": {"uv": [8, 11, 5, 8], "texture": "#0"},
+				"down": {"uv": [11, 8, 8, 11], "texture": "#0"}
+			}
+		}
+	],
+	"display": {}
+}

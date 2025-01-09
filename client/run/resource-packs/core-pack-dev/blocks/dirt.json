@@ -1,0 +1,14 @@
+{
+  "properties" : {
+    "opacity" : 15
+  },
+  "variant_properties": [],
+  "variants": {
+    "": [
+      {"model": "models/block/dirt.json"},
+      {"model": "models/block/dirt.json", "y": 90},
+      {"model": "models/block/dirt.json", "y": 180},
+      {"model": "models/block/dirt.json", "y": 270}
+    ]
+  }
+}

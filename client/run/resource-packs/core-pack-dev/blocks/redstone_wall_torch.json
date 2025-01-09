@@ -1,0 +1,17 @@
+{
+  "properties" : {
+    "opacity" : 0,
+    "glowing" : [10, 3, 3]
+  },
+  "variant_properties": ["facing", "lit"],
+  "variants": {
+    "facing=east,lit=false":  {"model": "models/block/redstone_wall_torch_off.json"},
+    "facing=east,lit=true":   {"model": "models/block/redstone_wall_torch.json"},
+    "facing=south,lit=false": {"model": "models/block/redstone_wall_torch_off.json", "y": 270},
+    "facing=south,lit=true":  {"model": "models/block/redstone_wall_torch.json",     "y": 270},
+    "facing=north,lit=false": {"model": "models/block/redstone_wall_torch_off.json", "y": 90},
+    "facing=north,lit=true":  {"model": "models/block/redstone_wall_torch.json",     "y": 90},
+    "facing=west,lit=false":  {"model": "models/block/redstone_wall_torch_off.json", "y": 180},
+    "facing=west,lit=true":   {"model": "models/block/redstone_wall_torch.json",     "y": 180}
+  }
+}

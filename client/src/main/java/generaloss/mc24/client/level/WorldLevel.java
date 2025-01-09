@@ -5,6 +5,7 @@ import generaloss.mc24.client.chunkmesh.ChunkTesselatorPool;
 import generaloss.mc24.server.chunk.Chunk;
 import generaloss.mc24.server.chunk.ChunkPos;
 import generaloss.mc24.server.network.packet2s.SetBlockStatePacket2S;
+import generaloss.mc24.server.registry.ServerRegistries;
 import generaloss.mc24.server.world.World;
 import jpize.util.Disposable;
 import jpize.util.camera.PerspectiveCamera;
@@ -30,7 +31,7 @@ public class WorldLevel extends World<LevelChunk> implements Disposable {
         super.registerBlockstateChangedCallback((chunk, localX, localY, localZ, blockstate) -> {
             // send packet
             context.connection().sendPacket(new SetBlockStatePacket2S(
-                chunk.position(), localX, localY, localZ, context.registries().BLOCK_STATES.getID(blockstate)
+                chunk.position(), localX, localY, localZ, ServerRegistries.BLOCK_STATE.getID(blockstate)
             ));
 
             // tesselate chunk

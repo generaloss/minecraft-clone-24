@@ -1,7 +1,6 @@
 package generaloss.mc24.server;
 
-import generaloss.mc24.server.registry.Registries;
-import generaloss.mc24.server.resourcepack.ResourcePack;
+import generaloss.mc24.server.resourcepack.ResourcePackManager;
 import jpize.util.io.FastReader;
 import jpize.util.res.ExternalResource;
 import jpize.util.res.Resource;
@@ -19,7 +18,8 @@ public class Main {
         config.putIfAbsent("port", 22854);
         config.save(configRes);
 
-        final Server server = new Server(new Registries(new ResourcePack("vanilla-pack.zip")), true);
+        final ResourcePackManager resourcePackManager = new ResourcePackManager();
+        final Server server = new Server(resourcePackManager, true);
         server.init();
         server.run(config.getInt("port"));
 

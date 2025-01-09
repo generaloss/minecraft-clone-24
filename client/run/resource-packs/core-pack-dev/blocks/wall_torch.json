@@ -1,0 +1,13 @@
+{
+  "properties" : {
+    "opacity" : 0,
+    "glowing" : [15, 15, 12]
+  },
+  "variant_properties": ["facing"],
+  "variants": {
+    "facing=east":  {"model": "models/block/wall_torch.json"},
+    "facing=south": {"model": "models/block/wall_torch.json", "y": 270},
+    "facing=north": {"model": "models/block/wall_torch.json", "y": 90},
+    "facing=west":  {"model": "models/block/wall_torch.json", "y": 180}
+  }
+}

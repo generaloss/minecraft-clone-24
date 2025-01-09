@@ -1,0 +1,39 @@
+{
+  "properties" : {
+    "opacity" : 0,
+    "glowing" : [15, 15, 12]
+  },
+  "variant_properties": ["facing", "lit"],
+  "variants": {
+    "facing=east,lit=false": {
+      "model": "models/block/campfire_off.json",
+      "y": 270
+    },
+    "facing=east,lit=true": {
+      "model": "models/block/campfire.json",
+      "y": 270
+    },
+    "facing=south,lit=false": {
+      "model": "models/block/campfire_off.json",
+      "y": 180
+    },
+    "facing=south,lit=true": {
+      "model": "models/block/campfire.json",
+      "y": 180
+    },
+    "facing=north,lit=false": {
+      "model": "models/block/campfire_off.json"
+    },
+    "facing=north,lit=true": {
+      "model": "models/block/campfire.json"
+    },
+    "facing=west,lit=false": {
+      "model": "models/block/campfire_off.json",
+      "y": 90
+    },
+    "facing=west,lit=true": {
+      "model": "models/block/campfire.json",
+      "y": 90
+    }
+  }
+}

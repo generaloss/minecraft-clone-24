@@ -1,6 +1,6 @@
 package generaloss.mc24.server.world;
 
-import generaloss.mc24.server.Directory;
+import generaloss.mc24.server.Direction;
 import generaloss.mc24.server.block.BlockState;
 import generaloss.mc24.server.chunk.Chunk;
 import generaloss.mc24.server.chunk.ChunkCache;
@@ -17,12 +17,12 @@ public class BlockLightEngine <W extends World<C>, C extends Chunk<? extends W>>
 
     public static final int MAX_LEVEL = Chunk.SIZE_BOUND;
 
-    private final Queue<Entry> increaseQueue;
+    private final Queue<Entry> queue;
     private final ChunkCache<W, C> chunkCache;
     private final List<BlockLightIncreasedCallback<W, C>> blockLightIncreasedCallbacks;
 
     public BlockLightEngine(W world) {
-        this.increaseQueue = new ConcurrentLinkedQueue<>();
+        this.queue = new ConcurrentLinkedQueue<>();
         this.chunkCache = new ChunkCache<>(world);
         this.blockLightIncreasedCallbacks = new CopyOnWriteArrayList<>();
     }
@@ -32,20 +32,12 @@ public class BlockLightEngine <W extends World<C>, C extends Chunk<? extends W>>
     }
 
     public void increase(Chunk<?> chunk, int x, int y, int z, int r, int g, int b) {
-        if(chunk == null || r == 0 || g == 0 || b == 0)
+        if(chunk == null || (r == 0 && g == 0 && b == 0))
             return;
 
-        final int prevR = chunk.getBlockLightLevel(x, y, z, 0);
-        final int prevG = chunk.getBlockLightLevel(x, y, z, 1);
-        final int prevB = chunk.getBlockLightLevel(x, y, z, 2);
-        if(r <= prevR && g <= prevG && b <= prevB)
-            return;
-
-        chunk.setBlockLightLevel(x, y, z, r, g, b);
-
-        if(r > prevG) increaseQueue.add(new Entry(x, y, z, 0, r));
-        if(g > prevG) increaseQueue.add(new Entry(x, y, z, 1, g));
-        if(b > prevB) increaseQueue.add(new Entry(x, y, z, 2, b));
+        queue.add(new Entry(x, y, z, 0, r));
+        queue.add(new Entry(x, y, z, 1, g));
+        queue.add(new Entry(x, y, z, 2, b));
 
         chunkCache.cacheNeighborsFor((C) chunk);
         this.processIncrease();
@@ -53,32 +45,79 @@ public class BlockLightEngine <W extends World<C>, C extends Chunk<? extends W>>
     }
 
     public void processIncrease() {
-        while(!increaseQueue.isEmpty()) {
-            final Entry entry = increaseQueue.poll();
+        while(!queue.isEmpty()) {
+            final Entry entry = queue.poll();
+            final int x = entry.x;
+            final int y = entry.y;
+            final int z = entry.z;
             final int channel = entry.channel;
             final int level = entry.level;
 
-            for(int i = 0; i < 6; i++){
-                final Directory dir = Directory.values()[i];
+            final int prevLevel = chunkCache.getBlockLightLevel(x, y, z, channel);
+            if(level <= prevLevel)
+                continue;
+
+            chunkCache.setBlockLightLevel(x, y, z, channel, level);
+
+            for(int i = 0; i < 6; i++) {
+                final Direction dir = Direction.values()[i];
                 final Vec3i normal = dir.getNormal();
 
-                final int nx = (entry.x + normal.x);
-                final int ny = (entry.y + normal.y);
-                final int nz = (entry.z + normal.z);
-
-                final int neighborLightLevel = chunkCache.getBlockLightLevel(nx, ny, nz, channel);
-
-                if(neighborLightLevel >= level - 1)
-                    continue;
+                final int nx = (x + normal.x);
+                final int ny = (y + normal.y);
+                final int nz = (z + normal.z);
 
                 final BlockState neighborBlockstate = chunkCache.getBlockState(nx, ny, nz);
-                final int neighborBlockOpacity = neighborBlockstate.properties().getInt("opacity");
-                final int targetLightLevel = (level - Math.max(1, neighborBlockOpacity));
+                final int neighborBlockOpacity = neighborBlockstate.blockProperties().getInt("opacity");
+                final int targetNeighborLevel = (level - Math.max(1, neighborBlockOpacity));
 
-                if(targetLightLevel > neighborLightLevel){
-                    chunkCache.setBlockLightLevel(nx, ny, nz, channel, targetLightLevel);
-                    increaseQueue.add(new Entry(nx, ny, nz, channel, targetLightLevel));
-                }
+                queue.add(new Entry(nx, ny, nz, channel, targetNeighborLevel));
+            }
+        }
+    }
+
+
+    public void decrease(Chunk<?> chunk, int x, int y, int z, int r, int g, int b) {
+        if(chunk == null || (r == MAX_LEVEL && g == MAX_LEVEL && b == MAX_LEVEL))
+            return;
+
+        queue.add(new Entry(x, y, z, 0, r));
+        queue.add(new Entry(x, y, z, 1, g));
+        queue.add(new Entry(x, y, z, 2, b));
+
+        chunkCache.cacheNeighborsFor((C) chunk);
+        this.processDecrease();
+        this.invokeIncreasedCallbacks((C) chunk, x, y, z, r, g, b); //! decrease
+    }
+
+    public void processDecrease() {
+        while(!queue.isEmpty()) {
+            final Entry entry = queue.poll();
+            final int x = entry.x;
+            final int y = entry.y;
+            final int z = entry.z;
+            final int channel = entry.channel;
+            final int level = entry.level;
+
+            final int prevLevel = chunkCache.getBlockLightLevel(x, y, z, channel);
+            if(level <= prevLevel)
+                continue;
+
+            chunkCache.setBlockLightLevel(x, y, z, channel, level);
+
+            for(int i = 0; i < 6; i++) {
+                final Direction dir = Direction.values()[i];
+                final Vec3i normal = dir.getNormal();
+
+                final int nx = (x + normal.x);
+                final int ny = (y + normal.y);
+                final int nz = (z + normal.z);
+
+                final BlockState neighborBlockstate = chunkCache.getBlockState(x, y, z);
+                final int neighborBlockOpacity = neighborBlockstate.blockProperties().getInt("opacity");
+                final int targetNeighborLevel = (level - Math.max(1, neighborBlockOpacity));
+
+                queue.add(new Entry(nx, ny, nz, channel, targetNeighborLevel));
             }
         }
     }

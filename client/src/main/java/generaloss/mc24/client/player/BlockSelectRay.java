@@ -1,7 +1,7 @@
 package generaloss.mc24.client.player;
 
 import generaloss.mc24.client.level.WorldLevel;
-import generaloss.mc24.server.Directory;
+import generaloss.mc24.server.Direction;
 import generaloss.mc24.server.block.BlockState;
 import jpize.util.camera.Camera3D;
 import jpize.util.math.Mathc;
@@ -12,7 +12,7 @@ import jpize.util.math.vector.Vec3i;
 public class BlockSelectRay {
 
     private boolean hasSelection;
-    private Directory selectedFace;
+    private Direction selectedFace;
     private final Vec3i destroyPosition;
     private final Vec3i placePosition;
     private BlockState blockstate;
@@ -27,7 +27,7 @@ public class BlockSelectRay {
         return hasSelection;
     }
 
-    public Directory getSelectedFace() {
+    public Direction getSelectedFace() {
         return selectedFace;
     }
 
@@ -84,7 +84,7 @@ public class BlockSelectRay {
 
             if(!blockstate.isBlockID("void", "air")){
                 this.hasSelection = true;
-                this.selectedFace = Directory.byVector(faceNormal.x, faceNormal.y, faceNormal.z);
+                this.selectedFace = Direction.byVector(faceNormal);
                 this.placePosition.set(destroyPosition).add(selectedFace.getNormal());
                 this.blockstate = blockstate;
                 break;

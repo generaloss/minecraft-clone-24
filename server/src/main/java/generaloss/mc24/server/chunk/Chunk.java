@@ -2,8 +2,7 @@ package generaloss.mc24.server.chunk;
 
 import generaloss.mc24.server.block.Block;
 import generaloss.mc24.server.block.BlockState;
-import generaloss.mc24.server.registry.Registries;
-import generaloss.mc24.server.world.BlockLightEngine;
+import generaloss.mc24.server.registry.ServerRegistries;
 import generaloss.mc24.server.world.World;
 import jpize.util.math.vector.Vec3i;
 
@@ -16,21 +15,18 @@ public class Chunk <W extends World<? extends Chunk<W>>> {
 
     private final W world;
     private final ChunkPos position;
-    private final Registries registries;
     private final ByteNibbleArray blockstateIDs;
     private final ByteMultiNibbleArray blockLight;
 
-    public Chunk(W world, ChunkPos position, ByteNibbleArray blockstateIDs,
-                 ByteMultiNibbleArray blockLight, Registries registries) {
+    public Chunk(W world, ChunkPos position, ByteNibbleArray blockstateIDs, ByteMultiNibbleArray blockLight) {
         this.world = world;
         this.position = position;
         this.blockstateIDs = blockstateIDs;
         this.blockLight = blockLight;
-        this.registries = registries;
     }
 
-    public Chunk(W world, ChunkPos position, Registries registries) {
-        this(world, position, new ByteNibbleArray(), new ByteMultiNibbleArray(3), registries);
+    public Chunk(W world, ChunkPos position) {
+        this(world, position, new ByteNibbleArray(), new ByteMultiNibbleArray(3));
     }
 
 
@@ -40,10 +36,6 @@ public class Chunk <W extends World<? extends Chunk<W>>> {
 
     public ChunkPos position() {
         return position;
-    }
-
-    public Registries registries() {
-        return registries;
     }
 
     public ByteNibbleArray getBlockStateIDs() {
@@ -61,29 +53,32 @@ public class Chunk <W extends World<? extends Chunk<W>>> {
         final int stateID = blockstateIDs.get(x, y, z);
         if(stateID == -1)
             return Block.VOID.getDefaultState();
-        return registries.BLOCK_STATES.get(stateID);
+        return ServerRegistries.BLOCK_STATE.get(stateID);
     }
 
-    public boolean setBlockState(int x, int y, int z, BlockState state) {
+    public boolean setBlockState(int x, int y, int z, BlockState blockstate) {
         // get & validate stateID
-        final int stateID = registries.BLOCK_STATES.getID(state);
+        final int stateID = ServerRegistries.BLOCK_STATE.getID(blockstate);
         if(stateID == -1 || blockstateIDs.isOutOfBounds(x, y, z))
             return false;
 
         // get previous state
-        //final BlockState previousState = registries.BLOCK_STATES.get(blockstateIndices.get(x, y, z));
+        final BlockState previousState = ServerRegistries.BLOCK_STATE.get(blockstateIDs.get(x, y, z));
 
         // set state ID
         blockstateIDs.set(x, y, z, stateID);
 
-        // remove black area
-        if(state.getBlock().properties().getInt("opacity") == BlockLightEngine.MAX_LEVEL){
-            this.setBlockLightLevel(x, y, z, 0, 0, 0);
-        }
-
         // increase glowing
-        final Vec3i glowing = state.getBlock().properties().getVec3i("glowing");
+        final Vec3i glowing = blockstate.getBlock().properties().getVec3i("glowing");
+        if(blockstate.getStatePropertyValue("lit") != null && !(boolean) blockstate.getStatePropertyValue("lit"))
+            glowing.mul(0);
         world.getBlockLightEngine().increase(this, x, y, z, glowing.x, glowing.y, glowing.z);
+
+        // remove black area
+        if(glowing.isZero()){
+            final int opacity = 0;//(15 - blockstate.getBlock().properties().getInt("opacity"));
+            this.setBlockLightLevel(x, y, z, opacity, opacity, opacity);
+        }
         return true;
     }
 

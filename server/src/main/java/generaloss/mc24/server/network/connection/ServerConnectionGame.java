@@ -9,6 +9,7 @@ import generaloss.mc24.server.network.packet2c.SetBlockStatePacket2C;
 import generaloss.mc24.server.network.packet2s.SetBlockStatePacket2S;
 import generaloss.mc24.server.network.protocol.IServerProtocolGame;
 import generaloss.mc24.server.player.ServerPlayer;
+import generaloss.mc24.server.registry.ServerRegistries;
 import generaloss.mc24.server.world.ServerWorld;
 import jpize.util.net.tcp.TCPConnection;
 
@@ -41,7 +42,7 @@ public class ServerConnectionGame extends ServerConnection implements IServerPro
     public void handleSetBlockState(SetBlockStatePacket2S packet) {
         final Server server = super.server();
         final ServerWorld world = server.worldHolder().getWorld("overworld");
-        final BlockState blockstate = server.registries().BLOCK_STATES.get(packet.getBlockStateID());
+        final BlockState blockstate = ServerRegistries.BLOCK_STATE.get(packet.getBlockStateID());
         world.getChunk(packet.getChunkPositionPacked()).setBlockState(
                 packet.getLocalX(), packet.getLocalY(), packet.getLocalZ(), blockstate
         );

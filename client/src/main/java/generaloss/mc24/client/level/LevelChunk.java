@@ -11,7 +11,7 @@ public class LevelChunk extends Chunk<WorldLevel> {
     public LevelChunk(WorldLevel level, ChunkPacket2C packet) {
         super(
             level, packet.getPosition(), packet.getBlockstateIDs(),
-            packet.getBlockLight(), level.context().registries()
+            packet.getBlockLight()
         );
     }
 

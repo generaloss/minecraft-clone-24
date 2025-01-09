@@ -1,7 +1,9 @@
 package generaloss.mc24.server.block;
 
 import generaloss.mc24.server.Identifiable;
-import generaloss.mc24.server.registry.Registries;
+import generaloss.mc24.server.registry.ServerRegistries;
+import jpize.util.res.Resource;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.*;
@@ -47,15 +49,10 @@ public class Block implements Identifiable<String> {
         return statesContainer.getDefaultState();
     }
 
-    public Block createBlockstates(Map<String, StateProperty<?>> stateProperties, Registries registries) {
-        statesContainer.create(stateProperties, registries);
-        return this;
-    }
 
-
-    public void loadFromJSON(String jsonString) {
-        final JSONObject jsonObject = new JSONObject(jsonString);
-        this.setID(jsonObject.getString("block_ID"));
+    public void loadFromJSON(Resource resource) {
+        final JSONObject jsonObject = new JSONObject(resource.readString());
+        this.setID(resource.simpleName());
 
         if(jsonObject.has("properties")){
             final JSONObject jsonProperties = jsonObject.getJSONObject("properties");
@@ -69,6 +66,20 @@ public class Block implements Identifiable<String> {
                 properties.set(propertyName, property.loadFromJSON(object));
             }
         }
+
+        final List<StateProperty<?>> stateProperties = new ArrayList<>();
+        if(jsonObject.has("variant_properties")){
+            final JSONArray jsonStateProperties = jsonObject.getJSONArray("variant_properties");
+            for(int i = 0; i < jsonStateProperties.length(); i++){
+                final String statePropertyName = jsonStateProperties.getString(i);
+                final StateProperty<?> stateProperty = ServerRegistries.STATE_PROPERTY.get(statePropertyName);
+                stateProperties.add(stateProperty);
+            }
+        }
+
+        // System.out.println("Load block '" + this.getID() + "'");
+
+        statesContainer.create(stateProperties.toArray(new StateProperty[0]));
     }
 
 }

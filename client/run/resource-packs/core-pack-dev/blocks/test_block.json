@@ -1,0 +1,12 @@
+{
+  "properties" : {
+    "opacity" : 15
+  },
+  "variant_properties": ["facing"],
+  "variants": {
+    "facing=east":  {"model": "models/block/test_block.json"},
+    "facing=south": {"model": "models/block/test_block.json", "y": 270},
+    "facing=north": {"model": "models/block/test_block.json", "y": 90},
+    "facing=west":  {"model": "models/block/test_block.json", "y": 180}
+  }
+}

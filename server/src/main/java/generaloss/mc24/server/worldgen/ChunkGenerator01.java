@@ -2,7 +2,7 @@ package generaloss.mc24.server.worldgen;
 
 import generaloss.mc24.server.block.BlockState;
 import generaloss.mc24.server.chunk.ServerChunk;
-import generaloss.mc24.server.registry.RegistryBlocks;
+import generaloss.mc24.server.registry.ServerRegistries;
 import jpize.util.math.FastNoise;
 import jpize.util.math.Maths;
 
@@ -17,8 +17,6 @@ public class ChunkGenerator01 implements IChunkGenerator {
 
     @Override
     public void generateBase(ServerChunk chunk) {
-        final RegistryBlocks blocks = chunk.world().getServer().registries().BLOCKS;
-
         final int chunkLocalX = chunk.position().getBlockX();
         final int chunkLocalY = chunk.position().getBlockY();
         final int chunkLocalZ = chunk.position().getBlockZ();
@@ -28,14 +26,12 @@ public class ChunkGenerator01 implements IChunkGenerator {
             final int worldY = (chunkLocalY + y);
             final int worldZ = (chunkLocalZ + z);
             if(worldY < -1 && noise.get(worldX, worldY, worldZ) > 0F)
-                chunk.setBlockState(x, y, z, blocks.get("stone").getDefaultState());
+                chunk.setBlockState(x, y, z, ServerRegistries.BLOCK.get("stone").getDefaultState());
         });
     }
 
     @Override
     public void generateDecoration(ServerChunk chunk) {
-        final RegistryBlocks blocks = chunk.world().getServer().registries().BLOCKS;
-
         final int chunkLocalX = chunk.position().getBlockX();
         final int chunkLocalY = chunk.position().getBlockY();
         final int chunkLocalZ = chunk.position().getBlockZ();
@@ -47,12 +43,12 @@ public class ChunkGenerator01 implements IChunkGenerator {
             final BlockState blockstate = chunk.getBlockState(x, y, z);
 
             // torches
-            if((blockstate.isBlockID("air")) && Maths.randomBoolean(0.002F))
-                chunk.setBlockState(x, y, z, blocks.get("torch").getDefaultState());
+            if((blockstate.isBlockID("air")) && Maths.randomBoolean(0.0002F))
+                chunk.setBlockState(x, y, z, ServerRegistries.BLOCK.get("torch").getDefaultState());
 
             // grass_block
             if(blockstate.isBlockID("stone") && chunk.getBlockState(x, y + 1, z).isBlockID("void", "air"))
-                chunk.setBlockState(x, y, z, blocks.get("grass_block").getDefaultState());
+                chunk.setBlockState(x, y, z, ServerRegistries.BLOCK.get("grass_block").getDefaultState());
         });
     }
 

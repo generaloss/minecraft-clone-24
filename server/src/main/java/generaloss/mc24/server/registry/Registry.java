@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-public class Registry <Key, Value> implements Iterable<Value> {
+public class Registry<Key, Value> implements Iterable<Value> {
 
     private final Map<Key, Value> map;
 
@@ -26,9 +26,6 @@ public class Registry <Key, Value> implements Iterable<Value> {
     }
 
     public Value getValue(Key ID) {
-        if(!map.containsKey(ID))
-            throw new IllegalStateException("Block with ID '" + ID + "' not loaded.");
-
         return map.get(ID);
     }
 

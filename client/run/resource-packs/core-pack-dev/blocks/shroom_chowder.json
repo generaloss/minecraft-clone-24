@@ -1,0 +1,13 @@
+{
+  "properties" : {
+    "opacity" : 0
+  },
+  "variant_properties": ["bites"],
+  "variants": {
+    "bites=0": {"model": "models/block/bowl.json"},
+    "bites=1": {"model": "models/block/shroom_chowder_3.json"},
+    "bites=2": {"model": "models/block/shroom_chowder_2.json"},
+    "bites=3": {"model": "models/block/shroom_chowder_1.json"},
+    "bites=4": {"model": "models/block/shroom_chowder_0.json"}
+  }
+}

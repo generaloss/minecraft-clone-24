@@ -1,0 +1,11 @@
+{
+  "properties" : {
+    "opacity" : 0,
+    "glowing" : [10, 3, 3]
+  },
+  "variant_properties": ["lit"],
+  "variants": {
+    "lit=false": {"model": "models/block/redstone_torch_off.json"},
+    "lit=true": {"model": "models/block/redstone_torch.json"}
+  }
+}

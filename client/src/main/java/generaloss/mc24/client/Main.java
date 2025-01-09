@@ -7,13 +7,14 @@ import generaloss.mc24.client.registry.ClientRegistries;
 import generaloss.mc24.client.screen.JoiningServerScreen;
 import generaloss.mc24.server.network.AccountSession;
 import generaloss.mc24.server.network.packet2s.LoginRequestPacket2S;
-import generaloss.mc24.server.resourcepack.ResourcePack;
+import generaloss.mc24.server.registry.ServerRegistries;
 import generaloss.mc24.client.screen.MainMenuScreen;
 import generaloss.mc24.client.screen.ScreenDispatcher;
 import generaloss.mc24.client.player.ClientPlayer;
 import generaloss.mc24.client.screen.SessionScreen;
 import generaloss.mc24.server.ArgsMap;
 import generaloss.mc24.server.Server;
+import generaloss.mc24.server.resourcepack.ResourcePackManager;
 import jpize.app.Jpize;
 import jpize.app.JpizeApplication;
 import jpize.audio.AlDevices;
@@ -22,12 +23,10 @@ import jpize.glfw.Glfw;
 import jpize.glfw.init.GlfwPlatform;
 import jpize.glfw.input.Key;
 import jpize.util.font.Font;
-import jpize.util.res.Resource;
-
-import java.util.List;
 
 public class Main extends JpizeApplication {
 
+    private final ResourcePackManager resourcePackManager;
     private final ClientRegistries registries;
     private final ScreenDispatcher screens;
     private final Server localServer;
@@ -37,12 +36,17 @@ public class Main extends JpizeApplication {
     private AccountSession session;
 
     public Main() {
-        this.registries = new ClientRegistries(new ResourcePack("vanilla-pack.zip"));
+        this.resourcePackManager = new ResourcePackManager();
+        this.registries = new ClientRegistries(resourcePackManager);
         this.screens = new ScreenDispatcher();
-        this.localServer = new Server(registries, false);
+        this.localServer = new Server(resourcePackManager, false);
         this.level = new WorldLevel(this);
         this.player = new ClientPlayer(this);
         this.connection = new ClientConnection(this);
+    }
+
+    public ResourcePackManager resourcePackManager() {
+        return resourcePackManager;
     }
 
     public ClientRegistries registries() {
@@ -53,9 +57,9 @@ public class Main extends JpizeApplication {
         return screens;
     }
 
-    //public Server localServer() {
-    //    return localServer;
-    //}
+    public Server localServer() {
+        return localServer;
+    }
 
     public WorldLevel level() {
         return level;
@@ -81,21 +85,27 @@ public class Main extends JpizeApplication {
 
     @Override
     public void init() {
+        // server
         localServer.init();
-        System.out.println("[INFO]: Initialize client");
         // audio
         AlDevices.openDevice();
-        // load block models
-        for(Resource blockModelRes : registries.getDefaultPack().getResource("models/blocks/").listResources())
-            registries.BLOCK_MODELS.register(blockModelRes.path());
-        // load font
+        // font
         registries.FONTS.register("default", "fonts/default/font.fnt");
-        // register screens
+
+        // blockstate models
+        ServerRegistries.BLOCK_STATE.addRegisterCallback(blockstate ->
+            registries.BLOCK_STATE_MODELS.register(blockstate, resourcePackManager)
+        );
+
+        // screens
         screens.register(new MainMenuScreen(this));
         screens.register(new SessionScreen(this));
         screens.register(new JoiningServerScreen(this));
+
         // load all resources
+        ServerRegistries.loadResources();
         registries.loadResources();
+
         // set menu screen
         screens.show("main_menu");
     }
@@ -114,7 +124,7 @@ public class Main extends JpizeApplication {
 
     public void disconnectSession() {
         connection.disconnect();
-        //localServer.stop();
+        // localServer.stop();
         player.input().disable();
         level.reset();
         System.out.println("[INFO]: Disconnect session");
@@ -131,21 +141,27 @@ public class Main extends JpizeApplication {
 
         // resource pack
         if(Key.F1.up()){
-            registries.reloadResources(List.of(registries.getDefaultPack()));
+            resourcePackManager.clear();
+            registries.reloadResources();
+
             for(LevelChunk chunk: level.getChunks()){
                 chunk.freeMesh();
                 level.tesselators().tesselate(chunk);
             }
         }else if(Key.F2.up()){
-            final ResourcePack testPack1 = new ResourcePack("test-pack-1.zip");
-            registries.reloadResources(List.of(testPack1, registries.getDefaultPack()));
+            resourcePackManager.clear();
+            resourcePackManager.putPack("test-pack-1.zip");
+            registries.reloadResources();
+
             for(LevelChunk chunk: level.getChunks()){
                 chunk.freeMesh();
                 level.tesselators().tesselate(chunk);
             }
         }else if(Key.F3.up()){
-            final ResourcePack testPack2 = new ResourcePack("test-pack-2.zip");
-            registries.reloadResources(List.of(testPack2, registries.getDefaultPack()));
+            resourcePackManager.clear();
+            resourcePackManager.putPack("test-pack-2.zip");
+            registries.reloadResources();
+
             for(LevelChunk chunk: level.getChunks()){
                 chunk.freeMesh();
                 level.tesselators().tesselate(chunk);

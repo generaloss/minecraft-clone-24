@@ -1,0 +1,12 @@
+{
+    "parent": "models/block/cube.json",
+    "textures": {
+        "particle": "#side",
+        "down": "#bottom",
+        "up": "#top",
+        "south": "#side",
+        "east": "#side",
+        "north": "#side",
+        "west": "#side"
+    }
+}

@@ -2,6 +2,7 @@ package generaloss.mc24.server.chunk;
 
 import generaloss.mc24.server.block.Block;
 import generaloss.mc24.server.block.BlockState;
+import generaloss.mc24.server.registry.ServerRegistries;
 import generaloss.mc24.server.world.World;
 import jpize.util.math.Mathc;
 import jpize.util.math.Maths;
@@ -85,7 +86,7 @@ public class ChunkCache <W extends World<C>, C extends Chunk<? extends W>> {
         if(chunk == null)
             return Block.VOID.getDefaultState();
         final byte stateID = chunk.getBlockStateIDs().get(norBlockPos.x, norBlockPos.y, norBlockPos.z);
-        return chunk.registries().BLOCK_STATES.get(stateID);
+        return ServerRegistries.BLOCK_STATE.get(stateID);
     }
 
     public boolean setBlockState(int x, int y, int z, BlockState blockstate) {

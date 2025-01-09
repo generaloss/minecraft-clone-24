@@ -7,7 +7,7 @@ public class ServerChunk extends Chunk<ServerWorld> {
     private boolean loaded;
 
     public ServerChunk(ServerWorld world, ChunkPos position) {
-        super(world, position, world.getServer().registries());
+        super(world, position);
     }
 
     public boolean isLoaded() {

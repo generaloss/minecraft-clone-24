@@ -1,0 +1,6 @@
+{
+  "parent": "models/block/template_redstone_torch.json",
+  "textures": {
+    "torch": "redstone_torch.png"
+  }
+}

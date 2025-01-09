@@ -1,0 +1,15 @@
+{
+  "properties" : {
+    "opacity" : 15
+  },
+  "variant_properties": ["snowy"],
+  "variants": {
+    "snowy=false": [
+      {"model": "models/block/grass_block.json"},
+      {"model": "models/block/grass_block.json", "y": 90},
+      {"model": "models/block/grass_block.json", "y": 180},
+      {"model": "models/block/grass_block.json", "y": 270}
+    ],
+    "snowy=true": {"model": "models/block/grass_block_snow.json"}
+  }
+}

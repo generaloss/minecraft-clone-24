@@ -42,7 +42,6 @@ public class LevelRenderer {
     public void render(PerspectiveCamera camera) {
         shader.bind();
         shader.uniform("u_texture", blockAtlas);
-        shader.uniform("u_lightDirection", LIGHT_DIRECTION);
 
         final Collection<LevelChunk> chunks = level.getChunks();
         for(LevelChunk chunk: chunks){

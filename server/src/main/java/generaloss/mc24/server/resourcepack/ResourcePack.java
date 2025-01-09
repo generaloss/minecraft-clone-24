@@ -17,6 +17,7 @@ public class ResourcePack implements Disposable {
     private final String ID;
     private final ZipFile zipFile;
     private final Map<String, ZipResource> resourceMap;
+    // private final String namespace;
 
     public ResourcePack(String filename) {
         try{
@@ -27,6 +28,8 @@ public class ResourcePack implements Disposable {
             this.resourceMap = new HashMap<>();
             for(ZipResource resource : resources)
                 resourceMap.put(resource.path(), resource);
+
+            // this.namespace = zipFile.entries().nextElement().getName().split("/")[0];
 
         }catch(IOException e){
             throw new IllegalArgumentException("Could not load resource pack: '" + filename + "'");
@@ -40,6 +43,10 @@ public class ResourcePack implements Disposable {
     public ZipResource getResource(String path) {
         return resourceMap.get(path);
     }
+
+    // public String getNamespace() {
+    //     return namespace;
+    // }
 
     @Override
     public void dispose() {

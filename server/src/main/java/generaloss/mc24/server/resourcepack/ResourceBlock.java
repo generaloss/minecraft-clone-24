@@ -16,7 +16,6 @@ public class ResourceBlock extends ResourceHandle<String, Block> {
     public ResourceBlock(Block block) {
         super(null);
         this.block = block;
-        // System.out.println("Loaded block '" + block.getID() + "'");
     }
 
     @Override
@@ -36,8 +35,7 @@ public class ResourceBlock extends ResourceHandle<String, Block> {
             return;
 
         final Resource resource = defaultPack.getResource(path);
-        block.loadFromJSON(resource.readString());
-        // System.out.println("Loaded block '" + block.getID() + "'");
+        block.loadFromJSON(resource);
     }
 
     @Override

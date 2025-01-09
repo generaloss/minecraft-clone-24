@@ -2,7 +2,7 @@ package generaloss.mc24.client.chunkmesh;
 
 import generaloss.mc24.client.level.LevelChunk;
 import generaloss.mc24.client.level.WorldLevel;
-import generaloss.mc24.server.Directory;
+import generaloss.mc24.server.Direction;
 import generaloss.mc24.server.block.BlockState;
 import generaloss.mc24.server.chunk.ChunkCache;
 
@@ -27,7 +27,7 @@ public class BlockAndLightCache {
         return blocks[this.blockIndex(i + 1, j + 1, k + 1)];
     }
 
-    public BlockState getBlockState(Directory dir) {
+    public BlockState getBlockState(Direction dir) {
         return this.getBlockState(dir.getX(), dir.getY(), dir.getZ());
     }
 

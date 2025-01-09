@@ -1,6 +1,6 @@
 package generaloss.mc24.client.block;
 
-import generaloss.mc24.server.Directory;
+import generaloss.mc24.server.Direction;
 import jpize.util.array.FloatList;
 import jpize.util.math.vector.Vec3f;
 
@@ -15,9 +15,11 @@ public class BlockFace {
     private BlockVertex[] vertices;
     private float[] vertexArray;
     private String textureID;
+    private int tintIndex;
 
-    private Directory hidesFace;
-    private Directory hideOppositeFace;
+    private Direction direction;
+    private Direction cullBy;
+    private boolean solid;
 
 
     public BlockVertex[] getVertices() {
@@ -28,12 +30,13 @@ public class BlockFace {
         return vertexArray;
     }
 
-    public BlockFace setVertices(BlockVertex[] vertices) {
+    public BlockFace setVertices(BlockVertex... vertices) {
         if(vertices.length != VERTICES_NUMBER)
             throw new IllegalArgumentException("Vertices count must be " + VERTICES_NUMBER + " / " + vertices.length);
 
         this.vertices = vertices;
         this.calculateNormals();
+        this.calculateIsSolidFace();
 
         // create array
         final FloatList vertexDataList = new FloatList();
@@ -67,68 +70,7 @@ public class BlockFace {
         }
     }
 
-
-    public String getTextureID() {
-        return textureID;
-    }
-
-    public BlockFace setTextureID(String textureID) {
-        this.textureID = textureID;
-        return this;
-    }
-
-
-    public Directory getHidesFace() {
-        return hidesFace;
-    }
-
-    public BlockFace setHidesFace(Directory hidesFace) {
-        this.hidesFace = hidesFace;
-        return this;
-    }
-
-    public BlockFace calculateHidesFace() {
-        final float x0 = vertices[0].getX();
-        final float y0 = vertices[0].getY();
-        final float z0 = vertices[0].getZ();
-        boolean hasX = true;
-        boolean hasY = true;
-        boolean hasZ = true;
-
-        for(int i = 1; i < vertices.length; i++){
-            final float x = vertices[i].getX();
-            if(x != x0 || x != 0F && x != 1F)
-                hasX = false;
-
-            final float y = vertices[i].getY();
-            if(y != y0 || y != 0F && y != 1F)
-                hasY = false;
-
-            final float z = vertices[i].getZ();
-            if(z != z0 || z != 0F && z != 1F)
-                hasZ = false;
-
-        }
-
-        this.setHidesFace(Directory.byVector(
-            (hasX ? -Math.signum((x0 * 2 - 1)) : 0),
-            (hasY ? -Math.signum((y0 * 2 - 1)) : 0),
-            (hasZ ? -Math.signum((z0 * 2 - 1)) : 0)
-        ));
-        return this;
-    }
-
-
-    public Directory getHideOppositeFace() {
-        return hideOppositeFace;
-    }
-
-    public BlockFace setHideOppositeFace(Directory hideOppositeFace) {
-        this.hideOppositeFace = hideOppositeFace;
-        return this;
-    }
-
-    public BlockFace calculateHideOppositeFace() {
+    private void calculateIsSolidFace() {
         final float x0 = vertices[0].getX();
         final float y0 = vertices[0].getY();
         final float z0 = vertices[0].getZ();
@@ -157,11 +99,61 @@ public class BlockFace {
             }
         }
 
-        this.setHideOppositeFace(Directory.byVector(
-            (hasX ? -Math.signum((x0 * 2 - 1)) : 0),
-            (hasY ? -Math.signum((y0 * 2 - 1)) : 0),
-            (hasZ ? -Math.signum((z0 * 2 - 1)) : 0)
-        ));
+        final int hasNumber = (hasX ? 1 : 0) + (hasY ? 1 : 0) + (hasZ ? 1 : 0);
+        this.setSolid(hasNumber == 1);
+    }
+
+
+    public String getTextureID() {
+        return textureID;
+    }
+
+    public BlockFace setTextureID(String textureID) {
+        this.textureID = textureID;
+        return this;
+    }
+
+    
+    public Direction getDirection() {
+        return direction;
+    }
+    
+    public BlockFace setDirection(Direction direction) {
+        this.direction = direction;
+        return this;
+    }
+    
+
+    public Direction getCullBy() {
+        return cullBy;
+    }
+
+    public boolean isMightBeCulled() {
+        return cullBy != Direction.NONE;
+    }
+
+    public BlockFace setCullBy(Direction cullBy) {
+        this.cullBy = cullBy;
+        return this;
+    }
+
+
+    public boolean isSolid() {
+        return solid;
+    }
+
+    public BlockFace setSolid(boolean solid) {
+        this.solid = solid;
+        return this;
+    }
+
+
+    public int getTintIndex() {
+        return tintIndex;
+    }
+
+    public BlockFace setTintIndex(int tintIndex) {
+        this.tintIndex = tintIndex;
         return this;
     }
 

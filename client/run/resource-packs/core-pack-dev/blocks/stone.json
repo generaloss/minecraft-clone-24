@@ -1,0 +1,14 @@
+{
+  "properties" : {
+    "opacity" : 15
+  },
+  "variant_properties": [],
+  "variants": {
+    "": [
+      {"model": "models/block/stone.json"},
+      {"model": "models/block/stone_mirrored.json"},
+      {"model": "models/block/stone.json",          "y": 180},
+      {"model": "models/block/stone_mirrored.json", "y": 180}
+    ]
+  }
+}

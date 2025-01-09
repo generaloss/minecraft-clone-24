@@ -6,7 +6,10 @@ import generaloss.mc24.server.resourcepack.ResourceBlock;
 public class RegistryBlocks extends ResourceRegistry<String, ResourceBlock> {
 
     public Block get(String ID) {
-        return super.getResource(ID).getObject();
+        final ResourceBlock block = super.getResource(ID);
+        if(block == null)
+            throw new IllegalArgumentException("Unknown block ID: " + ID);
+        return block.getObject();
     }
 
     public ResourceBlock register(String path) {

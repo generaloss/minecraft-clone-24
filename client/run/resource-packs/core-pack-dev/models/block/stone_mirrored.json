@@ -1,0 +1,6 @@
+{
+  "parent": "models/block/cube_mirrored_all.json",
+  "textures": {
+    "all": "stone.png"
+  }
+}
