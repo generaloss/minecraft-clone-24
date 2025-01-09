@@ -18,7 +18,7 @@ public class BlockFace {
     private int tintIndex;
 
     private Direction direction;
-    private Direction cullBy;
+    private Direction culling;
     private boolean solid;
 
 
@@ -37,7 +37,6 @@ public class BlockFace {
         this.vertices = vertices;
         this.calculateNormals();
         this.calculateIsSolidFace();
-
         // create array
         final FloatList vertexDataList = new FloatList();
         for(BlockVertex vertex: vertices)
@@ -71,36 +70,28 @@ public class BlockFace {
     }
 
     private void calculateIsSolidFace() {
-        final float x0 = vertices[0].getX();
-        final float y0 = vertices[0].getY();
-        final float z0 = vertices[0].getZ();
-        boolean hasX = true;
-        boolean hasY = true;
-        boolean hasZ = true;
-
-        for(int i = 1; i < vertices.length; i++){
-            final float x = vertices[i].getX();
-            if(x != x0)
-                hasX = false;
-
-            final float y = vertices[i].getY();
-            if(y != y0)
-                hasY = false;
-
-            final float z = vertices[i].getZ();
-            if(z != z0)
-                hasZ = false;
-
-            if((x > 0F && x < 1F) || (y > 0F && y < 1F) || (z > 0F && z < 1F)){
-                hasX = false;
-                hasY = false;
-                hasZ = false;
-                break;
-            }
+        float numX = 0;
+        float numY = 0;
+        float numZ = 0;
+        boolean smallX = false;
+        boolean smallY = false;
+        boolean smallZ = false;
+        for(BlockVertex vertex : vertices) {
+            final float x = vertex.getX();
+            final float y = vertex.getY();
+            final float z = vertex.getZ();
+            numX += (x - 0.5F);
+            numY += (y - 0.5F);
+            numZ += (z - 0.5F);
+            smallX = smallX || (x > 0F && x < 1F);
+            smallY = smallY || (y > 0F && y < 1F);
+            smallZ = smallZ || (z > 0F && z < 1F);
         }
-
-        final int hasNumber = (hasX ? 1 : 0) + (hasY ? 1 : 0) + (hasZ ? 1 : 0);
-        this.setSolid(hasNumber == 1);
+        final int num =
+                (Math.abs(numX) == 2F && !smallY && !smallZ ? 1 : 0) +
+                (Math.abs(numY) == 2F && !smallX && !smallZ ? 1 : 0) +
+                (Math.abs(numZ) == 2F && !smallX && !smallY ? 1 : 0);
+        this.setSolid(num == 1);
     }
 
 
@@ -124,16 +115,16 @@ public class BlockFace {
     }
     
 
-    public Direction getCullBy() {
-        return cullBy;
+    public Direction getCulling() {
+        return culling;
     }
 
     public boolean isMightBeCulled() {
-        return cullBy != Direction.NONE;
+        return culling != Direction.NONE;
     }
 
-    public BlockFace setCullBy(Direction cullBy) {
-        this.cullBy = cullBy;
+    public BlockFace setCulling(Direction culling) {
+        this.culling = culling;
         return this;
     }
 

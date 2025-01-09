@@ -50,47 +50,47 @@ public class ChunkTesselator {
         return context.registries().BLOCK_STATE_MODELS.get(blockstate);
     }
 
-    private float smoothLightForVertex(int channel, BlockVertex vertex, Direction dir) {
+    private float smoothLightForVertex(int colorChannel, BlockVertex vertex, Direction faceDirectory) {
         final int x = Maths.clamp(Math.round(vertex.getX()), 0, 1);
         final int y = Maths.clamp(Math.round(vertex.getY()), 0, 1);
         final int z = Maths.clamp(Math.round(vertex.getZ()), 0, 1);
 
-        return switch(dir) {
+        return switch(faceDirectory) {
             case WEST -> (
-                blockCache.getLightLevel(-1, y, z, channel) +
-                blockCache.getLightLevel(-1, y - 1, z, channel) +
-                blockCache.getLightLevel(-1, y, z - 1, channel) +
-                blockCache.getLightLevel(-1, y - 1, z - 1, channel)
+                blockCache.getLightLevel(-1, y, z, colorChannel) +
+                blockCache.getLightLevel(-1, y - 1, z, colorChannel) +
+                blockCache.getLightLevel(-1, y, z - 1, colorChannel) +
+                blockCache.getLightLevel(-1, y - 1, z - 1, colorChannel)
             ) * 0.25F / BlockLightEngine.MAX_LEVEL;
             case EAST -> (
-                blockCache.getLightLevel(1, y, z, channel) +
-                blockCache.getLightLevel(1, y - 1, z, channel) +
-                blockCache.getLightLevel(1, y, z - 1, channel) +
-                blockCache.getLightLevel(1, y - 1, z - 1, channel)
+                blockCache.getLightLevel(1, y, z, colorChannel) +
+                blockCache.getLightLevel(1, y - 1, z, colorChannel) +
+                blockCache.getLightLevel(1, y, z - 1, colorChannel) +
+                blockCache.getLightLevel(1, y - 1, z - 1, colorChannel)
             ) * 0.25F / BlockLightEngine.MAX_LEVEL;
             case DOWN -> (
-                blockCache.getLightLevel(x, -1, z, channel) +
-                blockCache.getLightLevel(x - 1, -1, z, channel) +
-                blockCache.getLightLevel(x, -1, z - 1, channel) +
-                blockCache.getLightLevel(x - 1, -1, z - 1, channel)
+                blockCache.getLightLevel(x, -1, z, colorChannel) +
+                blockCache.getLightLevel(x - 1, -1, z, colorChannel) +
+                blockCache.getLightLevel(x, -1, z - 1, colorChannel) +
+                blockCache.getLightLevel(x - 1, -1, z - 1, colorChannel)
             ) * 0.25F / BlockLightEngine.MAX_LEVEL;
             case UP -> (
-                blockCache.getLightLevel(x, 1, z, channel) +
-                blockCache.getLightLevel(x - 1, 1, z, channel) +
-                blockCache.getLightLevel(x, 1, z - 1, channel) +
-                blockCache.getLightLevel(x - 1, 1, z - 1, channel)
+                blockCache.getLightLevel(x, 1, z, colorChannel) +
+                blockCache.getLightLevel(x - 1, 1, z, colorChannel) +
+                blockCache.getLightLevel(x, 1, z - 1, colorChannel) +
+                blockCache.getLightLevel(x - 1, 1, z - 1, colorChannel)
             ) * 0.25F / BlockLightEngine.MAX_LEVEL;
             case SOUTH -> (
-                blockCache.getLightLevel(x, y, -1, channel) +
-                blockCache.getLightLevel(x - 1, y, -1, channel) +
-                blockCache.getLightLevel(x, y - 1, -1, channel) +
-                blockCache.getLightLevel(x - 1, y - 1, -1, channel)
+                blockCache.getLightLevel(x, y, -1, colorChannel) +
+                blockCache.getLightLevel(x - 1, y, -1, colorChannel) +
+                blockCache.getLightLevel(x, y - 1, -1, colorChannel) +
+                blockCache.getLightLevel(x - 1, y - 1, -1, colorChannel)
             ) * 0.25F / BlockLightEngine.MAX_LEVEL;
             case NORTH -> (
-                blockCache.getLightLevel(x, y, 1, channel) +
-                blockCache.getLightLevel(x - 1, y, 1, channel) +
-                blockCache.getLightLevel(x, y - 1, 1, channel) +
-                blockCache.getLightLevel(x - 1, y - 1, 1, channel)
+                blockCache.getLightLevel(x, y, 1, colorChannel) +
+                blockCache.getLightLevel(x - 1, y, 1, colorChannel) +
+                blockCache.getLightLevel(x, y - 1, 1, colorChannel) +
+                blockCache.getLightLevel(x - 1, y - 1, 1, colorChannel)
             ) * 0.25F / BlockLightEngine.MAX_LEVEL;
             default -> 1F;
         };
@@ -99,11 +99,8 @@ public class ChunkTesselator {
     private void addFaces(int x, int y, int z, BlockModel model, Direction direction, boolean hide) {
         final boolean hasAmbientOcclusion = model.hasAmbientOcclusion();
 
-        if(model.getBlockState().isBlockID("stone"))
-            System.err.println(model.getFacesGroup(Direction.UP).size());
-
         for(BlockFace face: model.getFacesGroup(direction)){
-            if(hide && face.getCullBy() == direction)
+            if(hide && face.isMightBeCulled())
                 continue;
 
             // cache ambient occlusion
@@ -116,10 +113,8 @@ public class ChunkTesselator {
                         vertexLightCache[channel][vertexIndex] =
                             this.smoothLightForVertex(channel, vertex, direction);
                     }else{
-                        vertexLightCache[channel][vertexIndex] = (float) (
-                            blockCache.getLightLevel(direction.getX(), direction.getY(), direction.getZ(), channel)
-                            + blockCache.getLightLevel(0, 0, 0, channel)
-                        ) / BlockLightEngine.MAX_LEVEL;
+                        vertexLightCache[channel][vertexIndex] =
+                            blockCache.getLightLevel(0, 0, 0, channel) / (float) BlockLightEngine.MAX_LEVEL;
                     }
                 }
             }

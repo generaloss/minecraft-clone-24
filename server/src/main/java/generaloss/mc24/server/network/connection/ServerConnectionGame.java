@@ -43,6 +43,8 @@ public class ServerConnectionGame extends ServerConnection implements IServerPro
         final Server server = super.server();
         final ServerWorld world = server.worldHolder().getWorld("overworld");
         final BlockState blockstate = ServerRegistries.BLOCK_STATE.get(packet.getBlockStateID());
+        if(blockstate == null)
+            return;
         world.getChunk(packet.getChunkPositionPacked()).setBlockState(
                 packet.getLocalX(), packet.getLocalY(), packet.getLocalZ(), blockstate
         );

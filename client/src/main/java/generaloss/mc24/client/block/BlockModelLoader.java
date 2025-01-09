@@ -137,12 +137,12 @@ public class BlockModelLoader {
         // set cullface
         final Direction cullface;
         if(jsonFace.has("cullface")){
-            final Direction faceDir = Direction.valueOf(jsonFace.getString("cullface").toUpperCase());
-            cullface = faceDir.getRotated(blockRotationMat);
+            final Direction cullfaceDir = Direction.valueOf(jsonFace.getString("cullface").toUpperCase());
+            cullface = cullfaceDir.getRotated(blockRotationMat);
         }else{
             cullface = Direction.NONE;
         }
-        face.setCullBy(cullface);
+        face.setCulling(cullface);
 
         // region
         final Region region = new Region();
