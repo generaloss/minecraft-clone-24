@@ -7,10 +7,10 @@ import jpize.util.math.vector.Vec3f;
 public class BlockFace {
 
     public static final int VERTICES_NUMBER = 4;
-    public static final int[][] VERTEX_INDEX_PERMUTATIONS = new int[][] {
-        {0, 1, 2, 3}, // normal
-        {1, 2, 3, 0}, // rotated
-    };
+    // public static final int[][] VERTEX_INDEX_PERMUTATIONS = new int[][] {
+    //     {0, 1, 2, 3}, // normal
+    //     {1, 2, 3, 0}, // rotated
+    // };
 
     private BlockVertex[] vertices;
     private float[] vertexArray;

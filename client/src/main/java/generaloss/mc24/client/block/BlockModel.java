@@ -30,9 +30,7 @@ public class BlockModel {
     }
 
     public BlockModel addFace(BlockFace face) {
-        if(blockstate.isBlockID("stone"))
-            System.out.println(face.getDirection() + " " + face.getCullBy() + " " + face.isSolid());
-        // add
+        // add to group
         final Direction direction = face.getDirection();
         final List<BlockFace> group = faceGroups.getOrDefault(direction, new ArrayList<>());
         group.add(face);

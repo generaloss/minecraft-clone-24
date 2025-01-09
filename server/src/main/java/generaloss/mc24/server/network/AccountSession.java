@@ -1,5 +1,9 @@
 package generaloss.mc24.server.network;
 
+import generaloss.mc24.accountservice.network.Request;
+import generaloss.mc24.accountservice.network.Response;
+import generaloss.mc24.server.SharedConstants;
+
 import java.util.UUID;
 
 public class AccountSession {
@@ -18,6 +22,11 @@ public class AccountSession {
 
     public String getUsername() {
         return username;
+    }
+
+    public void logout(String password) {
+        final Response resp = Request.sendLogout(SharedConstants.ACCOUNTS_HOST, username, password);
+        System.out.println("[INFO]: Logout: " + resp.readBoolean());
     }
 
 }

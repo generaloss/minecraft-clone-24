@@ -191,6 +191,8 @@ public class Main extends JpizeApplication {
 
     @Override
     public void dispose() {
+        if(session != null)
+            session.logout("qwe");
         level.dispose();
         screens.dispose();
         registries.dispose();

@@ -14,6 +14,7 @@ import generaloss.mc24.server.chunk.ChunkCache;
 import jpize.util.array.FloatList;
 import jpize.util.atlas.TextureAtlas;
 import jpize.util.math.FastNoise;
+import jpize.util.math.Maths;
 import jpize.util.region.TextureRegion;
 import jpize.util.time.Stopwatch;
 
@@ -27,8 +28,8 @@ public class ChunkTesselator {
     private final ChunkMeshCache meshCache;
     private volatile TesselatorStatus status;
     private final FloatList verticesCache;
-    private final BlockAndLightCache blockCache;
-    private final float[][] smoothLightCache;
+    private final BlockCache blockCache;
+    private final float[][] vertexLightCache;
 
     public ChunkTesselator(Main context, WorldLevel level, ChunkMeshCache meshCache) {
         this.context = context;
@@ -37,8 +38,8 @@ public class ChunkTesselator {
         this.meshCache = meshCache;
         this.status = TesselatorStatus.FREE;
         this.verticesCache = new FloatList();
-        this.blockCache = new BlockAndLightCache();
-        this.smoothLightCache = new float[3][BlockFace.VERTICES_NUMBER];
+        this.blockCache = new BlockCache();
+        this.vertexLightCache = new float[3][BlockFace.VERTICES_NUMBER];
     }
 
     public TesselatorStatus getStatus() {
@@ -49,130 +50,57 @@ public class ChunkTesselator {
         return context.registries().BLOCK_STATE_MODELS.get(blockstate);
     }
 
-    private float calculateVertexLight(int channel, BlockVertex vertex, Direction dir) {
-        final float x = vertex.getX();
-        final float y = vertex.getY();
-        final float z = vertex.getZ();
-        final float invx = (1F - x);
-        final float invy = (1F - y);
-        final float invz = (1F - z);
-
-        final float[][][] verticesLight = new float[2][2][2];
-        for(int i1 = 0; i1 < 2; i1++) {
-            final int i0 = (i1 - 1);
-            for(int j1 = 0; j1 < 2; j1++) {
-                final int j0 = (j1 - 1);
-                for(int k1 = 0; k1 < 2; k1++) {
-                    final int k0 = (k1 - 1);
-                    verticesLight[i1][j1][k1] += (
-                        blockCache.getLightLevel(i0, j0, k0, channel) +
-                        blockCache.getLightLevel(i1, j0, k0, channel) +
-                        blockCache.getLightLevel(i0, j1, k0, channel) +
-                        blockCache.getLightLevel(i1, j1, k0, channel) +
-                        blockCache.getLightLevel(i0, j0, k1, channel) +
-                        blockCache.getLightLevel(i1, j0, k1, channel) +
-                        blockCache.getLightLevel(i0, j1, k1, channel) +
-                        blockCache.getLightLevel(i1, j1, k1, channel)
-                    ) * 0.125F / BlockLightEngine.MAX_LEVEL;
-                }
-            }
-        }
+    private float smoothLightForVertex(int channel, BlockVertex vertex, Direction dir) {
+        final int x = Maths.clamp(Math.round(vertex.getX()), 0, 1);
+        final int y = Maths.clamp(Math.round(vertex.getY()), 0, 1);
+        final int z = Maths.clamp(Math.round(vertex.getZ()), 0, 1);
 
         return switch(dir) {
-            case WEST -> {
-                final float i1_j1_k = (verticesLight[0][0][0] * invz  +  z * verticesLight[0][0][1]);
-                final float i2_j1_k = (verticesLight[0][1][0] * invz  +  z * verticesLight[0][1][1]);
-                final float i_j1_k = (i1_j1_k * invy  +  y * i2_j1_k);
-                if(x != 0F){
-                    final float i1_j2_k = (verticesLight[1][0][0] * invz + z * verticesLight[1][0][1]);
-                    final float i2_j2_k = (verticesLight[1][1][0] * invz + z * verticesLight[1][1][1]);
-                    final float i_j2_k = (i1_j2_k * invy + y * i2_j2_k);
-
-                    yield (i_j1_k * invx  +  x * i_j2_k);
-                }
-                yield i_j1_k;
-            }
-            case EAST -> {
-                final float i1_j2_k = (verticesLight[1][0][0] * invz  +  z * verticesLight[1][0][1]);
-                final float i2_j2_k = (verticesLight[1][1][0] * invz  +  z * verticesLight[1][1][1]);
-                final float i_j2_k = (i1_j2_k * invy  +  y * i2_j2_k);
-
-                if(x != 1F) {
-                    final float i1_j1_k = (verticesLight[0][0][0] * invz  +  z * verticesLight[0][0][1]);
-                    final float i2_j1_k = (verticesLight[0][1][0] * invz  +  z * verticesLight[0][1][1]);
-                    final float i_j1_k = (i1_j1_k * invy  +  y * i2_j1_k);
-
-                    yield (i_j1_k * invx  +  x * i_j2_k);
-                }
-
-                yield i_j2_k;
-            }
-            case DOWN -> {
-                final float i1_j1_k = (verticesLight[0][0][0] * invz  +  z * verticesLight[0][0][1]);
-                final float i2_j1_k = (verticesLight[1][0][0] * invz  +  z * verticesLight[1][0][1]);
-                final float i_j1_k = (i1_j1_k * invx  +  x * i2_j1_k);
-
-                if(y != 0F){
-                    final float i1_j2_k = (verticesLight[0][1][0] * invz + z * verticesLight[0][1][1]);
-                    final float i2_j2_k = (verticesLight[1][1][0] * invz + z * verticesLight[1][1][1]);
-                    final float i_j2_k = (i1_j2_k * invx + x * i2_j2_k);
-
-                    yield (i_j1_k * invy  +  y * i_j2_k);
-                }
-
-                yield i_j1_k;
-            }
-            case UP -> {
-                final float i1_j2_k = (verticesLight[0][1][0] * invz  +  z * verticesLight[0][1][1]);
-                final float i2_j2_k = (verticesLight[1][1][0] * invz  +  z * verticesLight[1][1][1]);
-                final float i_j2_k = (i1_j2_k * invx  +  x * i2_j2_k);
-
-                if(y != 1F) {
-                    final float i1_j1_k = (verticesLight[0][0][0] * invz  +  z * verticesLight[0][0][1]);
-                    final float i2_j1_k = (verticesLight[1][0][0] * invz  +  z * verticesLight[1][0][1]);
-                    final float i_j1_k = (i1_j1_k * invx  +  x * i2_j1_k);
-
-                    yield (i_j1_k * invy  +  y * i_j2_k);
-                }
-
-                yield i_j2_k;
-            }
-            case SOUTH -> {
-                final float i1_j1_k = (verticesLight[0][0][0] * invy  +  y * verticesLight[0][1][0]);
-                final float i2_j1_k = (verticesLight[1][0][0] * invy  +  y * verticesLight[1][1][0]);
-                final float i_j1_k = (i1_j1_k * invx  +  x * i2_j1_k);
-
-                if(z != 0F){
-                    final float i1_j2_k = (verticesLight[0][0][1] * invy + y * verticesLight[0][1][1]);
-                    final float i2_j2_k = (verticesLight[1][0][1] * invy + y * verticesLight[1][1][1]);
-                    final float i_j2_k = (i1_j2_k * invx + x * i2_j2_k);
-
-                    yield (i_j1_k * invz  +  z * i_j2_k);
-                }
-
-                yield i_j1_k;
-            }
-            case NORTH -> {
-                final float i1_j2_k = (verticesLight[0][0][1] * invy  +  y * verticesLight[0][1][1]);
-                final float i2_j2_k = (verticesLight[1][0][1] * invy  +  y * verticesLight[1][1][1]);
-                final float i_j2_k = (i1_j2_k * invx  +  x * i2_j2_k);
-
-                if(z != 1F) {
-                    final float i1_j1_k = (verticesLight[0][0][0] * invy  +  y * verticesLight[0][1][0]);
-                    final float i2_j1_k = (verticesLight[1][0][0] * invy  +  y * verticesLight[1][1][0]);
-                    final float i_j1_k = (i1_j1_k * invx  +  x * i2_j1_k);
-
-                    yield (i_j1_k * invz  +  z * i_j2_k);
-                }
-
-                yield i_j2_k;
-            }
+            case WEST -> (
+                blockCache.getLightLevel(-1, y, z, channel) +
+                blockCache.getLightLevel(-1, y - 1, z, channel) +
+                blockCache.getLightLevel(-1, y, z - 1, channel) +
+                blockCache.getLightLevel(-1, y - 1, z - 1, channel)
+            ) * 0.25F / BlockLightEngine.MAX_LEVEL;
+            case EAST -> (
+                blockCache.getLightLevel(1, y, z, channel) +
+                blockCache.getLightLevel(1, y - 1, z, channel) +
+                blockCache.getLightLevel(1, y, z - 1, channel) +
+                blockCache.getLightLevel(1, y - 1, z - 1, channel)
+            ) * 0.25F / BlockLightEngine.MAX_LEVEL;
+            case DOWN -> (
+                blockCache.getLightLevel(x, -1, z, channel) +
+                blockCache.getLightLevel(x - 1, -1, z, channel) +
+                blockCache.getLightLevel(x, -1, z - 1, channel) +
+                blockCache.getLightLevel(x - 1, -1, z - 1, channel)
+            ) * 0.25F / BlockLightEngine.MAX_LEVEL;
+            case UP -> (
+                blockCache.getLightLevel(x, 1, z, channel) +
+                blockCache.getLightLevel(x - 1, 1, z, channel) +
+                blockCache.getLightLevel(x, 1, z - 1, channel) +
+                blockCache.getLightLevel(x - 1, 1, z - 1, channel)
+            ) * 0.25F / BlockLightEngine.MAX_LEVEL;
+            case SOUTH -> (
+                blockCache.getLightLevel(x, y, -1, channel) +
+                blockCache.getLightLevel(x - 1, y, -1, channel) +
+                blockCache.getLightLevel(x, y - 1, -1, channel) +
+                blockCache.getLightLevel(x - 1, y - 1, -1, channel)
+            ) * 0.25F / BlockLightEngine.MAX_LEVEL;
+            case NORTH -> (
+                blockCache.getLightLevel(x, y, 1, channel) +
+                blockCache.getLightLevel(x - 1, y, 1, channel) +
+                blockCache.getLightLevel(x, y - 1, 1, channel) +
+                blockCache.getLightLevel(x - 1, y - 1, 1, channel)
+            ) * 0.25F / BlockLightEngine.MAX_LEVEL;
             default -> 1F;
         };
     }
 
     private void addFaces(int x, int y, int z, BlockModel model, Direction direction, boolean hide) {
         final boolean hasAmbientOcclusion = model.hasAmbientOcclusion();
+
+        if(model.getBlockState().isBlockID("stone"))
+            System.err.println(model.getFacesGroup(Direction.UP).size());
 
         for(BlockFace face: model.getFacesGroup(direction)){
             if(hide && face.getCullBy() == direction)
@@ -184,18 +112,14 @@ public class ChunkTesselator {
             for(int vertexIndex = 0; vertexIndex < vertices.length; vertexIndex++){
                 final BlockVertex vertex = vertices[vertexIndex];
                 for(int channel = 0; channel < 3; channel++){
-                    try{
-                        if(SessionScreen.AO && face.isSolid()){
-                            smoothLightCache[channel][vertexIndex] =
-                                this.calculateVertexLight(channel, vertex, direction);
-                        }else{
-                            smoothLightCache[channel][vertexIndex] = (float) (
-                                blockCache.getLightLevel(direction.getX(), direction.getY(), direction.getZ(), channel)
-                                + blockCache.getLightLevel(0, 0, 0, channel)
-                            ) / BlockLightEngine.MAX_LEVEL;
-                        }
-                    }catch(Exception ignored){
-                        System.err.println("[ERROR] Failed to smooth light");
+                    if(SessionScreen.AO && face.isSolid()){
+                        vertexLightCache[channel][vertexIndex] =
+                            this.smoothLightForVertex(channel, vertex, direction);
+                    }else{
+                        vertexLightCache[channel][vertexIndex] = (float) (
+                            blockCache.getLightLevel(direction.getX(), direction.getY(), direction.getZ(), channel)
+                            + blockCache.getLightLevel(0, 0, 0, channel)
+                        ) / BlockLightEngine.MAX_LEVEL;
                     }
                 }
             }
@@ -233,9 +157,9 @@ public class ChunkTesselator {
                 verticesCache.set(cacheTexcoordIndex + 1, (region.v1() + region.getHeight() * rotatedVertex.getV()));
 
                 // color
-                float red   = smoothLightCache[0][rotatedVertexIndex];
-                float green = smoothLightCache[1][rotatedVertexIndex];
-                float blue  = smoothLightCache[2][rotatedVertexIndex];
+                float red   = vertexLightCache[0][rotatedVertexIndex];
+                float green = vertexLightCache[1][rotatedVertexIndex];
+                float blue  = vertexLightCache[2][rotatedVertexIndex];
 
                 // tint
                 if(face.getTintIndex() == 0){

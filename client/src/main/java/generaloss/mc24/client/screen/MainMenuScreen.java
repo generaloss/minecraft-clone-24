@@ -180,7 +180,7 @@ public class MainMenuScreen extends IScreen {
     @Override
     public void render() {
         // skybox
-        skybox.render(camera);
+        //skybox.render(camera);
 
         // overlay
         ScreenQuadShader.bind(overlayTexture);

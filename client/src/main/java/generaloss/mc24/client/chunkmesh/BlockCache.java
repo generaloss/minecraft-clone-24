@@ -6,14 +6,15 @@ import generaloss.mc24.server.Direction;
 import generaloss.mc24.server.block.BlockState;
 import generaloss.mc24.server.chunk.ChunkCache;
 
-public class BlockAndLightCache {
+// for caching block area 3x3
+public class BlockCache {
 
     public static final int CENTER_BLOCK_INDEX = 13;
 
     private final BlockState[] blocks;
     private final int[] lightLevels;
 
-    public BlockAndLightCache() {
+    public BlockCache() {
         this.blocks = new BlockState[3 * 3 * 3];
         this.lightLevels = new int[3 * 3 * 3 * 3];
     }

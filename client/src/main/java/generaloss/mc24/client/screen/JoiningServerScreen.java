@@ -55,7 +55,7 @@ public class JoiningServerScreen extends IScreen {
         final int countY = 10;
         regionBG.u2 = countY * Jpize.window().getAspectRatio();
         regionBG.v2 = countY;
-        batch.draw(background, regionBG, 0, 0, Jpize.getWidth(), Jpize.getHeight(), 1F, 1F, 1F, 0.35F);
+        //batch.draw(background, regionBG, 0, 0, Jpize.getWidth(), Jpize.getHeight(), 1F, 1F, 1F, 0.35F);
 
         // status
         final Font font = super.context().registries().FONTS.get("default");

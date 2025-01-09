@@ -29,10 +29,12 @@ public class BlockModelLoader {
         final boolean uvLock = (json.has("uvlock") && json.getBoolean("uvlock"));
 
         // load
-        return loadModelJSON(blockstate, modelPath, blockRotationMat, uvLock, resourcePackManager, new HashMap<>());
+        final BlockModel model = new BlockModel(blockstate);
+        loadModelJSON(model, blockstate, modelPath, blockRotationMat, uvLock, resourcePackManager, new HashMap<>());
+        return model;
     }
 
-    private static BlockModel loadModelJSON(BlockState blockstate, String modelPath,
+    private static void loadModelJSON(BlockModel model, BlockState blockstate, String modelPath,
                                             Matrix4f blockRotationMat, boolean uvLock,
                                             ResourcePackManager resourcePackManager, Map<String, String> textureMap) {
 
@@ -42,8 +44,6 @@ public class BlockModelLoader {
             throw new IllegalStateException("Model not found: '" + modelPath + "'");
 
         final JSONObject jsonModel = new JSONObject(modelResource.readString());
-
-        final BlockModel model = new BlockModel(blockstate);
 
         // map textures
         if(jsonModel.has("textures")) {
@@ -63,7 +63,7 @@ public class BlockModelLoader {
         // recursive load parent
         if(jsonModel.has("parent")) {
             final String parentPath = jsonModel.getString("parent");
-            loadModelJSON(blockstate, parentPath, blockRotationMat, uvLock, resourcePackManager, textureMap);
+            loadModelJSON(model, blockstate, parentPath, blockRotationMat, uvLock, resourcePackManager, textureMap);
         }
 
         // normalize texture map
@@ -119,8 +119,6 @@ public class BlockModelLoader {
                 }
             }
         }
-
-        return model;
     }
 
     private static BlockFace loadModelFace(Direction direction, Vec3f from, Vec3f to, boolean shade,
@@ -144,7 +142,7 @@ public class BlockModelLoader {
         }else{
             cullface = Direction.NONE;
         }
-        face.setCullBy(cullface.opposite());
+        face.setCullBy(cullface);
 
         // region
         final Region region = new Region();
