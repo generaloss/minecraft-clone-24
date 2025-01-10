@@ -57,6 +57,35 @@ public enum Direction {
     }
 
 
+    public boolean isWest() {
+        return this == WEST;
+    }
+
+    public boolean isEast() {
+        return this == EAST;
+    }
+
+    public boolean isDown() {
+        return this == DOWN;
+    }
+
+    public boolean isUp() {
+        return this == UP;
+    }
+
+    public boolean isSouth() {
+        return this == SOUTH;
+    }
+
+    public boolean isNorth() {
+        return this == NORTH;
+    }
+
+    public boolean isNone() {
+        return this == NONE;
+    }
+
+
     public static Direction byVector(double x, double y, double z) {
         if(x != 0) return (x < 0) ? WEST : EAST;
         if(y != 0) return (y < 0) ? DOWN : UP;

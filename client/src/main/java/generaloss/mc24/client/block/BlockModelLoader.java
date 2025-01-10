@@ -125,7 +125,7 @@ public class BlockModelLoader {
                                            Vec3f rotationOrigin, Matrix4f rotationMat, Matrix4f blockRotationMat,
                                            boolean uvLock, JSONObject jsonFace, Map<String, String> textureMap) {
 
-        if(direction == Direction.NONE)
+        if(direction.isNone())
             throw new IllegalStateException("Illegal 'none' face direction");
 
         final BlockFace face = new BlockFace();

@@ -120,7 +120,7 @@ public class BlockFace {
     }
 
     public boolean isMightBeCulled() {
-        return culling != Direction.NONE;
+        return !culling.isNone();
     }
 
     public BlockFace setCulling(Direction culling) {
