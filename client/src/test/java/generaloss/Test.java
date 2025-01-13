@@ -5,22 +5,19 @@ import jpize.app.JpizeApplication;
 import jpize.gl.Gl;
 import jpize.glfw.Glfw;
 import jpize.glfw.init.GlfwPlatform;
-import jpize.util.array.FloatList;
+import jpize.util.Rect;
 import jpize.util.math.Intersector;
 import jpize.util.math.vector.Vec2f;
 import jpize.util.pixmap.Canvas;
 import jpize.util.time.Stopwatch;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
 public class Test extends JpizeApplication {
 
-    private final int[] poly1i = {0, 0,  0, 200,  150, 300,  150, 200,  250, 150,  400, 250,  400, 150,  250, 0};
-    private final float[] poly1f = {0, 0,  0, 200,  150, 300,  150, 200,  250, 150,  400, 250,  400, 150,  250, 0};
+    private final int[] poly1i   = {0, 0,  0, 200,  150, 300,  150, 200,  250, 150,  400, 250,  400, 150,  250, 0}; //0,0, 200,0, 200,200, 0,200};//
+    private final float[] poly1f = {0, 0,  0, 200,  150, 300,  150, 200,  250, 150,  400, 250,  400, 150,  250, 0}; //0,0, 200,0, 200,200, 0,200};//
 
-    private final int[] poly2i = {0, 0,  300, 0,  400, 300,  100, 200};
-    private final float[] poly2f = {0, 0,  300, 0,  400, 300,  100, 200};
+    private final int[] poly2i   = {0, 0,  400, 0,  300, 300,  100, 200}; //-40,100, 100,-40, 240,100, 100,240};//
+    private final float[] poly2f = {0, 0,  400, 0,  300, 300,  100, 200}; //-40,100, 100,-40, 240,100, 100,240};//
 
     private final Canvas canvas;
 
@@ -35,71 +32,6 @@ public class Test extends JpizeApplication {
     }
 
     Stopwatch stopwatch = new Stopwatch().start();
-
-    public static float[] getPolygonsIntersection(float[] vertices1, float[] vertices2) {
-        final Vec2f dst_point = new Vec2f();
-        List<Vec2f> verticesList = new ArrayList<>();
-
-        for(int i = 0; i < vertices1.length; i += 2){
-            final float p1x1 = vertices1[i];
-            final float p1y1 = vertices1[i + 1];
-
-            final int k1 = (i + 2) % vertices1.length;
-            final float p1x2 = vertices1[k1];
-            final float p1y2 = vertices1[k1 + 1];
-
-            // check points 1
-            if(Intersector.isPointOnPolygon(p1x1, p1y1, vertices2))
-                verticesList.add(new Vec2f(p1x1, p1y1));
-
-            // check segments
-            for(int j = 0; j < vertices2.length; j += 2){
-                final float p2x1 = vertices2[j];
-                final float p2y1 = vertices2[j + 1];
-
-                final int k2 = (j + 2) % vertices2.length;
-                final float p2x2 = vertices2[k2];
-                final float p2y2 = vertices2[k2 + 1];
-
-                if(Intersector.getSegmentIntersectSegment(dst_point, p1x1, p1y1, p1x2, p1y2,  p2x1, p2y1, p2x2, p2y2) && !dst_point.isZero()) {
-                    verticesList.add(new Vec2f(dst_point.x, dst_point.y));
-                    dst_point.zero();
-                }
-            }
-        }
-
-        for(int j = 0; j < vertices2.length; j += 2){
-            final float p2x1 = vertices2[j];
-            final float p2y1 = vertices2[j + 1];
-
-            // check points 2
-            if(Intersector.isPointInPolygon(p2x1, p2y1, vertices1))
-                verticesList.add(new Vec2f(p2x1, p2y1));
-        }
-
-        if(verticesList.isEmpty())
-            return new float[0];
-
-        for(int i = 0; i < verticesList.size(); i++){
-            final Vec2f value = verticesList.get(i);
-            if(value.x == -0) value.x = 0;
-            if(value.y == -0) value.y = 0;
-            verticesList.set(i, value);
-        }
-
-        verticesList = verticesList.stream().distinct().collect(Collectors.toList());
-
-        final Vec2f center1 = Intersector.getPolygonCenterOfGravity(new Vec2f(), vertices1);
-        final Vec2f center2 = Intersector.getPolygonCenterOfGravity(new Vec2f(), vertices2);
-        final Vec2f center = center1.add(center2).mul(0.5F);
-
-        verticesList.sort(Comparator.comparingDouble((p) -> Vec2f.angle(p.x - center.x, p.y - center.y)));
-
-        final FloatList vertices = new FloatList();
-        for(Vec2f point: verticesList)
-            vertices.add(point.x, point.y);
-        return vertices.arrayTrimmed();
-    }
 
     @Override
     public void render() {
@@ -120,14 +52,49 @@ public class Test extends JpizeApplication {
         for(int i = 0; i < poly2iTranslated.length; i++)
             poly2fTranslated[i] = poly2iTranslated[i];
 
-        final float[] intersectionf = getPolygonsIntersection(poly1f, poly2fTranslated);
+        final float[] intersectionf = Inter.getPolygonsIntersection(poly1f, poly2fTranslated);
         final int[] intersectioni = new int[intersectionf.length];
         for(int i = 0; i < intersectionf.length; i++)
             intersectioni[i] = (int) intersectionf[i];
 
-        canvas.drawLinePathRGB(0xFF0000, poly1i);
-        canvas.drawLinePathRGB(0x00FF00, poly2iTranslated);
-        canvas.drawDottedLinePathRGB(0xFFFF00, 10, intersectioni);
+
+        canvas.enableBlending();
+        final Rect poly1Bounds = Inter.getPolygonBounds(new Rect(), poly1f);
+        for(int i = (int) poly1Bounds.x - 50; i < poly1Bounds.width + poly1Bounds.x + 50; i++){
+            for(int j = (int) poly1Bounds.y - 50; j < poly1Bounds.height + poly1Bounds.y + 50; j++){
+                if(Inter.isPointInPolygon(i, j, poly1f))
+                    canvas.setPixelRGBA(i, j, 0x333300AA);
+            }
+        }
+        canvas.disableBlending();
+        canvas.drawLinePathRGB(0xAAAA00, poly1i);
+
+        canvas.enableBlending();
+        final Rect poly2Bounds = Inter.getPolygonBounds(poly1Bounds, poly2fTranslated);
+        for(int i = (int) poly2Bounds.x - 50; i < poly2Bounds.width + poly2Bounds.x + 50; i++){
+            for(int j = (int) poly2Bounds.y - 50; j < poly2Bounds.height + poly2Bounds.y + 500; j++){
+                if(Inter.isPointInPolygon(i, j, poly2fTranslated))
+                    canvas.setPixelRGBA(i, j, 0x003300AA);
+            }
+        }
+        canvas.disableBlending();
+        canvas.drawLinePathRGB(0x00AA00, poly2iTranslated);
+
+        canvas.enableBlending();
+        final Rect intersectionBounds = Inter.getPolygonBounds(poly2Bounds, intersectionf);
+        for(int i = (int) intersectionBounds.x - 50; i < intersectionBounds.width + intersectionBounds.x + 50; i++){
+            for(int j = (int) intersectionBounds.y - 50; j < intersectionBounds.height + intersectionBounds.y + 50; j++){
+                if(Inter.isPointInPolygon(i, j, intersectionf))
+                    canvas.setPixelRGBA(i, j, 0x330000AA);
+            }
+        }
+        canvas.disableBlending();
+        canvas.drawDottedLinePathRGB(0xFF0000, 10, intersectioni);
+        for(int i = 0; i < intersectioni.length; i += 2){
+            final int x = intersectioni[i];
+            final int y = intersectioni[i + 1];
+            canvas.drawCircleRGB(x, y, 3, 0xFFFFFF);
+        }
 
         canvas.render();
     }
