@@ -27,26 +27,19 @@ public class Inter {
     public static boolean getSegmentIntersectSegment(Vec2f dst,
                                                      float beginX1, float beginY1, float endX1, float endY1,
                                                      float beginX2, float beginY2, float endX2, float endY2) {
+        if(Math.max(beginX1, endX1) < Math.min(beginX2, endX2))
+            return false;
 
-        final int o1 = getPointsOrientation(beginX1, beginY1, endX1, endY1, beginX2, beginY2);
-        final int o2 = getPointsOrientation(beginX1, beginY1, endX1, endY1, endX2, endY2);
-        final int o3 = getPointsOrientation(beginX2, beginY2, endX2, endY2, beginX1, beginY1);
-        final int o4 = getPointsOrientation(beginX2, beginY2, endX2, endY2, endX1, endY1);
+        final float a1 = (beginY1 - endY1) / (beginX1 - endX1);
+        final float a2 = (beginY2 - endY2) / (beginX2 - endX2);
+        if(a1 == a2)
+            return false;
 
-        // general case
-        if(o1 != o2 && o3 != o4) {
-            final float a1 = (endY1 - beginY1);
-            final float b1 = (beginX1 - endX1);
-            final float c1 = (a1 * beginX1 + b1 * beginY1);
-
-            final float a2 = (endY2 - beginY2);
-            final float b2 = (beginX2 - endX2);
-            final float c2 = (a2 * beginX2 + b2 * beginY2);
-
-            return getLineIntersectLine(dst, a1, b1, c1, a2, b2, c2);
-        }
-
-        return false;
+        final float b1 = (beginY1 - beginX1 * a1);
+        final float b2 = (beginY2 - beginX2 * a2);
+        dst.x = (b2 - b1) / (a1 - a2);
+        dst.y = (dst.x * a2 + b2);
+        return true;
     }
 
     public static boolean getSegmentIntersectSegment(Vec2f dst, Vec2f begin1, Vec2f end1, Vec2f begin2, Vec2f end2) {
@@ -187,30 +180,16 @@ public class Inter {
 
     private static class Segment {
 
-        public final Vec2f begin = new Vec2f();
-        public final Vec2f end = new Vec2f();
-        public boolean markBegin;
-        public boolean markEnd;
-        public boolean hasIntersection2;
-        public final List<Segment> intersectSegments = new ArrayList<>();
-        public final Map<Segment, Vec2f> intersectPoints = new HashMap<>();
-        public final LinkedList<Vec2f> vertices = new LinkedList<>();
+        public final Vec2f begin;
+        public final Vec2f end;
 
-        public Segment(float beginX, float beginY, float endX, float endY) {
-            this.begin.set(beginX, beginY);
-            this.end.set(endX, endY);
+        public Segment(Vec2f begin, Vec2f end) {
+            this.begin = begin;
+            this.end = end;
         }
 
-        public void collectVertices() {
-            if(!vertices.isEmpty())
-                return;
-            if(markBegin)
-                vertices.add(begin);
-            vertices.addAll(intersectPoints.values());
-            if(markEnd)
-                vertices.add(end);
-
-            vertices.sort(Comparator.comparingDouble(v -> Vec2f.dst(v, begin))); //! dst2
+        public Segment(float beginX, float beginY, float endX, float endY) {
+            this(new Vec2f(beginX, beginY), new Vec2f(endX, endY));
         }
 
         @Override
@@ -230,7 +209,7 @@ public class Inter {
 
     public static float[] getPolygonsIntersection(float[] vertices1, float[] vertices2) {
         // get polygons segments
-        final LinkedList<Segment> segments1 = new LinkedList<>();
+        final List<Segment> segments1 = new ArrayList<>();
         for(int i = 0; i < vertices1.length; i += 2) {
             final float x1 = vertices1[i];
             final float y1 = vertices1[i + 1];
@@ -241,7 +220,7 @@ public class Inter {
 
             segments1.add(new Segment(x1, y1, x2, y2));
         }
-        final LinkedList<Segment> segments2 = new LinkedList<>();
+        final List<Segment> segments2 = new ArrayList<>();
         for(int i = 0; i < vertices2.length; i += 2) {
             final float x1 = vertices2[i];
             final float y1 = vertices2[i + 1];
@@ -253,111 +232,64 @@ public class Inter {
             segments2.add(new Segment(x1, y1, x2, y2));
         }
 
-        // collect polygon1 intersected segments and vertices
-        final LinkedList<Segment> list = new LinkedList<>();
+        System.out.println("segments: " + Arrays.toString(segments1.toArray()) + Arrays.toString(segments2.toArray()));
+
+        // split segments1 to segments
         final Vec2f dst_vec = new Vec2f();
 
-        for(int i = 0; i < segments1.size(); i++) {
-            final Segment segmentPrev1 = segments1.get((i + segments1.size() - 1) % segments1.size());
+        for(int i = 0; i < segments1.size(); i++){
             final Segment segment1 = segments1.get(i);
 
-            if(isPointOnPolygon(segment1.begin.x, segment1.begin.y, vertices2) && !segmentPrev1.end.equals(dst_vec)) {
-                list.add(segment1);
-                segment1.markBegin = true;
-            }
+            for(int j = 0; j < segments2.size(); j++){
+                final Segment segment2 = segments2.get(j);
 
-            for(final Segment segment2: segments2) {
-                if(getSegmentIntersectSegment(dst_vec, segment1.begin, segment1.end, segment2.begin, segment2.end)) {
-                    if(dst_vec.equals(segment1.begin) || dst_vec.equals(segment1.end) || dst_vec.equals(segment2.begin) || dst_vec.equals(segment2.end)){
-                        continue;
-                    }
-
-                    if(!list.contains(segment1))
-                        list.add(segment1);
-
+                if(getSegmentIntersectSegment(dst_vec, segment1.begin, segment1.end, segment2.begin, segment2.end)){
                     final Vec2f vertex = dst_vec.copy();
-                    segment1.intersectSegments.add(segment2);
-                    segment1.intersectPoints.put(segment2, vertex);
 
-                    segment2.hasIntersection2 = true;
+                    final float eps = 0;
+
+                    if(Vec2f.dst(segment1.begin, vertex) > eps && Vec2f.dst(vertex, segment1.end) > eps){
+                        segments1.remove(i);
+                        segments1.add(i, new Segment(segment1.begin, vertex));
+                        segments1.add(++i, new Segment(vertex, segment1.end));
+                        // i = 0;
+                        // j = 0;
+                        System.out.println("sliced: " + Arrays.toString(segments1.toArray()) + Arrays.toString(segments2.toArray()));
+                    }
+
+                    // if(Vec2f.dst2(segment2.begin, vertex) > eps && Vec2f.dst2(vertex, segment2.end) > eps){
+                    //     segments2.remove(j);
+                    //     segments2.add(j, new Segment(segment2.begin, vertex));
+                    //     segments2.add(j + 1, new Segment(vertex, segment2.end));
+                    //     i = 0;
+                    //     j = 0;
+                    // }
                 }
             }
         }
-        if(list.isEmpty())
-            return new float[0];
 
-        for(Segment segment: list)
-            segment.collectVertices();
-
-        // collect polygon2 vertices
-        for(int i = 0; i < list.size(); i++) {
-            final Segment segment = list.get(i);
-
-            // if has intersections get intersected segments
-            for(int j = 0; j < segment.intersectSegments.size(); j++) {
-                final Segment intersectedSegment = segment.intersectSegments.get(j);
-
-                final int segment2Index = segments2.indexOf(intersectedSegment);
-                if(segment2Index == -1)
-                    continue;
-                // iterate segments 2
-                int added2Segments = 0;
-                int increment = 0;
-                for(int k = segment2Index; k < segment2Index + segments2.size() && k > segment2Index - segments2.size(); k += increment){
-                    final Segment intersectedSegment2 = segments2.get((k + segments2.size()) % segments2.size());
-                    // if has next intersection break iteration
-                    if(k != segment2Index && intersectedSegment2.hasIntersection2)
-                        break;
-
-                    if(k != 0 && !intersectedSegment2.markBegin && isPointOnPolygon(intersectedSegment2.begin.x, intersectedSegment2.begin.y, vertices1)){
-                        intersectedSegment2.markBegin = true;
-                        if(increment == 0)
-                            increment = -1;
-                    }
-                    if(k != 0 && !intersectedSegment2.markEnd && isPointOnPolygon(intersectedSegment2.end.x, intersectedSegment2.end.y, vertices1)){
-                        intersectedSegment2.markEnd = true;
-                        if(increment == 0)
-                            increment = 1;
-                    }
-
-                    if(increment == 0)
-                        break;
-
-                    if((intersectedSegment2.markEnd || intersectedSegment2.markBegin)) {
-                        list.add(++i, intersectedSegment2);
-                        added2Segments++;
-                    }
-                }
-                //i += added2Segments;
-            }
+        // collect all segments with at least one point in polygon
+        final List<Segment> segments = new ArrayList<>();
+        for(Segment segment1 : segments1){ // 78
+            if(!isPointOnPolygon(segment1.begin.x, segment1.begin.y, vertices2))
+                continue;
+            if(!isPointOnPolygon(segment1.end.x, segment1.end.y, vertices2))
+                continue;
+            segments.add(segment1);
         }
-
-        // collect all vertices
-        for(Segment segment: list)
-            segment.collectVertices();
+        for(Segment segment2 : segments2){
+            if(!isPointOnPolygon(segment2.begin.x, segment2.begin.y, vertices1))
+                continue;
+            if(!isPointOnPolygon(segment2.end.x, segment2.end.y, vertices1))
+                continue;
+            segments.add(segment2);
+        }
 
         final FloatList vertices = new FloatList();
-        int i = 0;
-        Segment lastSegment = list.get(0);
-
-        System.out.println();
-        while(i < list.size()) {
-            final Segment segment = list.get(i); //lastSegment;
-            System.out.println("segment_" + i + "_vertices: " + segment.vertices.size() + " (" + segment.intersectPoints.size() + " " + segment.markBegin + " " + segment.markEnd + ")");
-            for(Vec2f vertex: segment.vertices)
-                vertices.add(vertex.x, vertex.y);
-
-            // search next segment
-            //for(Segment listSegment: list){
-            //    if(lastSegment.vertices.getLast().equals(listSegment.vertices.getFirst()) || lastSegment.vertices.getFirst().equals(listSegment.vertices.getLast())) {
-            //        lastSegment = listSegment;
-            //        i++;
-            //        break;
-            //    }
-            //}
-            i++;
+        for(Segment segment : segments){
+            vertices.add(segment.begin.x, segment.begin.y);
+            // vertices.add(segment.end.x, segment.end.y);
         }
-
         return vertices.arrayTrimmed();
     }
 
