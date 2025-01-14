@@ -82,14 +82,17 @@ public class Test extends JpizeApplication {
 
         canvas.enableBlending();
         final Rect intersectionBounds = Inter.getPolygonBounds(poly2Bounds, intersectionf);
-        for(int i = (int) intersectionBounds.x - 50; i < intersectionBounds.width + intersectionBounds.x + 50; i++){
-            for(int j = (int) intersectionBounds.y - 50; j < intersectionBounds.height + intersectionBounds.y + 50; j++){
-                if(Inter.isPointInPolygon(i, j, intersectionf))
-                    canvas.setPixelRGBA(i, j, 0x330000AA);
-            }
-        }
+        // for(int i = (int) intersectionBounds.x - 50; i < intersectionBounds.width + intersectionBounds.x + 50; i++){
+        //     for(int j = (int) intersectionBounds.y - 50; j < intersectionBounds.height + intersectionBounds.y + 50; j++){
+        //         if(Inter.isPointInPolygon(i, j, intersectionf))
+        //             canvas.setPixelRGBA(i, j, 0x330000AA);
+        //     }
+        // }
         canvas.disableBlending();
-        canvas.drawDottedLinePathRGB(0xFF0000, 10, intersectioni);
+        // canvas.drawDottedLinePathRGB(0xFF0000, 10, intersectioni);
+        for(int i = 0; i < intersectioni.length; i += 2)
+            canvas.drawDottedLineRGB(intersectioni[i], intersectioni[i + 1], intersectioni[(i + 2) % intersectioni.length], intersectioni[(i + 3) % intersectioni.length], 10, 0xFF0000);
+
         for(int i = 0; i < intersectioni.length; i += 2){
             final int x = intersectioni[i];
             final int y = intersectioni[i + 1];

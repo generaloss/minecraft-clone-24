@@ -4,6 +4,7 @@ import jpize.util.Rect;
 import jpize.util.array.FloatList;
 import jpize.util.math.Mathc;
 import jpize.util.math.vector.Vec2f;
+import jpize.util.time.TimeUtils;
 
 import java.util.*;
 
@@ -25,20 +26,36 @@ public class Inter {
     }
 
     public static boolean getSegmentIntersectSegment(Vec2f dst,
-                                                     float beginX1, float beginY1, float endX1, float endY1,
-                                                     float beginX2, float beginY2, float endX2, float endY2) {
-        if(Math.max(beginX1, endX1) < Math.min(beginX2, endX2))
+                                                     float p0_x, float p0_y, float p1_x, float p1_y,
+                                                     float p2_x, float p2_y, float p3_x, float p3_y) {
+        final float s10_x = (p1_x - p0_x);
+        final float s10_y = (p1_y - p0_y);
+        final float s32_x = (p3_x - p2_x);
+        final float s32_y = (p3_y - p2_y);
+
+        final float denom = s10_x * s32_y - s32_x * s10_y;
+        if(denom == 0)
+            return false; // collinear
+        final boolean denomPositive = (denom > 0);
+
+        final float s02_x = (p0_x - p2_x);
+        final float s02_y = (p0_y - p2_y);
+        final float s_numer = (s10_x * s02_y - s10_y * s02_x);
+        if((s_numer < 0) == denomPositive)
             return false;
 
-        final float a1 = (beginY1 - endY1) / (beginX1 - endX1);
-        final float a2 = (beginY2 - endY2) / (beginX2 - endX2);
-        if(a1 == a2)
+        final float t_numer = (s32_x * s02_y - s32_y * s02_x);
+        if((t_numer < 0) == denomPositive)
             return false;
 
-        final float b1 = (beginY1 - beginX1 * a1);
-        final float b2 = (beginY2 - beginX2 * a2);
-        dst.x = (b2 - b1) / (a1 - a2);
-        dst.y = (dst.x * a2 + b2);
+        if(((s_numer > denom) == denomPositive) || ((t_numer > denom) == denomPositive))
+            return false;
+
+        final float t = (t_numer / denom);
+        if(dst != null) {
+            dst.x = p0_x + (t * s10_x);
+            dst.y = p0_y + (t * s10_y);
+        }
         return true;
     }
 
@@ -178,7 +195,7 @@ public class Inter {
     }
 
 
-    private static class Segment {
+    public static class Segment {
 
         public final Vec2f begin;
         public final Vec2f end;
@@ -204,12 +221,18 @@ public class Inter {
         public int hashCode() {
             return Objects.hash(begin, end);
         }
+
+        @Override
+        public String toString() {
+            return "[{" + begin + "}, {" + end + "}]";
+        }
     }
 
 
     public static float[] getPolygonsIntersection(float[] vertices1, float[] vertices2) {
-        // get polygons segments
         final List<Segment> segments1 = new ArrayList<>();
+        final List<Segment> segments2 = new ArrayList<>();
+        // get polygons segments
         for(int i = 0; i < vertices1.length; i += 2) {
             final float x1 = vertices1[i];
             final float y1 = vertices1[i + 1];
@@ -220,7 +243,6 @@ public class Inter {
 
             segments1.add(new Segment(x1, y1, x2, y2));
         }
-        final List<Segment> segments2 = new ArrayList<>();
         for(int i = 0; i < vertices2.length; i += 2) {
             final float x1 = vertices2[i];
             final float y1 = vertices2[i + 1];
@@ -231,8 +253,6 @@ public class Inter {
 
             segments2.add(new Segment(x1, y1, x2, y2));
         }
-
-        System.out.println("segments: " + Arrays.toString(segments1.toArray()) + Arrays.toString(segments2.toArray()));
 
         // split segments1 to segments
         final Vec2f dst_vec = new Vec2f();
@@ -246,50 +266,73 @@ public class Inter {
                 if(getSegmentIntersectSegment(dst_vec, segment1.begin, segment1.end, segment2.begin, segment2.end)){
                     final Vec2f vertex = dst_vec.copy();
 
-                    final float eps = 0;
-
-                    if(Vec2f.dst(segment1.begin, vertex) > eps && Vec2f.dst(vertex, segment1.end) > eps){
+                    if(Vec2f.dst2(segment1.begin, vertex) > 0F && Vec2f.dst2(vertex, segment1.end) > 0F){
                         segments1.remove(i);
                         segments1.add(i, new Segment(segment1.begin, vertex));
-                        segments1.add(++i, new Segment(vertex, segment1.end));
-                        // i = 0;
-                        // j = 0;
-                        System.out.println("sliced: " + Arrays.toString(segments1.toArray()) + Arrays.toString(segments2.toArray()));
+                        segments1.add(i + 1, new Segment(vertex, segment1.end));
+                        i = Math.max(0, i - 2);
+
+                        System.out.println("1 Split segments " + segment1 + ", " + segment2 + " with " + vertex);
                     }
 
-                    // if(Vec2f.dst2(segment2.begin, vertex) > eps && Vec2f.dst2(vertex, segment2.end) > eps){
-                    //     segments2.remove(j);
-                    //     segments2.add(j, new Segment(segment2.begin, vertex));
-                    //     segments2.add(j + 1, new Segment(vertex, segment2.end));
-                    //     i = 0;
-                    //     j = 0;
-                    // }
+                    if(Vec2f.dst2(segment2.begin, vertex) > 0F && Vec2f.dst2(vertex, segment2.end) > 0F){
+                        segments2.remove(j);
+                        segments2.add(j, new Segment(segment2.begin, vertex));
+                        segments2.add(j + 1, new Segment(vertex, segment2.end));
+                        i = Math.max(0, i - 2);
+
+                        System.out.println("2 Split segments " + segment1 + ", " + segment2 + " with " + vertex);
+                    }
                 }
             }
+            TimeUtils.delayMillis(10);
         }
 
         // collect all segments with at least one point in polygon
         final List<Segment> segments = new ArrayList<>();
-        for(Segment segment1 : segments1){ // 78
-            if(!isPointOnPolygon(segment1.begin.x, segment1.begin.y, vertices2))
+        for(Segment segment11 : segments1){
+            if(!isPointOnPolygon(segment11.begin.x, segment11.begin.y, vertices2))
                 continue;
-            if(!isPointOnPolygon(segment1.end.x, segment1.end.y, vertices2))
+            if(!isPointOnPolygon(segment11.end.x, segment11.end.y, vertices2))
                 continue;
-            segments.add(segment1);
+            segments.add(segment11);
         }
-        for(Segment segment2 : segments2){
-            if(!isPointOnPolygon(segment2.begin.x, segment2.begin.y, vertices1))
+        for(Segment segment22 : segments2){
+            if(!isPointOnPolygon(segment22.begin.x, segment22.begin.y, vertices1))
                 continue;
-            if(!isPointOnPolygon(segment2.end.x, segment2.end.y, vertices1))
+            if(!isPointOnPolygon(segment22.end.x, segment22.end.y, vertices1))
                 continue;
-            segments.add(segment2);
+            segments.add(segment22);
         }
 
+        if(segments.size() < 2)
+            return new float[0];
+
         final FloatList vertices = new FloatList();
+
+        loop:
         for(Segment segment : segments){
             vertices.add(segment.begin.x, segment.begin.y);
-            // vertices.add(segment.end.x, segment.end.y);
+            for(Segment segment1: segments)
+                if(segment1.begin.equals(segment.end))
+                    continue loop;
+            vertices.add(segment.end.x, segment.end.y);
         }
+
+        // Segment lastSegment = segments.get(0);
+
+        // while(!segments.isEmpty()){
+        //     vertices.add(lastSegment.begin.x, lastSegment.begin.y);
+        //     segments.remove(lastSegment);
+
+        //     for(Segment segment: segments) {
+        //         if(lastSegment.end.equals(segment.begin)) {
+        //             lastSegment = segment;
+        //             break;
+        //         }
+        //     }
+        // }
+
         return vertices.arrayTrimmed();
     }
 
