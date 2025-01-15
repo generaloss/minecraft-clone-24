@@ -3,6 +3,7 @@ package generaloss;
 import jpize.util.Rect;
 import jpize.util.math.vector.Vec2f;
 
+import javax.swing.tree.TreeNode;
 import java.util.*;
 
 public class Inter {
@@ -132,6 +133,10 @@ public class Inter {
         return inside;
     }
 
+    public static boolean isPointOnPolygon(Vec2f point, float... vertices) {
+        return isPointOnPolygon(point.x, point.y, vertices);
+    }
+
     public static boolean isPointInPolygon(float pointX, float pointY, float... vertices) {
         boolean inside = false;
 
@@ -153,6 +158,10 @@ public class Inter {
             }
         }
         return inside;
+    }
+
+    public static boolean isPointInPolygon(Vec2f point, float... vertices) {
+        return isPointInPolygon(point.x, point.y, vertices);
     }
 
 
@@ -178,11 +187,10 @@ public class Inter {
 
     public static class Segment {
 
-        public final Vec2f begin;
-        public final Vec2f end;
-        public boolean intersectedBegin;
-        public boolean intersectedEnd;
+        public final Vec2f begin, end;
+        public boolean markBegin, markEnd;
         public int color;
+        public List<Segment> next = new ArrayList<>(1);
 
         public Segment(Vec2f begin, Vec2f end) {
             this.begin = begin;
@@ -208,10 +216,11 @@ public class Inter {
     }
 
 
-    public static /*float[]*/ Queue<Segment> getPolygonsIntersection(float[] vertices1, float[] vertices2) {
+    public static /*float[]*/ List<Segment> getPolygonsIntersection(float[] vertices1, float[] vertices2) {
         // get polygons segments
         final List<Segment> segments1 = new ArrayList<>();
         final List<Segment> segments2 = new ArrayList<>();
+        Segment prevSegment = null;
         for(int i = 0; i < vertices1.length; i += 2) {
             final float x1 = vertices1[i];
             final float y1 = vertices1[i + 1];
@@ -223,7 +232,13 @@ public class Inter {
             final Segment segment = new Segment(x1, y1, x2, y2);
             segment.color = 0x0000FF;
             segments1.add(segment);
+
+            if(prevSegment != null) {
+                prevSegment.next.add(segment);
+            }
+            prevSegment = segment;
         }
+        prevSegment = null;
         for(int i = 0; i < vertices2.length; i += 2) {
             final float x1 = vertices2[i];
             final float y1 = vertices2[i + 1];
@@ -235,10 +250,16 @@ public class Inter {
             final Segment segment = new Segment(x1, y1, x2, y2);
             segment.color = 0x0000FF;
             segments2.add(segment);
+
+            if(prevSegment != null) {
+                prevSegment.next.add(segment);
+            }
+            prevSegment = segment;
         }
 
-        // split segments
+        // split segments and build tree
         final Vec2f dst_vec = new Vec2f();
+        final Vec2f dst_vec2 = new Vec2f();
 
         boolean splitted;
         splitLoop : do{
@@ -259,33 +280,38 @@ public class Inter {
                             Vec2f.dst2(segment2.begin, vertex) > 0F &&
                             Vec2f.dst2(vertex, segment2.end) > 0F
                         ){
-                            segments1.remove(segment1);
+                            final Segment segment1part = new Segment(vertex, segment1.end);
+                            segment1part.markBegin = true;
+                            segment1part.markEnd = segment1.markEnd;
+                            segment1part.next.addAll(segment1.next);
+                            segment1part.color = 0x00FF00;
+                            segments1.add(++i, segment1part);
 
-                            final Segment part11 = new Segment(segment1.begin, vertex);
-                            part11.color = 0xFF0000;
-                            part11.intersectedBegin = segment1.intersectedBegin;
-                            part11.intersectedEnd = true;
-                            segments1.add(i, part11);
+                            segment1.end.set(vertex);
+                            segment1.markEnd = true;
+                            segment1.color = 0xFF0000;
 
-                            final Segment part12 = new Segment(vertex, segment1.end);
-                            part12.color = 0x00FF00;
-                            part12.intersectedBegin = true;
-                            part12.intersectedEnd = segment1.intersectedEnd;
-                            segments1.add(++i, part12);
+                            final Segment segment2part = new Segment(vertex, segment2.end);
+                            segment2part.markBegin = true;
+                            segment2part.markEnd = segment2.markEnd;
+                            segment2part.next.addAll(segment2.next);
+                            segment2part.color = 0x00FF00;
+                            segments2.add(++j, segment2part);
 
-                            segments2.remove(segment2);
+                            segment2.end.set(vertex);
+                            segment2.markEnd = true;
+                            segment2.color = 0xFF0000;
 
-                            final Segment part21 = new Segment(segment2.begin, vertex);
-                            part21.color = 0xFF0000;
-                            part21.intersectedBegin = segment2.intersectedBegin;
-                            part21.intersectedEnd = true;
-                            segments2.add(j, part21);
 
-                            final Segment part22 = new Segment(vertex, segment2.end);
-                            part22.color = 0x00FF00;
-                            part22.intersectedBegin = true;
-                            part22.intersectedEnd = segment2.intersectedEnd;
-                            segments2.add(++j, part22);
+                            segment1.next.clear();
+                            segment1.next.add(segment1part);
+                            segment1.next.add(segment2);
+                            segment1.next.add(segment2part);
+
+                            segment2.next.clear();
+                            segment2.next.add(segment2part);
+                            segment2.next.add(segment1);
+                            segment2.next.add(segment1part);
 
                             splitted = true;
                             continue splitLoop;
@@ -298,29 +324,36 @@ public class Inter {
         // collect segments
         final Queue<Segment> segments = new LinkedList<>();
         for(Segment segment1: segments1){
-            if(
-                (segment1.intersectedBegin || isPointOnPolygon(segment1.begin.x, segment1.begin.y, vertices2)) &&
-                (segment1.intersectedEnd   || isPointOnPolygon(segment1.end.x,   segment1.end.y,   vertices2))
-            ){
+            if(segment1.markBegin || segment1.markEnd ||
+                (isPointOnPolygon(segment1.begin, vertices2) && isPointOnPolygon(segment1.end, vertices2))){
                 segments.add(segment1);
-            }else{
-                segments.add(segment1);
-                segment1.color = 0x777777;
             }
         }
         for(Segment segment2: segments2){
-            if(
-                (segment2.intersectedBegin || isPointOnPolygon(segment2.begin.x, segment2.begin.y, vertices1)) &&
-                (segment2.intersectedEnd   || isPointOnPolygon(segment2.end.x,   segment2.end.y,   vertices1))
-            ){
+            if(segment2.markBegin || segment2.markEnd ||
+                (isPointOnPolygon(segment2.begin, vertices1) && isPointOnPolygon(segment2.end, vertices1))){
                 segments.add(segment2);
-            }else{
-                segments.add(segment2);
-                segment2.color = 0x777777;
             }
         }
 
-        return segments;
+        final List<Segment> s = new ArrayList<>();
+        Segment lastSegment = segments.poll();
+        while(lastSegment.markEnd){}
+
+        while(true){
+            s.add(lastSegment);
+            if(lastSegment.next.isEmpty())
+                break;
+
+            // sort angle
+            dst_vec.set(lastSegment.end).sub(lastSegment.begin);
+            lastSegment.next.sort(Comparator.comparingDouble(segment -> {
+                dst_vec2.set(segment.end).sub(segment.begin);
+                return dst_vec.angleBetween(dst_vec2);
+            }));
+        }
+
+        return s;
 
         // if(segments.size() < 3)
         //     return new float[0];

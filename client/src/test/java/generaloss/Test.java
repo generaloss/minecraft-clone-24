@@ -11,6 +11,7 @@ import jpize.util.math.vector.Vec2f;
 import jpize.util.pixmap.Canvas;
 import jpize.util.time.Stopwatch;
 
+import java.util.List;
 import java.util.Queue;
 
 public class Test extends JpizeApplication {
@@ -77,7 +78,7 @@ public class Test extends JpizeApplication {
         canvas.drawLinePathRGB(0x333333, poly2iTranslated);
         canvas.enableBlending();
 
-        final Queue<Inter.Segment> segments = Inter.getPolygonsIntersection(poly1f, poly2fTranslated);
+        final List<Inter.Segment> segments = Inter.getPolygonsIntersection(poly1f, poly2fTranslated);
         // final float[] intersectionf = Inter.getPolygonsIntersection(poly1f, poly2fTranslated);
         // final int[] intersectioni = new int[intersectionf.length];
         // for(int i = 0; i < intersectionf.length; i++)
