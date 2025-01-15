@@ -1,16 +1,11 @@
 package generaloss;
 
 import jpize.util.Rect;
-import jpize.util.math.Mathc;
 import jpize.util.math.vector.Vec2f;
 
 import java.util.*;
 
 public class Inter {
-
-    public static int getPointsOrientation(float ax, float ay, float bx, float by, float cx, float cy) {
-        return Mathc.signum((by - ay) * (cx - bx) - (bx - ax) * (cy - by));
-    }
 
     public static boolean getLineIntersectLine(Vec2f dst, float a1, float b1, float c1, float a2, float b2, float c2) {
         final float determinant = (a1 * b2 - a2 * b1);
@@ -23,36 +18,42 @@ public class Inter {
         return true;
     }
 
+    public static boolean isLineIntersectLine(float a1, float b1, float c1, float a2, float b2, float c2) {
+        final float determinant = (a1 * b2 - a2 * b1);
+        return (determinant != 0F);
+    }
+
     public static boolean getSegmentIntersectSegment(Vec2f dst,
-                                                     float p0_x, float p0_y, float p1_x, float p1_y,
-                                                     float p2_x, float p2_y, float p3_x, float p3_y) {
-        final float s10_x = (p1_x - p0_x);
-        final float s10_y = (p1_y - p0_y);
-        final float s32_x = (p3_x - p2_x);
-        final float s32_y = (p3_y - p2_y);
+                                                     float beginX1, float beginY1, float endX1, float endY1,
+                                                     float beginX2, float beginY2, float endX2, float endY2) {
+        final float dx1 = (endX1 - beginX1);
+        final float dy1 = (endY1 - beginY1);
+        final float dx2 = (endX2 - beginX2);
+        final float dy2 = (endY2 - beginY2);
 
-        final float denom = s10_x * s32_y - s32_x * s10_y;
-        if(denom == 0)
+        final float denominator = (dx1 * dy2 - dx2 * dy1);
+        if(denominator == 0)
             return false; // collinear
-        final boolean denomPositive = (denom > 0);
+        final boolean denomimatorPositive = (denominator > 0);
 
-        final float s02_x = (p0_x - p2_x);
-        final float s02_y = (p0_y - p2_y);
-        final float s_numer = (s10_x * s02_y - s10_y * s02_x);
-        if((s_numer < 0) == denomPositive)
+        final float dx12 = (beginX1 - beginX2);
+        final float dy12 = (beginY1 - beginY2);
+
+        final float numerator1 = (dx1 * dy12 - dy1 * dx12);
+        if((numerator1 < 0) == denomimatorPositive)
             return false;
 
-        final float t_numer = (s32_x * s02_y - s32_y * s02_x);
-        if((t_numer < 0) == denomPositive)
+        final float numerator2 = (dx2 * dy12 - dy2 * dx12);
+        if((numerator2 < 0) == denomimatorPositive)
             return false;
 
-        if(((s_numer > denom) == denomPositive) || ((t_numer > denom) == denomPositive))
+        if(((numerator1 > denominator) == denomimatorPositive) || ((numerator2 > denominator) == denomimatorPositive))
             return false;
 
-        final float t = (t_numer / denom);
+        final float t = (numerator2 / denominator);
         if(dst != null) {
-            dst.x = p0_x + (t * s10_x);
-            dst.y = p0_y + (t * s10_y);
+            dst.x = (beginX1 + t * dx1);
+            dst.y = (beginY1 + t * dy1);
         }
         return true;
     }
@@ -61,55 +62,37 @@ public class Inter {
         return getSegmentIntersectSegment(dst, begin1.x, begin1.y, end1.x, end1.y, begin2.x, begin2.y, end2.x, end2.y);
     }
 
-    public static boolean isLineIntersectLine(float a1, float b1, float c1, float a2, float b2, float c2) {
-        final float determinant = (a1 * b2 - a2 * b1);
-        return (determinant != 0F);
-    }
-
     public static boolean isSegmentIntersectSegment(float beginX1, float beginY1, float endX1, float endY1,
                                                     float beginX2, float beginY2, float endX2, float endY2) {
 
-        final int o1 = getPointsOrientation(beginX1, beginY1, endX1, endY1,  beginX2, beginY2);
-        final int o2 = getPointsOrientation(beginX1, beginY1, endX1, endY1,  endX2, endY2);
-        final int o3 = getPointsOrientation(beginX2, beginY2, endX2, endY2,  beginX1, beginY1);
-        final int o4 = getPointsOrientation(beginX2, beginY2, endX2, endY2,  endX1, endY1);
+        final float dx1 = (endX1 - beginX1);
+        final float dy1 = (endY1 - beginY1);
+        final float dx2 = (endX2 - beginX2);
+        final float dy2 = (endY2 - beginY2);
 
-        // general case
-        if(o1 != o2 && o3 != o4) {
-            final float a1 = (endY1 - beginY1);
-            final float b1 = (beginX1 - endX1);
-            final float c1 = (a1 * beginX1 + b1 * beginY1);
+        final float denominator = (dx1 * dy2 - dx2 * dy1);
+        if(denominator == 0)
+            return false; // collinear
+        final boolean denomimatorPositive = (denominator > 0);
 
-            final float a2 = (endY2 - beginY2);
-            final float b2 = (beginX2 - endX2);
-            final float c2 = (a2 * beginX2 + b2 * beginY2);
+        final float dx12 = (beginX1 - beginX2);
+        final float dy12 = (beginY1 - beginY2);
 
-            if(isLineIntersectLine(a1, b1, c1,  a2, b2, c2))
-                return true;
-        }
+        final float numerator1 = (dx1 * dy12 - dy1 * dx12);
+        if((numerator1 < 0) == denomimatorPositive)
+            return false;
 
-        // special cases
-        return (
-            o1 == 0 && isOnSegment(beginX1, beginY1, beginX2, beginY2, endX1, endY1) ||
-            o2 == 0 && isOnSegment(beginX1, beginY1, endX2,   endY2,   endX1, endY1) ||
-            o3 == 0 && isOnSegment(beginX2, beginY2, beginX1, beginY1, endX2, endY2) ||
-            o4 == 0 && isOnSegment(beginX2, beginY2, endX1,   endY1,   endX2, endY2)
-        );
+        final float numerator2 = (dx2 * dy12 - dy2 * dx12);
+        if((numerator2 < 0) == denomimatorPositive)
+            return false;
+
+        return ((numerator1 > denominator) != denomimatorPositive) &&
+                ((numerator2 > denominator) != denomimatorPositive);
     }
 
     public static boolean isSegmentIntersectSegment(Vec2f begin1, Vec2f end1, Vec2f begin2, Vec2f end2) {
         return isSegmentIntersectSegment(begin1.x, begin1.y, end1.x, end1.y, begin2.x, begin2.y, end2.x, end2.y);
     }
-
-    private static boolean isOnSegment(float ax, float ay, float bx, float by, float cx, float cy) {
-        return (
-            bx <= Math.max(ax, cx) &&
-            bx >= Math.min(ax, cx) &&
-            by <= Math.max(ay, cy) &&
-            by >= Math.min(ay, cy)
-        );
-    }
-
 
     public static boolean isPointOnSegment(float pointX, float pointY, float ax, float ay, float bx, float by) {
         final float crossproduct = (pointY - ay) * (bx - ax) - (pointX - ax) * (by - ay);
