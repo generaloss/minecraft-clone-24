@@ -3,6 +3,7 @@ package generaloss;
 import jpize.app.Jpize;
 import jpize.app.JpizeApplication;
 import jpize.gl.Gl;
+import jpize.gl.tesselation.GlPrimitive;
 import jpize.glfw.Glfw;
 import jpize.glfw.init.GlfwPlatform;
 import jpize.util.Rect;
@@ -10,9 +11,6 @@ import jpize.util.math.Intersector;
 import jpize.util.math.vector.Vec2f;
 import jpize.util.pixmap.Canvas;
 import jpize.util.time.Stopwatch;
-
-import java.util.List;
-import java.util.Queue;
 
 public class Test extends JpizeApplication {
 
@@ -56,10 +54,10 @@ public class Test extends JpizeApplication {
             poly2fTranslated[i] = poly2iTranslated[i];
 
         canvas.enableBlending();
-        final Rect poly1Bounds = Inter.getPolygonBounds(new Rect(), poly1f);
+        final Rect poly1Bounds = Intersector.getPolygonBounds(new Rect(), poly1f);
         for(int i = (int) poly1Bounds.x - 50; i < poly1Bounds.width + poly1Bounds.x + 50; i++){
             for(int j = (int) poly1Bounds.y - 50; j < poly1Bounds.height + poly1Bounds.y + 50; j++){
-                if(Inter.isPointInPolygon(i, j, poly1f))
+                if(Intersector.isPointInPolygon(i, j, poly1f))
                     canvas.setPixelRGBA(i, j, 0x777777AA);
             }
         }
@@ -67,10 +65,10 @@ public class Test extends JpizeApplication {
         canvas.drawLinePathRGB(0x333333, poly1i);
 
         canvas.enableBlending();
-        final Rect poly2Bounds = Inter.getPolygonBounds(poly1Bounds, poly2fTranslated);
+        final Rect poly2Bounds = Intersector.getPolygonBounds(poly1Bounds, poly2fTranslated);
         for(int i = (int) poly2Bounds.x - 50; i < poly2Bounds.width + poly2Bounds.x + 50; i++){
             for(int j = (int) poly2Bounds.y - 50; j < poly2Bounds.height + poly2Bounds.y + 500; j++){
-                if(Inter.isPointInPolygon(i, j, poly2fTranslated))
+                if(Intersector.isPointInPolygon(i, j, poly2fTranslated))
                     canvas.setPixelRGBA(i, j, 0x777777AA);
             }
         }
@@ -78,41 +76,39 @@ public class Test extends JpizeApplication {
         canvas.drawLinePathRGB(0x333333, poly2iTranslated);
         canvas.enableBlending();
 
-        final List<Inter.Segment> segments = Inter.getPolygonsIntersection(poly1f, poly2fTranslated);
-        // final float[] intersectionf = Inter.getPolygonsIntersection(poly1f, poly2fTranslated);
-        // final int[] intersectioni = new int[intersectionf.length];
-        // for(int i = 0; i < intersectionf.length; i++)
-        //     intersectioni[i] = (int) intersectionf[i];
+        final float[] intersectionf = Inter.getPolygonIntersection(poly1f, poly2fTranslated);
+        final int[] intersectioni = new int[intersectionf.length];
+        for(int i = 0; i < intersectionf.length; i++)
+            intersectioni[i] = (int) intersectionf[i];
 
-
-        for(Inter.Segment segment : segments){
-            if(segment.color == 0x777777){
-                canvas.drawDottedLineRGB((int) segment.begin.x, (int) segment.begin.y, (int) segment.end.x, (int) segment.end.y, 40, segment.color);
-            }else{
-                canvas.drawDottedLineRGB((int) segment.begin.x, (int) segment.begin.y, (int) segment.end.x, (int) segment.end.y, 10, segment.color);
-                canvas.drawCircleRGB((int) segment.begin.x, (int) segment.begin.y, 5, 0xFFFFFF);
-                canvas.drawCircleRGB((int) segment.end.x, (int) segment.end.y, 3, 0xCCCCCC);
-            }
-        }
-
-
-        // final Rect intersectionBounds = Inter.getPolygonBounds(poly2Bounds, intersectionf);
-        // for(int i = (int) intersectionBounds.x - 50; i < intersectionBounds.width + intersectionBounds.x + 50; i++){
-        //     for(int j = (int) intersectionBounds.y - 50; j < intersectionBounds.height + intersectionBounds.y + 50; j++){
-        //         if(Inter.isPointInPolygon(i, j, intersectionf))
-        //             canvas.setPixelRGBA(i, j, 0x330000AA);
+        // for(Inter.Segment segment: segments){
+        //     if(segment.color == 0x777777){
+        //         canvas.drawDottedLineRGB((int) segment.begin.x, (int) segment.begin.y, (int) segment.end.x, (int) segment.end.y, 40, segment.color);
+        //     }else{
+        //         canvas.drawDottedLineRGB((int) segment.begin.x, (int) segment.begin.y, (int) segment.end.x, (int) segment.end.y, 10, segment.color);
+        //         canvas.drawCircleRGB((int) segment.begin.x, (int) segment.begin.y, 5, 0xFFFFFF);
+        //         canvas.drawCircleRGB((int) segment.end.x, (int) segment.end.y, 3, 0xCCCCCC);
         //     }
         // }
-        // canvas.disableBlending();
-        // canvas.drawDottedLinePathRGB(0xFF0000, 10, intersectioni);
-        // for(int i = 0; i < intersectioni.length; i += 4)
-        //     canvas.drawDottedLineRGB(intersectioni[i], intersectioni[i + 1], intersectioni[(i + 2) % intersectioni.length], intersectioni[(i + 3) % intersectioni.length], 10, 0xFF0000);
 
-        // for(int i = 0; i < intersectioni.length; i += 2){
-        //     final int x = intersectioni[i];
-        //     final int y = intersectioni[i + 1];
-        //     canvas.drawCircleRGB(x, y, 3, 0xFFFFFF);
-        // }
+
+        final Rect intersectionBounds = Intersector.getPolygonBounds(poly2Bounds, intersectionf);
+        for(int i = (int) intersectionBounds.x - 50; i < intersectionBounds.width + intersectionBounds.x + 50; i++){
+            for(int j = (int) intersectionBounds.y - 50; j < intersectionBounds.height + intersectionBounds.y + 50; j++){
+                if(Intersector.isPointInPolygon(i, j, intersectionf))
+                    canvas.setPixelRGBA(i, j, 0x330000AA);
+            }
+        }
+        canvas.disableBlending();
+        canvas.drawDottedLinePathRGB(0xFF0000, 10, intersectioni);
+        for(int i = 0; i < intersectioni.length; i += 4)
+            canvas.drawDottedLineRGB(intersectioni[i], intersectioni[i + 1], intersectioni[(i + 2) % intersectioni.length], intersectioni[(i + 3) % intersectioni.length], 10, 0xFF0000);
+
+        for(int i = 0; i < intersectioni.length; i += 2){
+            final int x = intersectioni[i];
+            final int y = intersectioni[i + 1];
+            canvas.drawCircleRGB(x, y, 3, 0xFFFFFF);
+        }
 
         canvas.render();
         // TimeUtils.delayMillis(100);
