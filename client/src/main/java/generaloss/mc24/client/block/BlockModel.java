@@ -2,7 +2,7 @@ package generaloss.mc24.client.block;
 
 import generaloss.mc24.server.Direction;
 import generaloss.mc24.server.block.BlockState;
-import jpize.util.math.geometry.Polygon;
+import jpize.util.math.Intersector;
 
 
 import java.util.*;
@@ -45,9 +45,6 @@ public class BlockModel {
 
 
     private boolean isMultiFaceSolid(Direction dir) {
-        if(true)
-            return false;
-
         final List<BlockFace> faces = faceGroups.get(dir);
         if(faces == null)
             return false;
@@ -83,7 +80,7 @@ public class BlockModel {
                 (dir.getZ() != 0) ? varr[3].getY() : varr[3].getZ()
         };
 
-        return Polygon.getArea(vertices);
+        return Intersector.getPolygonArea(vertices);
     }
 
     private float getFacesIntersectArea(BlockFace quad1, BlockFace quad2) {
@@ -113,10 +110,10 @@ public class BlockModel {
             (dir2.getZ() != 0) ? varr2[3].getY() : varr2[3].getZ()
         };
 
-        final float[] intersectionVertices = {0F};//Polygon.getPolygonsIntersection(vertices1, vertices2);
+        final float[] intersectionVertices = Intersector.getPolygonsIntersection(vertices1, vertices2);
         if(blockstate.isBlockID("stone_stairs") && dir1 == Direction.EAST)
             System.out.println("verts: " + Arrays.toString(intersectionVertices));
-        return Polygon.getArea(intersectionVertices);
+        return Intersector.getPolygonArea(intersectionVertices);
     }
 
 
