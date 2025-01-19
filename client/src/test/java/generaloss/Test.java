@@ -5,8 +5,8 @@ import jpize.app.JpizeApplication;
 import jpize.gl.Gl;
 import jpize.glfw.Glfw;
 import jpize.glfw.init.GlfwPlatform;
-import jpize.util.Rect;
-import jpize.util.math.Intersector;
+import jpize.util.math.geometry.Polygon;
+import jpize.util.math.geometry.Rect;
 import jpize.util.math.vector.Vec2f;
 import jpize.util.pixmap.Canvas;
 import jpize.util.time.Stopwatch;
@@ -43,7 +43,7 @@ public class Test extends JpizeApplication {
         final float px = Jpize.getX();
         final float py = Jpize.input().getCursorNativeY();
 
-        final Vec2f poly2center = Intersector.getPolygonCenterOfGravity(new Vec2f(), poly2f);
+        final Vec2f poly2center = Polygon.getCenterOfGravity(new Vec2f(), poly2f);
 
         final int[] poly2iTranslated = new int[poly2i.length];
         for(int i = 0; i < poly2i.length; i += 2) {
@@ -55,10 +55,10 @@ public class Test extends JpizeApplication {
             poly2fTranslated[i] = poly2iTranslated[i];
 
         canvas.enableBlending();
-        final Rect poly1Bounds = Inter.getPolygonBounds(new Rect(), poly1f);
+        final Rect poly1Bounds = new Rect().calculateFor(poly1f);
         for(int i = (int) poly1Bounds.x - 50; i < poly1Bounds.width + poly1Bounds.x + 50; i++){
             for(int j = (int) poly1Bounds.y - 50; j < poly1Bounds.height + poly1Bounds.y + 50; j++){
-                if(Inter.isPointInPolygon(i, j, poly1f))
+                if(Polygon.isPointIn(i, j, poly1f))
                     canvas.setPixelRGBA(i, j, 0x777777AA);
             }
         }
@@ -66,10 +66,10 @@ public class Test extends JpizeApplication {
         canvas.drawLinePathRGB(0x333333, poly1i);
 
         canvas.enableBlending();
-        final Rect poly2Bounds = Inter.getPolygonBounds(poly1Bounds, poly2fTranslated);
+        final Rect poly2Bounds = new Rect().calculateFor(poly2fTranslated);
         for(int i = (int) poly2Bounds.x - 50; i < poly2Bounds.width + poly2Bounds.x + 50; i++){
             for(int j = (int) poly2Bounds.y - 50; j < poly2Bounds.height + poly2Bounds.y + 500; j++){
-                if(Inter.isPointInPolygon(i, j, poly2fTranslated))
+                if(Polygon.isPointIn(i, j, poly2fTranslated))
                     canvas.setPixelRGBA(i, j, 0x777777AA);
             }
         }
@@ -77,14 +77,14 @@ public class Test extends JpizeApplication {
         canvas.drawLinePathRGB(0x333333, poly2iTranslated);
         canvas.enableBlending();
 
-        final Queue<Inter.Segment> segments = Inter.getPolygonsIntersection(poly1f, poly2fTranslated);
+        final Queue<MethodDev.Segment> segments = MethodDev.getPolygonsIntersection(poly1f, poly2fTranslated);
         // final float[] intersectionf = Inter.getPolygonsIntersection(poly1f, poly2fTranslated);
         // final int[] intersectioni = new int[intersectionf.length];
         // for(int i = 0; i < intersectionf.length; i++)
         //     intersectioni[i] = (int) intersectionf[i];
 
 
-        for(Inter.Segment segment : segments){
+        for(MethodDev.Segment segment : segments){
             if(segment.color == 0x777777){
                 canvas.drawDottedLineRGB((int) segment.begin.x, (int) segment.begin.y, (int) segment.end.x, (int) segment.end.y, 40, segment.color);
             }else{
