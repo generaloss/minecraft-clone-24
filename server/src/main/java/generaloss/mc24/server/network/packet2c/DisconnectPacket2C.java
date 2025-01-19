@@ -23,12 +23,12 @@ public class DisconnectPacket2C extends NetPacket<IClientProtocol> {
 
     @Override
     public void write(ExtDataOutputStream stream) throws IOException {
-        stream.writeStringUTF(message);
+        stream.writeUTFString(message);
     }
 
     @Override
     public void read(ExtDataInputStream stream) throws IOException {
-        message = stream.readStringUTF();
+        message = stream.readUTFString();
     }
 
     @Override

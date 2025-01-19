@@ -36,7 +36,7 @@ public class Connection implements INetPacketHandler {
     }
 
     public void sendResponse(ResponseCode code, String response) {
-        this.sendResponse(code, stream -> stream.writeStringUTF(response));
+        this.sendResponse(code, stream -> stream.writeUTFString(response));
     }
 
     public void sendResponse(ResponseCode code, UUID response) {

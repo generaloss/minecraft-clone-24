@@ -25,7 +25,8 @@ public class ClientConnection {
             DisconnectPacket2C.class,
             ChunkPacket2C.class,
             SetBlockStatePacket2C.class,
-            AbilitiesPacket2C.class
+            AbilitiesPacket2C.class,
+            EntityMovePacket2C.class
         );
     }
 

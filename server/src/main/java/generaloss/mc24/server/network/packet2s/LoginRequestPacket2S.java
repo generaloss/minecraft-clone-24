@@ -23,12 +23,12 @@ public class LoginRequestPacket2S extends NetPacket<IServerProtocolLogin> {
 
     @Override
     public void write(ExtDataOutputStream stream) throws IOException {
-        stream.writeStringUTF(clientVersion);
+        stream.writeUTFString(clientVersion);
     }
 
     @Override
     public void read(ExtDataInputStream stream) throws IOException {
-        clientVersion = stream.readStringUTF();
+        clientVersion = stream.readUTFString();
     }
 
     @Override

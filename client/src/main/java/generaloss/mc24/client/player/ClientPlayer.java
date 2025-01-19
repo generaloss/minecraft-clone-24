@@ -1,6 +1,7 @@
 package generaloss.mc24.client.player;
 
 import generaloss.mc24.client.Main;
+import generaloss.mc24.server.network.packet2s.PlayerMovePacket2S;
 import generaloss.mc24.server.player.AbstractPlayer;
 import jpize.app.Jpize;
 import jpize.glfw.input.Key;
@@ -8,6 +9,8 @@ import jpize.util.camera.PerspectiveCamera;
 import jpize.util.input.MotionInput;
 import jpize.util.input.RotationInput;
 import jpize.util.math.vector.Vec3f;
+
+import java.util.UUID;
 
 public class ClientPlayer extends AbstractPlayer {
 
@@ -19,10 +22,11 @@ public class ClientPlayer extends AbstractPlayer {
     private final BlockSelectRay blockSelectRay;
 
     public ClientPlayer(Main context) {
+        super(UUID.randomUUID());
         this.context = context;
         this.camera = new PerspectiveCamera(0.01F, 1000F, 85F);
         this.motionInput = new MotionInput();
-        this.rotationInput = new RotationInput(super.getRotation(), false);
+        this.rotationInput = new RotationInput(super.rotation(), false);
         this.rotationInput.setSpeed(0.05F);
         this.rotationInput.setSmoothness(0.1F);
         this.velocity = new Vec3f();
@@ -51,11 +55,13 @@ public class ClientPlayer extends AbstractPlayer {
 
         velocity.add(acceleration);
         velocity.mul(0.97F);
-        super.getPosition().add(velocity);
+        super.position().add(velocity);
+        if(velocity.isNotZero())
+            context.connection().sendPacket(new PlayerMovePacket2S(super.position()));
 
         // camera
-        camera.rotation().setRotation(super.getRotation());
-        camera.position().set(super.getPosition());
+        camera.rotation().setRotation(super.rotation());
+        camera.position().set(super.position());
         camera.update();
 
         // ray

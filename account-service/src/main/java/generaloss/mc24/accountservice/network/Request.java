@@ -75,29 +75,29 @@ public class Request implements INetPacketHandler {
 
     public static Response sendCreateAccount(String host, String nickname, String password) { // bool
         return Request.send(host, RequestType.CREATE_ACCOUNT, stream -> {
-            stream.writeStringUTF(nickname);
-            stream.writeStringUTF(password);
+            stream.writeUTFString(nickname);
+            stream.writeUTFString(password);
         });
     }
 
     public static Response sendDeleteAccount(String host, String nickname, String password) { // bool
         return Request.send(host, RequestType.DELETE_ACCOUNT, stream -> {
-            stream.writeStringUTF(nickname);
-            stream.writeStringUTF(password);
+            stream.writeUTFString(nickname);
+            stream.writeUTFString(password);
         });
     }
 
     public static Response sendLogin(String host, String nickname, String password) { // sessionID
         return Request.send(host, RequestType.LOG_IN, stream -> {
-            stream.writeStringUTF(nickname);
-            stream.writeStringUTF(password);
+            stream.writeUTFString(nickname);
+            stream.writeUTFString(password);
         });
     }
 
     public static Response sendLogout(String host, String nickname, String password) { // bool
         return Request.send(host, RequestType.LOG_OUT, stream -> {
-            stream.writeStringUTF(nickname);
-            stream.writeStringUTF(password);
+            stream.writeUTFString(nickname);
+            stream.writeUTFString(password);
         });
     }
 

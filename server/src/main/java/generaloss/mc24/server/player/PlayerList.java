@@ -18,7 +18,7 @@ public class PlayerList {
         final ServerPlayer player = new ServerPlayer(session, connection);
         // set position
         final Vec3i spawnpoint = server.worldHolder().getWorld("overworld").getSpawnPoint().point();
-        player.getPosition().set(spawnpoint);
+        player.position().set(spawnpoint);
         // send chunks
         connection.sendAllChunks();
         // send abilities

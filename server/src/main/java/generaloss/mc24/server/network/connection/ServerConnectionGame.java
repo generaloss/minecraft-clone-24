@@ -5,7 +5,9 @@ import generaloss.mc24.server.block.BlockState;
 import generaloss.mc24.server.chunk.Chunk;
 import generaloss.mc24.server.network.AccountSession;
 import generaloss.mc24.server.network.packet2c.ChunkPacket2C;
+import generaloss.mc24.server.network.packet2c.EntityMovePacket2C;
 import generaloss.mc24.server.network.packet2c.SetBlockStatePacket2C;
+import generaloss.mc24.server.network.packet2s.PlayerMovePacket2S;
 import generaloss.mc24.server.network.packet2s.SetBlockStatePacket2S;
 import generaloss.mc24.server.network.protocol.IServerProtocolGame;
 import generaloss.mc24.server.player.ServerPlayer;
@@ -54,6 +56,14 @@ public class ServerConnectionGame extends ServerConnection implements IServerPro
             packet.getLocalX(), packet.getLocalY(), packet.getLocalZ(),
             packet.getBlockStateID()
         ));
+    }
+
+    @Override
+    public void handlePlayerMove(PlayerMovePacket2S packet) {
+        player.position().set(packet.getPosition());
+        super.server().net().tcpServer().broadcast(super.tcpConnection(),
+            new EntityMovePacket2C(player.getUUID(), player.position()));
+        System.out.println(player.position());
     }
 
 }

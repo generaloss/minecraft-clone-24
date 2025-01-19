@@ -24,7 +24,8 @@ public class NetServer {
             LoginRequestPacket2S.class,
             EncodeKeyPacket2S.class,
             SessionIDPacket2S.class,
-            SetBlockStatePacket2S.class
+            SetBlockStatePacket2S.class,
+            PlayerMovePacket2S.class
         );
         this.tcpServer = new TCPServer()
             .setOnConnect(this::onConnect)

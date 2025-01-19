@@ -46,7 +46,7 @@ public class Response {
 
     public String readString() {
         try{
-            return readStream.readStringUTF();
+            return readStream.readUTFString();
         }catch(Exception ignored) {
             return null;
         }

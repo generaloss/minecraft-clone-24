@@ -84,14 +84,14 @@ public class RequestListener implements Closeable {
 
     public void createAccount(Connection connection, ExtDataInputStream stream) throws IOException, IllegalArgumentException {
         // (nickname, password) -> (bool)
-        Account.create(stream.readStringUTF(), stream.readStringUTF());
+        Account.create(stream.readUTFString(), stream.readUTFString());
         connection.sendResponse(ResponseCode.NO_ERROR, "Account created successfully.");
     }
 
     public void deleteAccount(Connection connection, ExtDataInputStream stream) throws IOException, IllegalArgumentException {
         // (nickname, password) -> (bool)
-        final String nickname = stream.readStringUTF();
-        final String password = stream.readStringUTF();
+        final String nickname = stream.readUTFString();
+        final String password = stream.readUTFString();
 
         final Account account = Account.load(nickname);
         if(!account.getPassword().equals(password))
@@ -103,8 +103,8 @@ public class RequestListener implements Closeable {
 
     public void logInAccount(Connection connection, ExtDataInputStream stream) throws IOException, IllegalArgumentException {
         // (nickname, password) -> (sessionID)
-        final String nickname = stream.readStringUTF();
-        final String password = stream.readStringUTF();
+        final String nickname = stream.readUTFString();
+        final String password = stream.readUTFString();
 
         final Account account = Account.load(nickname);
         if(!account.getPassword().equals(password))
@@ -116,8 +116,8 @@ public class RequestListener implements Closeable {
 
     public void logOutAccount(Connection connection, ExtDataInputStream stream) throws IOException, IllegalArgumentException {
         // (nickname, password) -> (bool)
-        final String nickname = stream.readStringUTF();
-        final String password = stream.readStringUTF();
+        final String nickname = stream.readUTFString();
+        final String password = stream.readUTFString();
 
         final Account account = Account.load(nickname);
         if(!account.getPassword().equals(password))
@@ -146,8 +146,8 @@ public class RequestListener implements Closeable {
             throw new IllegalArgumentException("Session does not exist.");
 
         connection.sendResponse(ResponseCode.NO_ERROR, outStream -> {
-            outStream.writeStringUTF(account.getNickname());
-            outStream.writeStringUTF(account.getCreationDate());
+            outStream.writeUTFString(account.getNickname());
+            outStream.writeUTFString(account.getCreationDate());
         });
     }
 

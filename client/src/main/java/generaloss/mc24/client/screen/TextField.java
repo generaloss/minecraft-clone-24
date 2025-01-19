@@ -4,7 +4,7 @@ import jpize.app.Jpize;
 import jpize.glfw.input.MouseBtn;
 import jpize.util.font.Font;
 import jpize.util.input.TextInput;
-import jpize.util.math.Intersector;
+import jpize.util.math.geometry.Intersector;
 import jpize.util.mesh.TextureBatch;
 
 public class TextField {
