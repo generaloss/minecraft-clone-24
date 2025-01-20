@@ -26,13 +26,16 @@ public class ClientConnection {
             ChunkPacket2C.class,
             SetBlockStatePacket2C.class,
             AbilitiesPacket2C.class,
-            EntityMovePacket2C.class
+            InsertEntityPacket2C.class,
+            RemoveEntityPacket2C.class,
+            MoveEntityPacket2C.class
         );
     }
 
     public void connect(String host, int port) {
         try{
             tcpClient.connect(host, port);
+            tcpClient.connection().setTcpNoDelay(true);
         }catch(Exception e) {
             throw new IllegalStateException("Failed to connect to server: " + e.getMessage());
         }
@@ -50,7 +53,9 @@ public class ClientConnection {
         tcpConnection.setTcpNoDelay(true);
     }
 
-    private void onDisconnect(TCPConnection tcpConnection) { }
+    private void onDisconnect(TCPConnection tcpConnection) {
+        context.closeSession();
+    }
 
     private void onReceive(TCPConnection tcpConnection, byte[] bytes) {
         if(!packetDispatcher.readPacket(bytes, tcpConnection.attachment()))

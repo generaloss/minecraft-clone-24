@@ -5,6 +5,8 @@ import generaloss.mc24.client.level.WorldLevel;
 import generaloss.mc24.client.network.ClientConnection;
 import generaloss.mc24.client.registry.ClientRegistries;
 import generaloss.mc24.client.screen.JoiningServerScreen;
+import generaloss.mc24.server.SharedConstants;
+import generaloss.mc24.server.entity.EntityContainer;
 import generaloss.mc24.server.network.AccountSession;
 import generaloss.mc24.server.network.packet2s.LoginRequestPacket2S;
 import generaloss.mc24.server.registry.ServerRegistries;
@@ -31,6 +33,7 @@ public class Main extends JpizeApplication {
     private final ScreenDispatcher screens;
     private final Server localServer;
     private final WorldLevel level;
+    private final EntityContainer entities;
     private final ClientPlayer player;
     private final ClientConnection connection;
     private AccountSession session;
@@ -41,6 +44,7 @@ public class Main extends JpizeApplication {
         this.screens = new ScreenDispatcher();
         this.localServer = new Server(resourcePackManager, false);
         this.level = new WorldLevel(this);
+        this.entities = new EntityContainer();
         this.player = new ClientPlayer(this);
         this.connection = new ClientConnection(this);
     }
@@ -63,6 +67,10 @@ public class Main extends JpizeApplication {
 
     public WorldLevel level() {
         return level;
+    }
+
+    public EntityContainer entities() {
+        return entities;
     }
 
     public ClientPlayer player() {
@@ -107,7 +115,7 @@ public class Main extends JpizeApplication {
         registries.loadResources();
 
         // set menu screen
-        screens.show("main_menu");
+        screens.show(MainMenuScreen.SCREEN_ID);
     }
 
 
@@ -117,16 +125,22 @@ public class Main extends JpizeApplication {
         System.out.println("[INFO]: Connecting to server " + host + ":" + port);
         connection.connect(host, port);
 
-        screens.show("joining_server");
+        screens.show(JoiningServerScreen.SCREEN_ID);
 
-        connection.sendPacket(new LoginRequestPacket2S("24.11.5"));
+        connection.sendPacket(new LoginRequestPacket2S(SharedConstants.VERSION));
     }
 
     public void disconnectSession() {
         connection.disconnect();
+        this.closeSession();
         // localServer.stop();
+    }
+
+    public void closeSession() {
         player.input().disable();
         level.reset();
+        entities.clear();
+        screens.show(MainMenuScreen.SCREEN_ID);
         System.out.println("[INFO]: Disconnect session");
     }
 

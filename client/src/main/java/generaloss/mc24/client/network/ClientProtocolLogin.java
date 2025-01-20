@@ -22,7 +22,7 @@ public class ClientProtocolLogin extends ClientProtocol implements IClientProtoc
     @Override
     public void handleServerInfoResponse(ServerInfoResponsePacket2C packet) {
         final long ping = (System.currentTimeMillis() - packet.getTimestamp());
-        final MainMenuScreen screen = super.context().screens().get("main_menu");
+        final MainMenuScreen screen = super.context().screens().get(MainMenuScreen.SCREEN_ID);
         screen.onServerInfo(packet.getMotd(), packet.getVersion(), ping);
         super.disconnect();
     }

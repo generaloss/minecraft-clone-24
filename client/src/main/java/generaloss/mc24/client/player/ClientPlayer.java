@@ -2,7 +2,7 @@ package generaloss.mc24.client.player;
 
 import generaloss.mc24.client.Main;
 import generaloss.mc24.server.network.packet2s.PlayerMovePacket2S;
-import generaloss.mc24.server.player.AbstractPlayer;
+import generaloss.mc24.server.entity.player.AbstractPlayer;
 import jpize.app.Jpize;
 import jpize.glfw.input.Key;
 import jpize.util.camera.PerspectiveCamera;
@@ -20,6 +20,7 @@ public class ClientPlayer extends AbstractPlayer {
     private final RotationInput rotationInput;
     private final Vec3f velocity;
     private final BlockSelectRay blockSelectRay;
+    private int frame;
 
     public ClientPlayer(Main context) {
         super(UUID.randomUUID());
@@ -46,6 +47,7 @@ public class ClientPlayer extends AbstractPlayer {
     }
 
     public void update() {
+        frame++;
         // control
         motionInput.update(rotationInput.getTarget().getYaw());
 
@@ -56,7 +58,8 @@ public class ClientPlayer extends AbstractPlayer {
         velocity.add(acceleration);
         velocity.mul(0.97F);
         super.position().add(velocity);
-        if(velocity.isNotZero())
+
+        if(velocity.len() > 0.01F && frame % 3 == 0)
             context.connection().sendPacket(new PlayerMovePacket2S(super.position()));
 
         // camera

@@ -259,7 +259,7 @@ public class ChunkTesselator {
             }
         });
 
-        System.out.println("[INFO]: Mesh build time: " + stopwatch.getMillis());
+        // System.out.println("[INFO]: Mesh build time: " + stopwatch.getMillis());
         status = TesselatorStatus.DONE;
     }
 

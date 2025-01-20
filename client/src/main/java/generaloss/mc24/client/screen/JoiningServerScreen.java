@@ -12,13 +12,15 @@ import jpize.util.region.Region;
 
 public class JoiningServerScreen extends IScreen {
 
+    public static final String SCREEN_ID = "joining_server";
+
     private final TextureBatch batch;
     private final Region regionBG;
     private final Texture2D background;
     private String status;
 
     public JoiningServerScreen(Main context) {
-        super(context, "joining_server");
+        super(context, SCREEN_ID);
 
         this.batch = new TextureBatch();
 
@@ -43,7 +45,7 @@ public class JoiningServerScreen extends IScreen {
         // exit to main_menu screen
         if(Key.ESCAPE.down()){
             super.context().disconnectSession();
-            super.context().screens().show("main_menu");
+            super.context().screens().show(MainMenuScreen.SCREEN_ID);
         }
     }
 

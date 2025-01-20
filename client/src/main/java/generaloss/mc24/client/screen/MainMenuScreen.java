@@ -26,6 +26,8 @@ import java.util.concurrent.Executors;
 
 public class MainMenuScreen extends IScreen {
 
+    public static final String SCREEN_ID = "main_menu";
+
     private final Texture2D overlayTexture;
     private final Skybox skybox;
     private final PerspectiveCamera camera;
@@ -42,7 +44,7 @@ public class MainMenuScreen extends IScreen {
     private final ExecutorService executors;
 
     public MainMenuScreen(Main context) {
-        super(context, "main_menu");
+        super(context, MainMenuScreen.SCREEN_ID);
 
         this.batch = new TextureBatch();
 
@@ -173,7 +175,7 @@ public class MainMenuScreen extends IScreen {
 
     public void onDisconnect(String message) {
         super.context().disconnectSession();
-        super.context().screens().show("main_menu");
+        super.context().screens().show(MainMenuScreen.SCREEN_ID);
         disconnectMessage = "Disconnection: " + message;
     }
 

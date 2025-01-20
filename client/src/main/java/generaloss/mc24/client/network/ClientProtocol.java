@@ -47,7 +47,7 @@ public abstract class ClientProtocol implements IClientProtocol {
 
     public void handleDisconnect(DisconnectPacket2C packet) {
         tcpConnection.close();
-        final MainMenuScreen screen = context.screens().get("main_menu");
+        final MainMenuScreen screen = context.screens().get(MainMenuScreen.SCREEN_ID);
         Jpize.syncExecutor().exec(() -> screen.onDisconnect(packet.getMessage()));
     }
 

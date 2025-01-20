@@ -33,7 +33,9 @@ public class Request implements INetPacketHandler {
 
         this.tcpClient = new TCPClient();
         this.tcpClient.setOnReceive(this::onReceive);
-        this.tcpClient.connect(host, RequestListener.PORT);
+        try{
+            this.tcpClient.connect(host, RequestListener.PORT);
+        }catch(Exception ignored){ }
     }
 
     public boolean isConnectionClosed() {

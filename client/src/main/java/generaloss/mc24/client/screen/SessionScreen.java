@@ -7,6 +7,7 @@ import generaloss.mc24.server.Facing;
 import generaloss.mc24.server.block.Block;
 import generaloss.mc24.server.block.BlockState;
 import generaloss.mc24.server.block.StateProperty;
+import generaloss.mc24.server.entity.AbstractEntity;
 import generaloss.mc24.server.registry.ServerRegistries;
 import jpize.app.Jpize;
 import jpize.gl.Gl;
@@ -17,8 +18,10 @@ import jpize.glfw.input.MouseBtn;
 import jpize.util.array.StringList;
 import jpize.util.camera.PerspectiveCamera;
 import jpize.util.font.Font;
+import jpize.util.font.FontRenderOptions;
 import jpize.util.math.Maths;
 import jpize.util.math.vector.Vec2f;
+import jpize.util.math.vector.Vec3f;
 import jpize.util.math.vector.Vec3i;
 import jpize.util.mesh.TextureBatch;
 
@@ -26,12 +29,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class SessionScreen extends IScreen {
 
+    public static final String SCREEN_ID = "session";
+
     private final TextureBatch batch;
     private final Texture2D crosshair;
     private BlockState toPlaceBlockState;
 
     public SessionScreen(Main context) {
-        super(context, "session");
+        super(context, SCREEN_ID);
 
         this.batch = new TextureBatch();
 
@@ -60,7 +65,7 @@ public class SessionScreen extends IScreen {
         // exit to main_menu screen
         if(Key.ESCAPE.down()){
             super.context().disconnectSession();
-            super.context().screens().show("main_menu");
+            super.context().screens().show(MainMenuScreen.SCREEN_ID);
         }
 
         // tesselate chunk meshes
@@ -132,10 +137,33 @@ public class SessionScreen extends IScreen {
 
     @Override
     public void render() {
+        // -res-
+        final Font font = super.context().registries().FONTS.get("default");
+        final FontRenderOptions fontOptions = font.getRenderOptions();
+
         // level
         Gl.enable(GlTarget.DEPTH_TEST);
         final PerspectiveCamera camera = super.context().player().camera();
         super.context().level().render(camera);
+
+        // entities
+
+        final Vec2f prevScale = fontOptions.scale().copy();
+        fontOptions.scale().set(0.05F);
+        for(AbstractEntity entity : super.context().entities()){
+            final Vec3f pos = entity.position();
+
+            float angleY = Vec2f.angle(camera.getX() - pos.x, camera.getZ() - pos.z) + 90;
+            float angleX = Vec2f.angleBetween(Vec2f.len(camera.getX() - pos.x, camera.getZ() - pos.z), camera.getY() - pos.y, 0, 1) - 90;
+            float angleZ = camera.rotation().getYaw();
+
+            final String text = entity.getDisplayName();
+            final Vec2f bounds = font.getTextBounds(text);
+
+            fontOptions.matrix().setRotationXYZ(angleX, angleY, 0);
+            font.drawText(camera, text, pos.x - bounds.x * 0.5F, pos.y - bounds.y * 0.5F, pos.z);
+        }
+        fontOptions.scale().set(prevScale);
 
         // hud
         Gl.disable(GlTarget.DEPTH_TEST);
@@ -148,7 +176,6 @@ public class SessionScreen extends IScreen {
         batch.draw(crosshair, crosshairX, crosshairY, crosshairSize, crosshairSize);
 
         // place block ID
-        final Font font = super.context().registries().FONTS.get("default");
         final String selectedBlockText = ("Selected block: " + toPlaceBlockState.getBlockID());
         final Vec2f selectedBlockTextBounds = font.getTextBounds(selectedBlockText);
         final float selectedBlockTextX = (Jpize.getWidth() - selectedBlockTextBounds.x);

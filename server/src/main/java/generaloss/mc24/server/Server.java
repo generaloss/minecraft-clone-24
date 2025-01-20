@@ -1,7 +1,7 @@
 package generaloss.mc24.server;
 
 import generaloss.mc24.server.network.connection.NetServer;
-import generaloss.mc24.server.player.PlayerList;
+import generaloss.mc24.server.entity.player.PlayerList;
 import generaloss.mc24.server.registry.ServerRegistries;
 import generaloss.mc24.server.resourcepack.ResourcePackManager;
 import generaloss.mc24.server.world.ServerWorld;
@@ -20,6 +20,7 @@ public class Server implements Tickable {
     private final ResourcePackManager resourcePackManager;
     private final NetServer net;
     private final ServerPropertiesHolder properties;
+    private final boolean dedicated;
     private final WorldHolder worldHolder;
     private final PlayerList players;
     private Thread thread;
@@ -28,7 +29,7 @@ public class Server implements Tickable {
         this.resourcePackManager = resourcePackManager;
         ServerRegistries.init(resourcePackManager);
         this.properties = new ServerPropertiesHolder();
-        this.properties.set("dedicated", dedicated);
+        this.dedicated = dedicated;
         this.net = new NetServer(this);
         this.worldHolder = new WorldHolder();
         this.players = new PlayerList(this);
@@ -68,13 +69,13 @@ public class Server implements Tickable {
             ServerRegistries.BLOCK.register(blockRes.path());
 
         // load all resources
-        if(properties.getBool("dedicated"))
+        if(dedicated)
             ServerRegistries.loadResources();
 
         System.out.println("[INFO]: Loaded " + ServerRegistries.BLOCK.size() + " blocks");
         System.out.println("[INFO]: Created " + ServerRegistries.BLOCK_STATE.size() + " block states");
 
-        if(properties.getBool("dedicated"))
+        if(dedicated)
             worldHolder.putWorld(new ServerWorld(this, "overworld", new ChunkGenerator01()));
     }
     
@@ -92,12 +93,12 @@ public class Server implements Tickable {
     public void stop() {
         System.out.println("[INFO]: Server closed.");
         net.tcpServer().close();
-        if(properties.getBool("dedicated"))
+        if(dedicated)
             thread.interrupt();
     }
 
     private void startServerThread() {
-        if(properties.getBool("dedicated")){
+        if(dedicated){
             thread = new Thread(this::startLoop);
             thread.setDaemon(true);
             thread.start();

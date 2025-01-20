@@ -3,11 +3,10 @@ package generaloss.mc24.client.network;
 import generaloss.mc24.client.Main;
 import generaloss.mc24.client.level.LevelChunk;
 import generaloss.mc24.client.level.WorldLevel;
+import generaloss.mc24.client.screen.SessionScreen;
 import generaloss.mc24.server.block.BlockState;
-import generaloss.mc24.server.network.packet2c.AbilitiesPacket2C;
-import generaloss.mc24.server.network.packet2c.ChunkPacket2C;
-import generaloss.mc24.server.network.packet2c.EntityMovePacket2C;
-import generaloss.mc24.server.network.packet2c.SetBlockStatePacket2C;
+import generaloss.mc24.server.entity.AbstractEntity;
+import generaloss.mc24.server.network.packet2c.*;
 import generaloss.mc24.server.network.protocol.IClientProtocolGame;
 import generaloss.mc24.server.registry.ServerRegistries;
 import jpize.app.Jpize;
@@ -36,12 +35,24 @@ public class ClientProtocolGame extends ClientProtocol implements IClientProtoco
 
     @Override
     public void handleAbilitiesPacket(AbilitiesPacket2C packet) {
-        Jpize.syncExecutor().exec(() -> super.context().screens().show("session"));
+        Jpize.syncExecutor().exec(() -> super.context().screens().show(SessionScreen.SCREEN_ID));
     }
 
     @Override
-    public void handleEntityMove(EntityMovePacket2C packet) {
-        //! entity moves on client
+    public void handleInsertEntity(InsertEntityPacket2C packet) {
+        System.out.println("[INFO]: Entity " + packet.getEntity().getUUID() + " spawn");
+        super.context().entities().insert(packet.getEntity());
     }
 
+    @Override
+    public void handleRemoveEntity(RemoveEntityPacket2C packet) {
+        System.out.println("[INFO]: Entity " + packet.getEntityUUID() + " despawn");
+        super.context().entities().remove(packet.getEntityUUID());
+    }
+
+    @Override
+    public void handleMoveEntity(MoveEntityPacket2C packet) {
+        final AbstractEntity entity = super.context().entities().get(packet.getEntityUUID());
+        entity.position().set(packet.getPosition());
+    }
 }
