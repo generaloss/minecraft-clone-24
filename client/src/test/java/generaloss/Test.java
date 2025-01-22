@@ -41,7 +41,7 @@ public class Test extends JpizeApplication {
         canvas.clear();
 
         final float px = Jpize.getX();
-        final float py = Jpize.input().getCursorNativeY();
+        final float py = Jpize.getY();
 
         final Vec2f poly2center = Polygon.getCenterOfGravity(new Vec2f(), poly2f);
 

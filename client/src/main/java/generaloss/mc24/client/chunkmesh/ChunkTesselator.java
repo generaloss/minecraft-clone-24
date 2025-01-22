@@ -272,12 +272,13 @@ public class ChunkTesselator {
         final LevelChunk chunk = chunkCache.getCenterChunk();
         chunk.freeMesh();
 
-        final ChunkMesh mesh = meshCache.getFreeOrCreate();
-        mesh.setData(verticesCache.arrayTrimmed());
-
+        final float[] array = verticesCache.arrayTrimmed();
+        if(array.length != 0){
+            final ChunkMesh mesh = meshCache.getFreeOrCreate();
+            mesh.setData(array);
+            chunk.setMesh(mesh);
+        }
         verticesCache.clear();
-        chunk.setMesh(mesh);
-
         status = TesselatorStatus.FREE;
     }
 

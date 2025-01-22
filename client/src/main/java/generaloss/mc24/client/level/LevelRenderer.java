@@ -44,6 +44,7 @@ public class LevelRenderer {
         shader.uniform("u_texture", blockAtlas);
 
         final Collection<LevelChunk> chunks = level.getChunks();
+        int n = 0;
         for(LevelChunk chunk: chunks){
             final ChunkMesh mesh = chunk.mesh();
             if(mesh == null)
@@ -52,11 +53,13 @@ public class LevelRenderer {
             final ChunkPos position = chunk.position();
             if(!position.isVisible(camera.frustum()))
                 continue;
+            n++;
 
             matrix.set(camera.getCombined()).translate(position.getBlockX(), position.getBlockY(), position.getBlockZ());
             shader.uniform("u_combined", matrix);
             mesh.render();
         }
+        System.out.println(n);
     }
 
 }

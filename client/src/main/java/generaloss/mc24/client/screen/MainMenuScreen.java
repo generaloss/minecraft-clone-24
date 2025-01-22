@@ -18,8 +18,7 @@ import jpize.util.camera.PerspectiveCamera;
 import jpize.util.font.Font;
 import jpize.util.font.FontRenderOptions;
 import jpize.util.mesh.TextureBatch;
-import jpize.util.postprocess.ScreenQuadMesh;
-import jpize.util.postprocess.ScreenQuadShader;
+import jpize.util.postprocess.RenderQuad;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -185,8 +184,7 @@ public class MainMenuScreen extends IScreen {
         //skybox.render(camera);
 
         // overlay
-        ScreenQuadShader.bind(overlayTexture);
-        ScreenQuadMesh.render();
+        RenderQuad.instance().render(overlayTexture);
 
         // font init
         final Font font = super.context().registries().FONTS.get("default");

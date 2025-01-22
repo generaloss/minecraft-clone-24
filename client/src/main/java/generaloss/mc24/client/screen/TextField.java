@@ -50,7 +50,7 @@ public class TextField {
         final float height = font.getLineAdvanceScaled();
         final float width = font.getTextWidth("W".repeat(30));
 
-        batch.drawBlackRect(x, y, width, height, 0.5F);
+        batch.drawRectBlack(x, y, width, height, 0.5F);
 
         if(MouseBtn.pressedAny(MouseBtn.values())){
             this.setFocused(Intersector.isPointOnRect(Jpize.getX(), Jpize.getY(), x, y, width, height));
