@@ -27,7 +27,7 @@ import jpize.util.mesh.TextureBatch;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class SessionScreen extends IScreen {
+public class SessionScreen extends Screen {
 
     public static final String SCREEN_ID = "session";
 
@@ -40,7 +40,7 @@ public class SessionScreen extends IScreen {
 
         this.batch = new TextureBatch();
 
-        this.crosshair = super.context().registries().TEXTURES
+        this.crosshair = super.context.registries().TEXTURES
             .register("crosshair", "textures/gui/hud/crosshair.png")
             .getObject();
     }
@@ -53,9 +53,9 @@ public class SessionScreen extends IScreen {
     @Override
     public void show() {
         Gl.clearColor(0.25F, 0.35F, 0.5F); // sky color
-        final PerspectiveCamera camera = super.context().player().camera();
+        final PerspectiveCamera camera = super.context.player().camera();
         camera.resize(Jpize.getWidth(), Jpize.getHeight());
-        super.context().player().input().enable();
+        super.context.player().input().enable();
     }
 
     public static boolean AO = true;
@@ -64,15 +64,15 @@ public class SessionScreen extends IScreen {
     public void update() {
         // exit to main_menu screen
         if(Key.ESCAPE.down()){
-            super.context().disconnectSession();
-            super.context().screens().show(MainMenuScreen.SCREEN_ID);
+            super.context.disconnectSession();
+            super.context.screens().show(MainMenuScreen.SCREEN_ID);
         }
 
         // tesselate chunk meshes
-        super.context().level().update();
+        super.context.level().update();
 
         // player
-        final ClientPlayer player = super.context().player();
+        final ClientPlayer player = super.context.player();
         player.update();
 
         // select block to place
@@ -109,7 +109,7 @@ public class SessionScreen extends IScreen {
             if(MouseBtn.LEFT.down()){
                 // destroy
                 final Vec3i position = ray.getDestroyPosition();
-                super.context().level().setBlockState(position.x, position.y, position.z, Block.AIR.getDefaultState());
+                super.context.level().setBlockState(position.x, position.y, position.z, Block.AIR.getDefaultState());
 
             }else if(MouseBtn.RIGHT.down()){
                 // facing
@@ -125,12 +125,12 @@ public class SessionScreen extends IScreen {
 
                 // place
                 final Vec3i position = ray.getPlacePosition();
-                super.context().level().setBlockState(position.x, position.y, position.z, toPlaceBlockState);
+                super.context.level().setBlockState(position.x, position.y, position.z, toPlaceBlockState);
 
             }else if(MouseBtn.MIDDLE.down()){
                 // pick
                 final Vec3i position = ray.getDestroyPosition();
-                toPlaceBlockState = super.context().level().getBlockState(position.x, position.y, position.z);
+                toPlaceBlockState = super.context.level().getBlockState(position.x, position.y, position.z);
             }
         }
     }
@@ -138,19 +138,19 @@ public class SessionScreen extends IScreen {
     @Override
     public void render() {
         // -res-
-        final Font font = super.context().registries().FONTS.get("default");
+        final Font font = super.context.registries().FONTS.get("default");
         final FontRenderOptions fontOptions = font.getRenderOptions();
 
         // level
         Gl.enable(GlTarget.DEPTH_TEST);
-        final PerspectiveCamera camera = super.context().player().camera();
-        super.context().level().render(camera);
+        final PerspectiveCamera camera = super.context.player().camera();
+        super.context.level().render(camera);
 
         // entities
 
         final Vec2f prevScale = fontOptions.scale().copy();
         fontOptions.scale().set(0.05F);
-        for(AbstractEntity entity : super.context().entities()){
+        for(AbstractEntity entity : super.context.entities()){
             final Vec3f pos = entity.position();
 
             float angleY = Vec2f.angle(camera.getX() - pos.x, camera.getZ() - pos.z) + 90;
@@ -183,7 +183,7 @@ public class SessionScreen extends IScreen {
         font.drawText(batch, selectedBlockText, selectedBlockTextX, selectedBlockTextY);
 
         // place block ID
-        final BlockSelectRay ray = super.context().player().blockSelectRay();
+        final BlockSelectRay ray = super.context.player().blockSelectRay();
         if(ray.hasSelection()){
             final StateProperty<?>[] keys = ray.getBlockState().getStateProperties().keySet().toArray(new StateProperty[0]);
             AtomicInteger i = new AtomicInteger();
@@ -202,7 +202,7 @@ public class SessionScreen extends IScreen {
 
     @Override
     public void resize(int width, int height) {
-        final PerspectiveCamera camera = super.context().player().camera();
+        final PerspectiveCamera camera = super.context.player().camera();
         camera.resize(width, height);
     }
 

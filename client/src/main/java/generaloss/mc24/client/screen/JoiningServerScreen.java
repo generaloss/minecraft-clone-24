@@ -10,7 +10,7 @@ import jpize.util.math.vector.Vec2f;
 import jpize.util.mesh.TextureBatch;
 import jpize.util.region.Region;
 
-public class JoiningServerScreen extends IScreen {
+public class JoiningServerScreen extends Screen {
 
     public static final String SCREEN_ID = "joining_server";
 
@@ -25,7 +25,7 @@ public class JoiningServerScreen extends IScreen {
         this.batch = new TextureBatch();
 
         this.regionBG = new Region();
-        this.background = super.context().registries().TEXTURES
+        this.background = super.context.registries().TEXTURES
             .register("crosshair", "textures/blocks/dirt.png")
             .getObject();
     }
@@ -44,8 +44,8 @@ public class JoiningServerScreen extends IScreen {
     public void update() {
         // exit to main_menu screen
         if(Key.ESCAPE.down()){
-            super.context().disconnectSession();
-            super.context().screens().show(MainMenuScreen.SCREEN_ID);
+            super.context.disconnectSession();
+            super.context.screens().show(MainMenuScreen.SCREEN_ID);
         }
     }
 
@@ -60,7 +60,7 @@ public class JoiningServerScreen extends IScreen {
         //batch.draw(background, regionBG, 0, 0, Jpize.getWidth(), Jpize.getHeight(), 1F, 1F, 1F, 0.35F);
 
         // status
-        final Font font = super.context().registries().FONTS.get("default");
+        final Font font = super.context.registries().FONTS.get("default");
         final String text = status;
         final Vec2f textBounds = font.getTextBounds(text);
         final float textX = (Jpize.getWidth() - textBounds.x) * 0.5F;

@@ -23,7 +23,7 @@ import jpize.util.postprocess.RenderQuad;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class MainMenuScreen extends IScreen {
+public class MainMenuScreen extends Screen {
 
     public static final String SCREEN_ID = "main_menu";
 
@@ -72,13 +72,13 @@ public class MainMenuScreen extends IScreen {
     }
 
     public void init() {
-        this.nicknameField = new TextField(10, 650, super.context().registries().FONTS.get("default"));
+        this.nicknameField = new TextField(10, 650, super.context.registries().FONTS.get("default"));
         this.nicknameField.setHint("nickname");
 
-        this.passwordField = new TextField(10, 600, super.context().registries().FONTS.get("default"));
+        this.passwordField = new TextField(10, 600, super.context.registries().FONTS.get("default"));
         this.passwordField.setHint("password");
 
-        this.serverAddressField = new TextField(10, 550, super.context().registries().FONTS.get("default"));
+        this.serverAddressField = new TextField(10, 550, super.context.registries().FONTS.get("default"));
         this.serverAddressField.setHint("localhost:22854");
     }
 
@@ -118,7 +118,7 @@ public class MainMenuScreen extends IScreen {
                 final Response response = Request.sendLogin(SharedConstants.ACCOUNTS_HOST, nickname, passwordField.getText());
                 if(response.getCode().noError()){
                     final AccountSession session = new AccountSession(response.readUUID(), nickname);
-                    super.context().setSession(session);
+                    super.context.setSession(session);
                     System.out.println("[INFO]: Logged in as '" + nickname + "'");
                 }
                 accountStatus = "Login status: " + response.getCode() + ", " + response.readString();
@@ -129,7 +129,7 @@ public class MainMenuScreen extends IScreen {
             final String[] serverAddress = serverAddressField.getText().split(":");
             try{
                 final int port = Integer.parseInt(serverAddress[1]);
-                context().connectSession(serverAddress[0], port);
+                context.connectSession(serverAddress[0], port);
             }catch(NumberFormatException | ArrayIndexOutOfBoundsException | IllegalStateException e){
                 serverInfo = "Server Info: Invalid address (press 'Ctrl + I' to ping server)";
             }
@@ -139,8 +139,8 @@ public class MainMenuScreen extends IScreen {
             final String[] serverAddress = serverAddressField.getText().split(":");
             try{
                 final int port = Integer.parseInt(serverAddress[1]);
-                super.context().connection().connect(serverAddress[0], port);
-                super.context().connection().sendPacket(new ServerInfoRequestPacket2S(System.currentTimeMillis()));
+                super.context.connection().connect(serverAddress[0], port);
+                super.context.connection().sendPacket(new ServerInfoRequestPacket2S(System.currentTimeMillis()));
             }catch(NumberFormatException | ArrayIndexOutOfBoundsException | IllegalStateException e){
                 serverInfo = "Server Info: Invalid address (press 'Ctrl + I' to ping server)";
             }
@@ -173,8 +173,8 @@ public class MainMenuScreen extends IScreen {
     }
 
     public void onDisconnect(String message) {
-        super.context().disconnectSession();
-        super.context().screens().show(MainMenuScreen.SCREEN_ID);
+        super.context.disconnectSession();
+        super.getManager().setCurrent(MainMenuScreen.SCREEN_ID);
         disconnectMessage = "Disconnection: " + message;
     }
 
@@ -187,7 +187,7 @@ public class MainMenuScreen extends IScreen {
         RenderQuad.instance().render(overlayTexture);
 
         // font init
-        final Font font = super.context().registries().FONTS.get("default");
+        final Font font = super.context.registries().FONTS.get("default");
         final FontRenderOptions fontOptions = font.getRenderOptions();
 
         batch.setup();

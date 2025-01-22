@@ -11,7 +11,6 @@ import generaloss.mc24.server.network.AccountSession;
 import generaloss.mc24.server.network.packet2s.LoginRequestPacket2S;
 import generaloss.mc24.server.registry.ServerRegistries;
 import generaloss.mc24.client.screen.MainMenuScreen;
-import generaloss.mc24.client.screen.ScreenDispatcher;
 import generaloss.mc24.client.player.ClientPlayer;
 import generaloss.mc24.client.screen.SessionScreen;
 import generaloss.mc24.server.ArgsMap;
@@ -25,12 +24,13 @@ import jpize.glfw.Glfw;
 import jpize.glfw.init.GlfwPlatform;
 import jpize.glfw.input.Key;
 import jpize.util.font.Font;
+import jpize.util.screen.ScreenManager;
 
 public class Main extends JpizeApplication {
 
     private final ResourcePackManager resourcePackManager;
     private final ClientRegistries registries;
-    private final ScreenDispatcher screens;
+    private final ScreenManager<String> screens;
     private final Server localServer;
     private final WorldLevel level;
     private final EntityContainer entities;
@@ -41,7 +41,7 @@ public class Main extends JpizeApplication {
     public Main() {
         this.resourcePackManager = new ResourcePackManager();
         this.registries = new ClientRegistries(resourcePackManager);
-        this.screens = new ScreenDispatcher();
+        this.screens = new ScreenManager<>();
         this.localServer = new Server(resourcePackManager, false);
         this.level = new WorldLevel(this);
         this.entities = new EntityContainer();
@@ -57,7 +57,7 @@ public class Main extends JpizeApplication {
         return registries;
     }
 
-    public ScreenDispatcher screens() {
+    public ScreenManager<String> screens() {
         return screens;
     }
 
@@ -106,16 +106,16 @@ public class Main extends JpizeApplication {
         );
 
         // screens
-        screens.register(new MainMenuScreen(this));
-        screens.register(new SessionScreen(this));
-        screens.register(new JoiningServerScreen(this));
+        screens.register(MainMenuScreen.SCREEN_ID, new MainMenuScreen(this));
+        screens.register(SessionScreen.SCREEN_ID, new SessionScreen(this));
+        screens.register(JoiningServerScreen.SCREEN_ID, new JoiningServerScreen(this));
 
         // load all resources
         ServerRegistries.loadResources();
         registries.loadResources();
 
         // set menu screen
-        screens.show(MainMenuScreen.SCREEN_ID);
+        screens.setCurrent(MainMenuScreen.SCREEN_ID);
     }
 
 
@@ -125,7 +125,7 @@ public class Main extends JpizeApplication {
         System.out.println("[INFO]: Connecting to server " + host + ":" + port);
         connection.connect(host, port);
 
-        screens.show(JoiningServerScreen.SCREEN_ID);
+        screens.setCurrent(JoiningServerScreen.SCREEN_ID);
 
         connection.sendPacket(new LoginRequestPacket2S(SharedConstants.VERSION));
     }
@@ -140,7 +140,7 @@ public class Main extends JpizeApplication {
         player.input().disable();
         level.reset();
         entities.clear();
-        screens.show(MainMenuScreen.SCREEN_ID);
+        screens.setCurrent(MainMenuScreen.SCREEN_ID);
         System.out.println("[INFO]: Disconnect session");
     }
 

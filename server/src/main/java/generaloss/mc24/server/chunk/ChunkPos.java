@@ -1,6 +1,6 @@
 package generaloss.mc24.server.chunk;
 
-import jpize.util.math.matrix.Frustum;
+import jpize.util.math.Frustum;
 
 import java.util.Objects;
 
@@ -68,7 +68,7 @@ public class ChunkPos {
         final int x = this.getBlockX();
         final int y = this.getBlockY();
         final int z = this.getBlockZ();
-        return frustum.isBoxIn(x, y, z, x + Chunk.SIZE, y + Chunk.SIZE, z + Chunk.SIZE);
+        return frustum.isAABoxIn(x, y, z, x + Chunk.SIZE, y + Chunk.SIZE, z + Chunk.SIZE);
     }
 
     public ChunkPos getNeighbor(int dx, int dy, int dz) {
