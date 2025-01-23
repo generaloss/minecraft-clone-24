@@ -35,7 +35,7 @@ public class ClientProtocolGame extends ClientProtocol implements IClientProtoco
 
     @Override
     public void handleAbilitiesPacket(AbilitiesPacket2C packet) {
-        Jpize.syncExecutor().exec(() -> super.context().screens().show(SessionScreen.SCREEN_ID));
+        Jpize.syncExecutor().exec(() -> super.context().screens().setCurrent(SessionScreen.SCREEN_ID));
     }
 
     @Override

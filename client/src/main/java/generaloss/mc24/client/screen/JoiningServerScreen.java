@@ -45,7 +45,7 @@ public class JoiningServerScreen extends Screen {
         // exit to main_menu screen
         if(Key.ESCAPE.down()){
             super.context.disconnectSession();
-            super.context.screens().show(MainMenuScreen.SCREEN_ID);
+            super.context.screens().setCurrent(MainMenuScreen.SCREEN_ID);
         }
     }
 
