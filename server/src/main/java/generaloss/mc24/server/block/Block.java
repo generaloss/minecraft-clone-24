@@ -78,7 +78,6 @@ public class Block implements Identifiable<String> {
         }
 
         // System.out.println("Load block '" + this.getID() + "'");
-
         statesContainer.create(stateProperties.toArray(new StateProperty[0]));
     }
 

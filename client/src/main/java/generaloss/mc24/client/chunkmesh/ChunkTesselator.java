@@ -4,6 +4,7 @@ import generaloss.mc24.client.Main;
 import generaloss.mc24.client.block.BlockFace;
 import generaloss.mc24.client.block.BlockModel;
 import generaloss.mc24.client.block.BlockVertex;
+import generaloss.mc24.client.resourcepack.BlockModelHandle;
 import generaloss.mc24.client.screen.SessionScreen;
 import generaloss.mc24.server.Direction;
 import generaloss.mc24.server.block.*;
@@ -47,7 +48,10 @@ public class ChunkTesselator {
     }
 
     private BlockModel getBlockModel(BlockState blockstate) {
-        return context.registries().BLOCK_STATE_MODELS.get(blockstate);
+        final BlockModelHandle handle = context.registries().BLOCK_STATE_MODELS.get(blockstate);
+        if(handle == null)
+            return null;
+        return handle.resource();
     }
 
     private float smoothLightForVertex(int colorChannel, BlockVertex vertex, Direction faceDirectory) {
@@ -145,7 +149,7 @@ public class ChunkTesselator {
                 verticesCache.set(cachePosIndex + 2, rotatedVertex.getZ() + z);
 
                 // texcoord
-                final TextureAtlas<String> atlas = context.registries().ATLASES.get("blocks");
+                final TextureAtlas<String> atlas = context.registries().ATLASES.get("blocks").resource();
                 final TextureRegion region = atlas.getRegion(face.getTextureID());
 
                 verticesCache.set(cacheTexcoordIndex + 0, (region.u1() + region.getWidth()  * rotatedVertex.getU()));

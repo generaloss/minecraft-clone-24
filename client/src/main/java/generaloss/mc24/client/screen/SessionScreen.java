@@ -41,13 +41,13 @@ public class SessionScreen extends Screen {
         this.batch = new TextureBatch();
 
         this.crosshair = super.context.registries().TEXTURES
-            .register("crosshair", "textures/gui/hud/crosshair.png")
-            .getObject();
+            .load("crosshair", "textures/gui/hud/crosshair.png")
+            .resource();
     }
 
     @Override
     public void init() {
-        this.toPlaceBlockState = ServerRegistries.BLOCK.get("stone").getDefaultState();
+        this.toPlaceBlockState = ServerRegistries.BLOCK.get("stone").resource().getDefaultState();
     }
 
     @Override
@@ -77,25 +77,25 @@ public class SessionScreen extends Screen {
 
         // select block to place
         if(Key.NUM_1.down()) {
-            toPlaceBlockState = ServerRegistries.BLOCK.get("stone").getDefaultState();
+            toPlaceBlockState = ServerRegistries.BLOCK.get("stone").resource().getDefaultState();
         }else if(Key.NUM_2.down()) {
-            toPlaceBlockState = ServerRegistries.BLOCK.get("grass_block").getDefaultState();
+            toPlaceBlockState = ServerRegistries.BLOCK.get("grass_block").resource().getDefaultState();
         }else if(Key.NUM_3.down()) {
-            toPlaceBlockState = ServerRegistries.BLOCK.get("dirt").getDefaultState();
+            toPlaceBlockState = ServerRegistries.BLOCK.get("dirt").resource().getDefaultState();
         }else if(Key.NUM_4.down()) {
-            toPlaceBlockState = ServerRegistries.BLOCK.get("stone_stairs").getDefaultState();
+            toPlaceBlockState = ServerRegistries.BLOCK.get("stone_stairs").resource().getDefaultState();
         }else if(Key.NUM_5.down()) {
-            toPlaceBlockState = ServerRegistries.BLOCK.get("torch").getDefaultState();
+            toPlaceBlockState = ServerRegistries.BLOCK.get("torch").resource().getDefaultState();
         }else if(Key.NUM_6.down()) {
-            toPlaceBlockState = ServerRegistries.BLOCK.get("wall_torch").getDefaultState();
+            toPlaceBlockState = ServerRegistries.BLOCK.get("wall_torch").resource().getDefaultState();
         }else if(Key.NUM_7.down()) {
-            toPlaceBlockState = ServerRegistries.BLOCK.get("redstone_torch").getDefaultState();
+            toPlaceBlockState = ServerRegistries.BLOCK.get("redstone_torch").resource().getDefaultState();
         }else if(Key.NUM_8.down()) {
-            toPlaceBlockState = ServerRegistries.BLOCK.get("redstone_wall_torch").getDefaultState();
+            toPlaceBlockState = ServerRegistries.BLOCK.get("redstone_wall_torch").resource().getDefaultState();
         }else if(Key.NUM_9.down()) {
-            toPlaceBlockState = ServerRegistries.BLOCK.get("red_shroom_0").getDefaultState();
+            toPlaceBlockState = ServerRegistries.BLOCK.get("red_shroom_0").resource().getDefaultState();
         }else if(Key.NUM_0.down()) {
-            toPlaceBlockState = ServerRegistries.BLOCK.get("campfire").getDefaultState();
+            toPlaceBlockState = ServerRegistries.BLOCK.get("campfire").resource().getDefaultState();
         }
 
         if(Key.F5.down()) {
@@ -138,7 +138,7 @@ public class SessionScreen extends Screen {
     @Override
     public void render() {
         // -res-
-        final Font font = super.context.registries().FONTS.get("default");
+        final Font font = super.context.registries().FONTS.get("default").resource();
         final FontRenderOptions fontOptions = font.getRenderOptions();
 
         // level

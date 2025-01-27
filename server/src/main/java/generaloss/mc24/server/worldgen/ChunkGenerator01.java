@@ -26,7 +26,7 @@ public class ChunkGenerator01 implements IChunkGenerator {
             final int worldY = (chunkLocalY + y);
             final int worldZ = (chunkLocalZ + z);
             if(worldY < -1 && noise.get(worldX, worldY, worldZ) > 0F)
-                chunk.setBlockState(x, y, z, ServerRegistries.BLOCK.get("stone").getDefaultState());
+                chunk.setBlockState(x, y, z, ServerRegistries.BLOCK.get("stone").resource().getDefaultState());
         });
     }
 
@@ -44,11 +44,11 @@ public class ChunkGenerator01 implements IChunkGenerator {
 
             // torches
             if((blockstate.isBlockID("air")) && Maths.randomBoolean(0.0002F))
-                chunk.setBlockState(x, y, z, ServerRegistries.BLOCK.get("torch").getDefaultState());
+                chunk.setBlockState(x, y, z, ServerRegistries.BLOCK.get("torch").resource().getDefaultState());
 
             // grass_block
             if(blockstate.isBlockID("stone") && chunk.getBlockState(x, y + 1, z).isBlockID("void", "air"))
-                chunk.setBlockState(x, y, z, ServerRegistries.BLOCK.get("grass_block").getDefaultState());
+                chunk.setBlockState(x, y, z, ServerRegistries.BLOCK.get("grass_block").resource().getDefaultState());
         });
     }
 

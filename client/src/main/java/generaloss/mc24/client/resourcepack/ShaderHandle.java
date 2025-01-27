@@ -1,0 +1,35 @@
+package generaloss.mc24.client.resourcepack;
+
+import jpize.gl.shader.Shader;
+import jpize.util.res.Resource;
+import jpize.util.res.handle.IResourceSource;
+import jpize.util.res.handle.ResourceHandle;
+
+public class ShaderHandle extends ResourceHandle<String, Shader> {
+
+    private final Shader shader;
+
+    public ShaderHandle(String key, String path) {
+        super(key, path);
+        this.shader = new Shader();
+    }
+
+
+    @Override
+    public Shader resource() {
+        return shader;
+    }
+
+    @Override
+    public void load(IResourceSource source, String path) {
+        final Resource vertexRes = source.getResource(path + ".vsh");
+        final Resource fragmentRes = source.getResource(path + ".fsh");
+        shader.load(vertexRes, fragmentRes);
+    }
+
+    @Override
+    public void dispose() {
+        shader.dispose();
+    }
+
+}

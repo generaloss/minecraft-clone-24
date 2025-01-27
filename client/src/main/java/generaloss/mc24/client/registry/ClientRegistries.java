@@ -1,63 +1,41 @@
 package generaloss.mc24.client.registry;
 
-import generaloss.mc24.server.resourcepack.ResourcePack;
+import generaloss.mc24.client.resourcepack.*;
+import generaloss.mc24.server.block.BlockState;
 import generaloss.mc24.server.resourcepack.ResourcePackManager;
 import jpize.util.Disposable;
+import jpize.util.res.handle.ResourceHandleMap;
 import jpize.util.time.Stopwatch;
-
-import java.util.Collection;
 
 public class ClientRegistries implements Disposable {
 
-    private final ResourcePackManager packManager;
-
-    public final RegistryAtlases ATLASES;
-    public final RegistryMusics MUSICS;
-    public final RegistryShaders SHADERS;
-    public final RegistrySkyboxes SKYBOXES;
-    public final RegistryTextures TEXTURES;
-    public final RegistryFonts FONTS;
-    public final RegistryBlockModels BLOCK_STATE_MODELS;
+    public final ResourceHandleMap<String, TextureAtlasHandle> ATLASES;
+    public final ResourceHandleMap<String, MusicHandle> MUSICS;
+    public final ResourceHandleMap<String, ShaderHandle> SHADERS;
+    public final ResourceHandleMap<String, SkyboxHandle> SKYBOXES;
+    public final ResourceHandleMap<String, Texture2DHandle> TEXTURES;
+    public final ResourceHandleMap<String, FontHandle> FONTS;
+    public final ResourceHandleMap<BlockState, BlockModelHandle> BLOCK_STATE_MODELS;
 
     public ClientRegistries(ResourcePackManager packManager) {
-        this.packManager = packManager;
-
-        this.ATLASES = new RegistryAtlases();
-        this.MUSICS = new RegistryMusics();
-        this.SHADERS = new RegistryShaders();
-        this.SKYBOXES = new RegistrySkyboxes();
-        this.TEXTURES = new RegistryTextures();
-        this.FONTS = new RegistryFonts();
-        this.BLOCK_STATE_MODELS = new RegistryBlockModels();
-    }
-
-    public void loadResources() {
-        final Stopwatch stopwatch = new Stopwatch().start();
-
-        final ResourcePack corePack = packManager.getCorePack();
-        ATLASES.load(corePack);
-        MUSICS.load(corePack);
-        SHADERS.load(corePack);
-        SKYBOXES.load(corePack);
-        TEXTURES.load(corePack);
-        FONTS.load(corePack);
-        BLOCK_STATE_MODELS.load(corePack);
-
-        System.out.println("[INFO]: Loaded client resources in " + stopwatch.getMillis() + " ms.");
+        this.ATLASES = new ResourceHandleMap<>(packManager);
+        this.MUSICS = new ResourceHandleMap<>(packManager, MusicHandle::new);
+        this.SHADERS = new ResourceHandleMap<>(packManager, ShaderHandle::new);
+        this.SKYBOXES = new ResourceHandleMap<>(packManager, SkyboxHandle::new);
+        this.TEXTURES = new ResourceHandleMap<>(packManager, Texture2DHandle::new);
+        this.FONTS = new ResourceHandleMap<>(packManager, FontHandle::new);
+        this.BLOCK_STATE_MODELS = new ResourceHandleMap<>(packManager, BlockModelHandle::new);
     }
 
     public void reloadResources() {
         final Stopwatch stopwatch = new Stopwatch().start();
-
-        final Collection<ResourcePack> packs = packManager.getActivePacks();
-        ATLASES.reload(packs);
-        MUSICS.reload(packs);
-        SHADERS.reload(packs);
-        SKYBOXES.reload(packs);
-        TEXTURES.reload(packs);
-        BLOCK_STATE_MODELS.reload(packs);
-        FONTS.reload(packs);
-
+        ATLASES.reload();
+        MUSICS.reload();
+        SHADERS.reload();
+        SKYBOXES.reload();
+        TEXTURES.reload();
+        BLOCK_STATE_MODELS.reload();
+        FONTS.reload();
         System.out.println("[INFO]: Reloaded client resources in " + stopwatch.getMillis() + " ms.");
     }
 

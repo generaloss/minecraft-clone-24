@@ -51,17 +51,17 @@ public class MainMenuScreen extends Screen {
         final ClientRegistries resourceRegistry = context.registries();
 
         this.overlayTexture = resourceRegistry.TEXTURES
-            .register("menu_panorama_overlay", "textures/gui/title/panorama_overlay.png")
-            .getObject()
+            .load("menu_panorama_overlay", "textures/gui/title/panorama_overlay.png")
+            .resource()
             .setFilters(GlFilter.LINEAR);
 
         this.skybox = resourceRegistry.SKYBOXES
-            .register("menu_panorama_skybox", "textures/gui/title/panorama_%s.png")
-            .getObject();
+            .load("menu_panorama_skybox", "textures/gui/title/panorama_%s.png")
+            .resource();
 
         this.music = (AlMusic) resourceRegistry.MUSICS
-            .register("menu_music", "music/beginning2.ogg")
-            .getObject()
+            .load("menu_music", "music/beginning2.ogg")
+            .resource()
             .setLooping(true)
             .setGain(0.1);
 
@@ -72,13 +72,13 @@ public class MainMenuScreen extends Screen {
     }
 
     public void init() {
-        this.nicknameField = new TextField(10, 650, super.context.registries().FONTS.get("default"));
+        this.nicknameField = new TextField(10, 650, super.context.registries().FONTS.get("default").resource());
         this.nicknameField.setHint("nickname");
 
-        this.passwordField = new TextField(10, 600, super.context.registries().FONTS.get("default"));
+        this.passwordField = new TextField(10, 600, super.context.registries().FONTS.get("default").resource());
         this.passwordField.setHint("password");
 
-        this.serverAddressField = new TextField(10, 550, super.context.registries().FONTS.get("default"));
+        this.serverAddressField = new TextField(10, 550, super.context.registries().FONTS.get("default").resource());
         this.serverAddressField.setHint("localhost:22854");
     }
 
@@ -187,7 +187,7 @@ public class MainMenuScreen extends Screen {
         RenderQuad.instance().render(overlayTexture);
 
         // font init
-        final Font font = super.context.registries().FONTS.get("default");
+        final Font font = super.context.registries().FONTS.get("default").resource();
         final FontRenderOptions fontOptions = font.getRenderOptions();
 
         batch.setup();

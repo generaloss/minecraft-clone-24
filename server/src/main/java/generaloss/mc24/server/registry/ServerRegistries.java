@@ -3,20 +3,21 @@ package generaloss.mc24.server.registry;
 import generaloss.mc24.server.Facing;
 import generaloss.mc24.server.block.Block;
 import generaloss.mc24.server.block.StateProperty;
-import generaloss.mc24.server.resourcepack.ResourceBlock;
+import generaloss.mc24.server.resourcepack.BlockHandle;
 import generaloss.mc24.server.resourcepack.ResourcePackManager;
+import jpize.util.res.handle.ResourceHandleMap;
 import jpize.util.time.Stopwatch;
 
 public class ServerRegistries {
 
-    private static ResourcePackManager packManager;
-
-    public static final RegistryStateProperty STATE_PROPERTY = new RegistryStateProperty();
-    public static final RegistryBlocks BLOCK = new RegistryBlocks();
-    public static final RegistryBlockState BLOCK_STATE = new RegistryBlockState();
+    public static RegistryStateProperty STATE_PROPERTY;
+    public static ResourceHandleMap<String, BlockHandle> BLOCK;
+    public static RegistryBlockState BLOCK_STATE;
 
     public static void init(ResourcePackManager packManager) {
-        ServerRegistries.packManager = packManager;
+        STATE_PROPERTY = new RegistryStateProperty();
+        BLOCK = new ResourceHandleMap<>(packManager, (String key, String path) -> new BlockHandle(key, path));
+        BLOCK_STATE = new RegistryBlockState();
 
         // STATE_PROPERTIES
         STATE_PROPERTY.register(new StateProperty<>("snowy", Boolean.class));
@@ -30,19 +31,13 @@ public class ServerRegistries {
         // BLOCKS
         Block.AIR.states().create();
         Block.VOID.states().create();
-        BLOCK.register(new ResourceBlock(Block.AIR));
-        BLOCK.register(new ResourceBlock(Block.VOID));
-    }
-
-    public static void loadResources() {
-        final Stopwatch stopwatch = new Stopwatch().start();
-        BLOCK.load(packManager.getCorePack());
-        System.out.println("[INFO]: Loaded server resources in " + stopwatch.getMillis() + " ms.");
+        BLOCK.load(new BlockHandle(Block.AIR));
+        BLOCK.load(new BlockHandle(Block.VOID));
     }
 
     public static void reloadResources() {
         final Stopwatch stopwatch = new Stopwatch().start();
-        BLOCK.reload(packManager.getActivePacks());
+        BLOCK.reload();
         System.out.println("[INFO]: Reloaded server resources in " + stopwatch.getMillis() + " ms.");
     }
 

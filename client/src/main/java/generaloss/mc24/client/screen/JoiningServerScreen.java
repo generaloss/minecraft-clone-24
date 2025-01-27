@@ -26,8 +26,8 @@ public class JoiningServerScreen extends Screen {
 
         this.regionBG = new Region();
         this.background = super.context.registries().TEXTURES
-            .register("crosshair", "textures/blocks/dirt.png")
-            .getObject();
+            .load("crosshair", "textures/blocks/dirt.png")
+            .resource();
     }
 
     public void setStatus(String status) {
@@ -60,7 +60,7 @@ public class JoiningServerScreen extends Screen {
         //batch.draw(background, regionBG, 0, 0, Jpize.getWidth(), Jpize.getHeight(), 1F, 1F, 1F, 0.35F);
 
         // status
-        final Font font = super.context.registries().FONTS.get("default");
+        final Font font = super.context.registries().FONTS.get("default").resource();
         final String text = status;
         final Vec2f textBounds = font.getTextBounds(text);
         final float textX = (Jpize.getWidth() - textBounds.x) * 0.5F;

@@ -2,12 +2,11 @@ package generaloss.mc24.client.block;
 
 import generaloss.mc24.server.Direction;
 import generaloss.mc24.server.block.BlockState;
-import generaloss.mc24.server.resourcepack.ResourcePack;
-import generaloss.mc24.server.resourcepack.ResourcePackManager;
 import jpize.util.math.matrix.Matrix4f;
 import jpize.util.math.vector.Vec3f;
 import jpize.util.region.Region;
 import jpize.util.res.Resource;
+import jpize.util.res.handle.IResourceSource;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -16,7 +15,7 @@ import java.util.Map;
 
 public class BlockModelLoader {
 
-    public static BlockModel loadVariantJSON(BlockState blockstate, JSONObject json, ResourcePackManager resourcePackManager) {
+    public static BlockModel loadVariantJSON(BlockState blockstate, JSONObject json, IResourceSource resSource) {
         final String modelPath = json.getString("model");
 
         // global rotation
@@ -30,16 +29,15 @@ public class BlockModelLoader {
 
         // load
         final BlockModel model = new BlockModel(blockstate);
-        loadModelJSON(model, blockstate, modelPath, blockRotationMat, uvLock, resourcePackManager, new HashMap<>());
+        loadModelJSON(model, blockstate, modelPath, blockRotationMat, uvLock, resSource, new HashMap<>());
         return model;
     }
 
     private static void loadModelJSON(BlockModel model, BlockState blockstate, String modelPath,
-                                            Matrix4f blockRotationMat, boolean uvLock,
-                                            ResourcePackManager resourcePackManager, Map<String, String> textureMap) {
+                                      Matrix4f blockRotationMat, boolean uvLock,
+                                      IResourceSource resSource, Map<String, String> textureMap) {
 
-        final ResourcePack corePack = resourcePackManager.getCorePack();
-        final Resource modelResource = corePack.getResource(modelPath);
+        final Resource modelResource = resSource.getResource(modelPath);
         if(modelResource == null)
             throw new IllegalStateException("Model not found: '" + modelPath + "'");
 
@@ -63,7 +61,7 @@ public class BlockModelLoader {
         // recursive load parent
         if(jsonModel.has("parent")) {
             final String parentPath = jsonModel.getString("parent");
-            loadModelJSON(model, blockstate, parentPath, blockRotationMat, uvLock, resourcePackManager, textureMap);
+            loadModelJSON(model, blockstate, parentPath, blockRotationMat, uvLock, resSource, textureMap);
         }
 
         // normalize texture map

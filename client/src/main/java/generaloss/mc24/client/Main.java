@@ -4,6 +4,7 @@ import generaloss.mc24.client.level.LevelChunk;
 import generaloss.mc24.client.level.WorldLevel;
 import generaloss.mc24.client.network.ClientConnection;
 import generaloss.mc24.client.registry.ClientRegistries;
+import generaloss.mc24.client.resourcepack.BlockModelHandle;
 import generaloss.mc24.client.screen.JoiningServerScreen;
 import generaloss.mc24.server.SharedConstants;
 import generaloss.mc24.server.entity.EntityContainer;
@@ -15,6 +16,7 @@ import generaloss.mc24.client.player.ClientPlayer;
 import generaloss.mc24.client.screen.SessionScreen;
 import generaloss.mc24.server.ArgsMap;
 import generaloss.mc24.server.Server;
+import generaloss.mc24.server.resourcepack.ResourcePack;
 import generaloss.mc24.server.resourcepack.ResourcePackManager;
 import jpize.app.Jpize;
 import jpize.app.JpizeApplication;
@@ -93,26 +95,26 @@ public class Main extends JpizeApplication {
 
     @Override
     public void init() {
-        // server
-        localServer.init();
         // audio
         AlDevices.openDevice();
         // font
-        registries.FONTS.register("default", "fonts/default/font.fnt");
+        registries.FONTS.load("default", "fonts/default/font.fnt");
 
         // blockstate models
-        ServerRegistries.BLOCK_STATE.addRegisterCallback(blockstate ->
-            registries.BLOCK_STATE_MODELS.register(blockstate, resourcePackManager)
-        );
+        ServerRegistries.BLOCK_STATE.addRegisterCallback(blockstate -> {
+            System.out.println("loaded block state: " + blockstate);
+            registries.BLOCK_STATE_MODELS.load(
+                new BlockModelHandle(blockstate, "blocks/" + blockstate.getBlockID() + ".json")
+            );
+        });
+
+        // server
+        localServer.init();
 
         // screens
         screens.register(MainMenuScreen.SCREEN_ID, new MainMenuScreen(this));
         screens.register(SessionScreen.SCREEN_ID, new SessionScreen(this));
         screens.register(JoiningServerScreen.SCREEN_ID, new JoiningServerScreen(this));
-
-        // load all resources
-        ServerRegistries.loadResources();
-        registries.loadResources();
 
         // set menu screen
         screens.setCurrent(MainMenuScreen.SCREEN_ID);
@@ -163,8 +165,7 @@ public class Main extends JpizeApplication {
                 level.tesselators().tesselate(chunk);
             }
         }else if(Key.F2.up()){
-            resourcePackManager.clear();
-            resourcePackManager.putPack("test-pack-1.zip");
+            resourcePackManager.clear().putPack(new ResourcePack("test-pack-1.zip"));
             registries.reloadResources();
 
             for(LevelChunk chunk: level.getChunks()){
@@ -173,7 +174,7 @@ public class Main extends JpizeApplication {
             }
         }else if(Key.F3.up()){
             resourcePackManager.clear();
-            resourcePackManager.putPack("test-pack-2.zip");
+            resourcePackManager.putPack(new ResourcePack("test-pack-2.zip"));
             registries.reloadResources();
 
             for(LevelChunk chunk: level.getChunks()){
@@ -186,7 +187,7 @@ public class Main extends JpizeApplication {
         screens.update();
 
         // font
-        final Font font = registries.FONTS.get("default");
+        final Font font = registries.FONTS.get("default").resource();
         font.getRenderOptions().scale().set(Jpize.getHeight() / font.getHeight() * 0.03F);
     }
 
@@ -194,7 +195,7 @@ public class Main extends JpizeApplication {
     public void render() {
         Gl.clearColorDepthBuffers();
         screens.render();
-        final Font font = registries.FONTS.get("default");
+        final Font font = registries.FONTS.get("default").resource();
         font.drawText("FPS: " + Jpize.getFPS(), 10F, Jpize.getHeight() - 10F - font.getLineAdvanceScaled());
     }
 

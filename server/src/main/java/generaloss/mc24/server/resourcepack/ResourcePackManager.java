@@ -1,17 +1,21 @@
 package generaloss.mc24.server.resourcepack;
 
+import jpize.util.res.Resource;
+import jpize.util.res.handle.IResourceSource;
+
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
-public class ResourcePackManager {
+public class ResourcePackManager implements IResourceSource {
 
     private final ResourcePack corePack;
-    private final List<ResourcePack> activePacks;
+    private final List<ResourcePack> packs;
 
     public ResourcePackManager() {
         this.corePack = new ResourcePack("core-pack.zip");
-        this.activePacks = new ArrayList<>();
+        this.packs = new ArrayList<>();
     }
 
     public ResourcePack getCorePack() {
@@ -19,43 +23,48 @@ public class ResourcePackManager {
     }
 
     public Collection<ResourcePack> getActivePacks() {
-        final List<ResourcePack> packs = new ArrayList<>(activePacks);
-        packs.add(corePack);
-        for(ResourcePack pack: packs){
-            System.out.println(pack.getID());
-        }
-        return packs;
+        final List<ResourcePack> list = new ArrayList<>(packs);
+        list.add(corePack);
+        return list;
     }
 
 
-    public void putPack(ResourcePack pack) {
-        activePacks.add(pack);
+    public ResourcePackManager putPack(ResourcePack pack) {
+        packs.add(pack);
+        return this;
     }
 
-    public void putPack(String packFilename) {
-        this.putPack(new ResourcePack(packFilename));
-    }
-
-    public void putPack(int i, ResourcePack pack) {
-        activePacks.add(i, pack);
-    }
-
-    public void putPack(int i, String packFilename) {
-        this.putPack(i, new ResourcePack(packFilename));
+    public ResourcePackManager putPack(int i, ResourcePack pack) {
+        packs.add(i, pack);
+        return this;
     }
 
 
-    public void removePack(ResourcePack pack) {
-        activePacks.remove(pack);
+    public ResourcePackManager removePack(ResourcePack pack) {
+        packs.remove(pack);
+        return this;
     }
 
-    public void removePack(int i) {
-        activePacks.remove(i);
+    public ResourcePackManager removePack(int i) {
+        packs.remove(i);
+        return this;
+    }
+
+    public ResourcePackManager clear() {
+        packs.clear();
+        return this;
     }
 
 
-    public void clear() {
-        activePacks.clear();
+    @Override
+    public Resource getResource(String path) {
+        final Iterator<ResourcePack> packIterator = this.getActivePacks().iterator();
+
+        Resource resource = null;
+        while(packIterator.hasNext() && resource == null)
+            resource = packIterator.next().getResource(path);
+
+        return resource;
     }
 
 }
