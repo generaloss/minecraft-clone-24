@@ -1,6 +1,5 @@
 package generaloss.mc24.client.chunkmesh;
 
-import generaloss.mc24.client.Main;
 import generaloss.mc24.client.level.LevelChunk;
 import generaloss.mc24.client.level.WorldLevel;
 import jpize.util.Disposable;
@@ -17,7 +16,7 @@ public class ChunkTesselatorPool implements Disposable {
     private final Queue<LevelChunk> taskQueue;
     private final ChunkTesselator[] tesselators;
 
-    public ChunkTesselatorPool(int nTesselators, Main context, WorldLevel level) {
+    public ChunkTesselatorPool(int nTesselators, WorldLevel level) {
         this.taskQueue = new LinkedList<>();
         this.meshCache = new ChunkMeshCache();
         // create executors
@@ -25,7 +24,7 @@ public class ChunkTesselatorPool implements Disposable {
         // create tesselators
         this.tesselators = new ChunkTesselator[nTesselators];
         for(int i = 0; i < nTesselators; i++)
-            this.tesselators[i] = new ChunkTesselator(context, level, meshCache);
+            this.tesselators[i] = new ChunkTesselator(level, meshCache);
     }
 
     public void tesselate(LevelChunk chunk) {

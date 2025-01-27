@@ -1,4 +1,4 @@
-package generaloss.mc24.client.resourcepack;
+package generaloss.mc24.client.resource;
 
 import jpize.gl.texture.GlCubemapTarget;
 import jpize.gl.texture.Skybox;

@@ -1,6 +1,7 @@
 package generaloss.mc24.client.screen;
 
 import generaloss.mc24.client.Main;
+import generaloss.mc24.client.resource.ClientResources;
 import jpize.app.Jpize;
 import jpize.gl.Gl;
 import jpize.gl.texture.Texture2D;
@@ -25,8 +26,7 @@ public class JoiningServerScreen extends Screen {
         this.batch = new TextureBatch();
 
         this.regionBG = new Region();
-        this.background = super.context.registries().TEXTURES
-            .load("crosshair", "textures/blocks/dirt.png")
+        this.background = ClientResources.TEXTURES.load("crosshair", "textures/blocks/dirt.png")
             .resource();
     }
 
@@ -60,7 +60,7 @@ public class JoiningServerScreen extends Screen {
         //batch.draw(background, regionBG, 0, 0, Jpize.getWidth(), Jpize.getHeight(), 1F, 1F, 1F, 0.35F);
 
         // status
-        final Font font = super.context.registries().FONTS.get("default").resource();
+        final Font font = ClientResources.FONTS.get("default").resource();
         final String text = status;
         final Vec2f textBounds = font.getTextBounds(text);
         final float textX = (Jpize.getWidth() - textBounds.x) * 0.5F;

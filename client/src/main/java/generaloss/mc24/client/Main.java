@@ -3,8 +3,8 @@ package generaloss.mc24.client;
 import generaloss.mc24.client.level.LevelChunk;
 import generaloss.mc24.client.level.WorldLevel;
 import generaloss.mc24.client.network.ClientConnection;
-import generaloss.mc24.client.registry.ClientRegistries;
-import generaloss.mc24.client.resourcepack.BlockModelHandle;
+import generaloss.mc24.client.resource.ClientResources;
+import generaloss.mc24.client.resource.BlockModelHandle;
 import generaloss.mc24.client.screen.JoiningServerScreen;
 import generaloss.mc24.server.SharedConstants;
 import generaloss.mc24.server.entity.EntityContainer;
@@ -22,8 +22,6 @@ import jpize.app.Jpize;
 import jpize.app.JpizeApplication;
 import jpize.audio.AlDevices;
 import jpize.gl.Gl;
-import jpize.glfw.Glfw;
-import jpize.glfw.init.GlfwPlatform;
 import jpize.glfw.input.Key;
 import jpize.util.font.Font;
 import jpize.util.screen.ScreenManager;
@@ -31,7 +29,6 @@ import jpize.util.screen.ScreenManager;
 public class Main extends JpizeApplication {
 
     private final ResourcePackManager resourcePackManager;
-    private final ClientRegistries registries;
     private final ScreenManager<String> screens;
     private final Server localServer;
     private final WorldLevel level;
@@ -42,7 +39,7 @@ public class Main extends JpizeApplication {
 
     public Main() {
         this.resourcePackManager = new ResourcePackManager();
-        this.registries = new ClientRegistries(resourcePackManager);
+        ClientResources.init(resourcePackManager);
         this.screens = new ScreenManager<>();
         this.localServer = new Server(resourcePackManager, false);
         this.level = new WorldLevel(this);
@@ -53,10 +50,6 @@ public class Main extends JpizeApplication {
 
     public ResourcePackManager resourcePackManager() {
         return resourcePackManager;
-    }
-
-    public ClientRegistries registries() {
-        return registries;
     }
 
     public ScreenManager<String> screens() {
@@ -98,12 +91,12 @@ public class Main extends JpizeApplication {
         // audio
         AlDevices.openDevice();
         // font
-        registries.FONTS.load("default", "fonts/default/font.fnt");
+        ClientResources.FONTS.load("default", "fonts/default/font.fnt");
 
         // blockstate models
         ServerRegistries.BLOCK_STATE.addRegisterCallback(blockstate -> {
             System.out.println("loaded block state: " + blockstate);
-            registries.BLOCK_STATE_MODELS.load(
+            ClientResources.BLOCK_STATE_MODELS.load(
                 new BlockModelHandle(blockstate, "blocks/" + blockstate.getBlockID() + ".json")
             );
         });
@@ -158,7 +151,7 @@ public class Main extends JpizeApplication {
         // resource pack
         if(Key.F1.up()){
             resourcePackManager.clear();
-            registries.reloadResources();
+            ClientResources.reload();
 
             for(LevelChunk chunk: level.getChunks()){
                 chunk.freeMesh();
@@ -166,7 +159,7 @@ public class Main extends JpizeApplication {
             }
         }else if(Key.F2.up()){
             resourcePackManager.clear().putPack(new ResourcePack("test-pack-1.zip"));
-            registries.reloadResources();
+            ClientResources.reload();
 
             for(LevelChunk chunk: level.getChunks()){
                 chunk.freeMesh();
@@ -175,7 +168,7 @@ public class Main extends JpizeApplication {
         }else if(Key.F3.up()){
             resourcePackManager.clear();
             resourcePackManager.putPack(new ResourcePack("test-pack-2.zip"));
-            registries.reloadResources();
+            ClientResources.reload();
 
             for(LevelChunk chunk: level.getChunks()){
                 chunk.freeMesh();
@@ -187,7 +180,7 @@ public class Main extends JpizeApplication {
         screens.update();
 
         // font
-        final Font font = registries.FONTS.get("default").resource();
+        final Font font = ClientResources.FONTS.get("default").resource();
         font.getRenderOptions().scale().set(Jpize.getHeight() / font.getHeight() * 0.03F);
     }
 
@@ -195,7 +188,7 @@ public class Main extends JpizeApplication {
     public void render() {
         Gl.clearColorDepthBuffers();
         screens.render();
-        final Font font = registries.FONTS.get("default").resource();
+        final Font font = ClientResources.FONTS.get("default").resource();
         font.drawText("FPS: " + Jpize.getFPS(), 10F, Jpize.getHeight() - 10F - font.getLineAdvanceScaled());
     }
 
@@ -210,16 +203,12 @@ public class Main extends JpizeApplication {
             session.logout("qwe");
         level.dispose();
         screens.dispose();
-        registries.dispose();
+        ClientResources.dispose();
         AlDevices.dispose();
     }
 
 
     public static void main(String[] args) {
-        // wayland=>x11 fix
-        if(System.getProperty("os.name").equals("Linux"))
-            Glfw.glfwInitHintPlatform(GlfwPlatform.X11);
-
         // parse arguments
         final ArgsMap argsMap = new ArgsMap(args);
         final int width = argsMap.getInt("width", 1280);

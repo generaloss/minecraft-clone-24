@@ -18,7 +18,7 @@ public class WorldLevel extends World<LevelChunk> implements Disposable {
 
     public WorldLevel(Main context) {
         this.context = context;
-        this.tesselators = new ChunkTesselatorPool(16, context, this);
+        this.tesselators = new ChunkTesselatorPool(16, this);
         this.renderer = new LevelRenderer(context, this);
 
         // light callback

@@ -3,7 +3,7 @@ package generaloss.mc24.client.screen;
 import generaloss.mc24.accountservice.network.Request;
 import generaloss.mc24.accountservice.network.Response;
 import generaloss.mc24.client.Main;
-import generaloss.mc24.client.registry.ClientRegistries;
+import generaloss.mc24.client.resource.ClientResources;
 import generaloss.mc24.server.SharedConstants;
 import generaloss.mc24.server.network.AccountSession;
 import generaloss.mc24.server.network.packet2s.ServerInfoRequestPacket2S;
@@ -48,18 +48,16 @@ public class MainMenuScreen extends Screen {
         this.batch = new TextureBatch();
 
         // resources
-        final ClientRegistries resourceRegistry = context.registries();
-
-        this.overlayTexture = resourceRegistry.TEXTURES
+        this.overlayTexture = ClientResources.TEXTURES
             .load("menu_panorama_overlay", "textures/gui/title/panorama_overlay.png")
             .resource()
             .setFilters(GlFilter.LINEAR);
 
-        this.skybox = resourceRegistry.SKYBOXES
+        this.skybox = ClientResources.SKYBOXES
             .load("menu_panorama_skybox", "textures/gui/title/panorama_%s.png")
             .resource();
 
-        this.music = (AlMusic) resourceRegistry.MUSICS
+        this.music = (AlMusic) ClientResources.MUSICS
             .load("menu_music", "music/beginning2.ogg")
             .resource()
             .setLooping(true)
@@ -72,13 +70,13 @@ public class MainMenuScreen extends Screen {
     }
 
     public void init() {
-        this.nicknameField = new TextField(10, 650, super.context.registries().FONTS.get("default").resource());
+        this.nicknameField = new TextField(10, 650, ClientResources.FONTS.get("default").resource());
         this.nicknameField.setHint("nickname");
 
-        this.passwordField = new TextField(10, 600, super.context.registries().FONTS.get("default").resource());
+        this.passwordField = new TextField(10, 600, ClientResources.FONTS.get("default").resource());
         this.passwordField.setHint("password");
 
-        this.serverAddressField = new TextField(10, 550, super.context.registries().FONTS.get("default").resource());
+        this.serverAddressField = new TextField(10, 550, ClientResources.FONTS.get("default").resource());
         this.serverAddressField.setHint("localhost:22854");
     }
 
@@ -187,7 +185,7 @@ public class MainMenuScreen extends Screen {
         RenderQuad.instance().render(overlayTexture);
 
         // font init
-        final Font font = super.context.registries().FONTS.get("default").resource();
+        final Font font = ClientResources.FONTS.get("default").resource();
         final FontRenderOptions fontOptions = font.getRenderOptions();
 
         batch.setup();

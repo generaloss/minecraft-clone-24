@@ -1,10 +1,10 @@
 package generaloss.mc24.client.chunkmesh;
 
-import generaloss.mc24.client.Main;
 import generaloss.mc24.client.block.BlockFace;
 import generaloss.mc24.client.block.BlockModel;
 import generaloss.mc24.client.block.BlockVertex;
-import generaloss.mc24.client.resourcepack.BlockModelHandle;
+import generaloss.mc24.client.resource.BlockModelHandle;
+import generaloss.mc24.client.resource.ClientResources;
 import generaloss.mc24.client.screen.SessionScreen;
 import generaloss.mc24.server.Direction;
 import generaloss.mc24.server.block.*;
@@ -23,8 +23,6 @@ import java.util.concurrent.ExecutorService;
 
 public class ChunkTesselator {
 
-    private final Main context;
-
     private final ChunkCache<WorldLevel, LevelChunk> chunkCache;
     private final ChunkMeshCache meshCache;
     private volatile TesselatorStatus status;
@@ -32,9 +30,7 @@ public class ChunkTesselator {
     private final BlockCache blockCache;
     private final float[][] vertexLightCache;
 
-    public ChunkTesselator(Main context, WorldLevel level, ChunkMeshCache meshCache) {
-        this.context = context;
-
+    public ChunkTesselator(WorldLevel level, ChunkMeshCache meshCache) {
         this.chunkCache = new ChunkCache<>(level);
         this.meshCache = meshCache;
         this.status = TesselatorStatus.FREE;
@@ -48,7 +44,7 @@ public class ChunkTesselator {
     }
 
     private BlockModel getBlockModel(BlockState blockstate) {
-        final BlockModelHandle handle = context.registries().BLOCK_STATE_MODELS.get(blockstate);
+        final BlockModelHandle handle = ClientResources.BLOCK_STATE_MODELS.get(blockstate);
         if(handle == null)
             return null;
         return handle.resource();
@@ -149,7 +145,7 @@ public class ChunkTesselator {
                 verticesCache.set(cachePosIndex + 2, rotatedVertex.getZ() + z);
 
                 // texcoord
-                final TextureAtlas<String> atlas = context.registries().ATLASES.get("blocks").resource();
+                final TextureAtlas<String> atlas = ClientResources.ATLASES.get("blocks").resource();
                 final TextureRegion region = atlas.getRegion(face.getTextureID());
 
                 verticesCache.set(cacheTexcoordIndex + 0, (region.u1() + region.getWidth()  * rotatedVertex.getU()));

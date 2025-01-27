@@ -1,4 +1,4 @@
-package generaloss.mc24.client.resourcepack;
+package generaloss.mc24.client.resource;
 
 import generaloss.mc24.client.block.BlockModel;
 import generaloss.mc24.client.block.BlockModelLoader;

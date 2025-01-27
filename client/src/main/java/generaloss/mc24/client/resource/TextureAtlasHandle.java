@@ -1,4 +1,4 @@
-package generaloss.mc24.client.resourcepack;
+package generaloss.mc24.client.resource;
 
 import jpize.gl.texture.GlFilter;
 import jpize.util.atlas.TextureAtlas;
@@ -10,7 +10,7 @@ public class TextureAtlasHandle extends ResourceHandle<String, TextureAtlas<Stri
 
     private final TextureAtlas<String> atlas;
     private final int width, height;
-    private boolean initialized;
+    private ZipResource[] resources;
 
     public TextureAtlasHandle(String key, String path, int width, int height) {
         super(key, path);
@@ -33,14 +33,13 @@ public class TextureAtlasHandle extends ResourceHandle<String, TextureAtlas<Stri
 
     @Override
     public void load(IResourceSource source, String path) {
-        if(initialized) return;
-        initialized = true;
+        if(resources == null)
+            resources = ((ZipResource) source.getResource(path)).listResources();
 
-        final ZipResource[] list = ((ZipResource) source.getResource(path)).listResources();
-        for(ZipResource resource: list){
+        for(ZipResource resource: resources){
             if(resource.isDir())
                 continue;
-            final String key = resource.path().substring(super.getPath().length());
+            final String key = resource.path().substring(path.length());
             atlas.put(key, resource);
         }
         atlas.build(width, height);

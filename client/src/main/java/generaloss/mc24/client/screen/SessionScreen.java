@@ -3,6 +3,7 @@ package generaloss.mc24.client.screen;
 import generaloss.mc24.client.Main;
 import generaloss.mc24.client.player.BlockSelectRay;
 import generaloss.mc24.client.player.ClientPlayer;
+import generaloss.mc24.client.resource.ClientResources;
 import generaloss.mc24.server.Facing;
 import generaloss.mc24.server.block.Block;
 import generaloss.mc24.server.block.BlockState;
@@ -37,12 +38,8 @@ public class SessionScreen extends Screen {
 
     public SessionScreen(Main context) {
         super(context, SCREEN_ID);
-
         this.batch = new TextureBatch();
-
-        this.crosshair = super.context.registries().TEXTURES
-            .load("crosshair", "textures/gui/hud/crosshair.png")
-            .resource();
+        this.crosshair = ClientResources.TEXTURES.load("crosshair", "textures/gui/hud/crosshair.png").resource();
     }
 
     @Override
@@ -138,7 +135,7 @@ public class SessionScreen extends Screen {
     @Override
     public void render() {
         // -res-
-        final Font font = super.context.registries().FONTS.get("default").resource();
+        final Font font = ClientResources.FONTS.get("default").resource();
         final FontRenderOptions fontOptions = font.getRenderOptions();
 
         // level

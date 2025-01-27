@@ -2,8 +2,8 @@ package generaloss.mc24.client.level;
 
 import generaloss.mc24.client.Main;
 import generaloss.mc24.client.chunkmesh.ChunkMesh;
-import generaloss.mc24.client.registry.ClientRegistries;
-import generaloss.mc24.client.resourcepack.TextureAtlasHandle;
+import generaloss.mc24.client.resource.ClientResources;
+import generaloss.mc24.client.resource.TextureAtlasHandle;
 import generaloss.mc24.server.chunk.ChunkPos;
 import jpize.gl.shader.Shader;
 import jpize.gl.texture.Texture2D;
@@ -26,14 +26,10 @@ public class LevelRenderer {
         this.level = level;
 
         // registries
-        final ClientRegistries resourceRegistry = context.registries();
-
-        this.shader = resourceRegistry.SHADERS
-            .load("level_chunk", "shaders/chunk")
+        this.shader = ClientResources.SHADERS.load("level_chunk", "shaders/chunk")
             .resource();
 
-        this.blockAtlas = resourceRegistry.ATLASES
-            .load(new TextureAtlasHandle("blocks", "textures/blocks/", 256, 256))
+        this.blockAtlas = ClientResources.ATLASES.load(new TextureAtlasHandle("blocks", "textures/blocks/", 256, 256))
             .resource().getTexture();
 
         // matrix

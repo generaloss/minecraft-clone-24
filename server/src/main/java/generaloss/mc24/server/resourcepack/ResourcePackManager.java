@@ -58,11 +58,14 @@ public class ResourcePackManager implements IResourceSource {
 
     @Override
     public Resource getResource(String path) {
-        final Iterator<ResourcePack> packIterator = this.getActivePacks().iterator();
+        final Iterator<ResourcePack> packIterator = packs.iterator();
 
         Resource resource = null;
         while(packIterator.hasNext() && resource == null)
             resource = packIterator.next().getResource(path);
+
+        if(resource == null)
+            resource = corePack.getResource(path);
 
         return resource;
     }

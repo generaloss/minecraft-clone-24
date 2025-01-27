@@ -1,4 +1,4 @@
-package generaloss.mc24.client.resourcepack;
+package generaloss.mc24.client.resource;
 
 import jpize.audio.util.AlMusic;
 import jpize.util.res.Resource;
