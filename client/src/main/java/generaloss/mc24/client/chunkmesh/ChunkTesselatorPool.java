@@ -30,7 +30,6 @@ public class ChunkTesselatorPool implements Disposable {
     public void tesselate(LevelChunk chunk) {
         if(chunk == null || taskQueue.contains(chunk))
             return;
-
         taskQueue.add(chunk);
     }
 

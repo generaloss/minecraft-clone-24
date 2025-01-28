@@ -114,7 +114,7 @@ public class ChunkTesselator {
                             this.smoothLightForVertex(channel, vertex, direction);
                     }else{
                         vertexLightCache[channel][vertexIndex] =
-                            blockCache.getLightLevel(0, 0, 0, channel) / (float) BlockLightEngine.MAX_LEVEL;
+                            blockCache.getLightLevel(direction.getX(), direction.getY(), direction.getZ(), channel) / (float) BlockLightEngine.MAX_LEVEL;
                     }
                 }
             }

@@ -2,7 +2,7 @@ package generaloss.mc24.server;
 
 import java.util.Collection;
 
-public class IntRegistry <Value> {
+public class IntRegistry<Value> {
 
     private final ObjectIntMap<Value> identityMap;
 
