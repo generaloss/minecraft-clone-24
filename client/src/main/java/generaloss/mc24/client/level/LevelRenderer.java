@@ -19,17 +19,18 @@ public class LevelRenderer {
 
     private final WorldLevel level;
     private final Shader shader;
-    private final Texture2D blockAtlas;
+    private final Texture2D blockAtlasTexture;
     private final Matrix4f matrix;
 
     public LevelRenderer(Main context, WorldLevel level) {
         this.level = level;
 
         // registries
-        this.shader = ClientResources.SHADERS.load("level_chunk", "shaders/chunk")
+        this.shader = ClientResources.SHADERS.create("level_chunk", "shaders/chunk")
             .resource();
 
-        this.blockAtlas = ClientResources.ATLASES.load(new TextureAtlasHandle("blocks", "textures/blocks/", 256, 256))
+        this.blockAtlasTexture = ClientResources.ATLASES
+            .create(new TextureAtlasHandle("blocks", "textures/blocks/", 512, 512))
             .resource().getTexture();
 
         // matrix
@@ -38,7 +39,8 @@ public class LevelRenderer {
 
     public void render(PerspectiveCamera camera) {
         shader.bind();
-        shader.uniform("u_texture", blockAtlas);
+        System.out.println(blockAtlasTexture);
+        shader.uniform("u_texture", blockAtlasTexture);
 
         final Collection<LevelChunk> chunks = level.getChunks();
         for(LevelChunk chunk: chunks){

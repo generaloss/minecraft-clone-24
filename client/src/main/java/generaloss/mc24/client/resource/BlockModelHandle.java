@@ -4,14 +4,14 @@ import generaloss.mc24.client.block.BlockModel;
 import generaloss.mc24.client.block.BlockModelLoader;
 import generaloss.mc24.server.block.BlockState;
 import jpize.util.res.Resource;
-import jpize.util.res.handle.IResourceSource;
-import jpize.util.res.handle.ResourceHandle;
+import jpize.util.res.IResourceSource;
+import jpize.util.res.handle.ResHandle;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.*;
 
-public class BlockModelHandle extends ResourceHandle<BlockState, BlockModel> {
+public class BlockModelHandle extends ResHandle<BlockState, BlockModel> {
 
     private final BlockState blockstate;
     private final List<BlockModel> models;

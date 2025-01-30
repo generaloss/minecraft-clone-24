@@ -49,16 +49,16 @@ public class MainMenuScreen extends Screen {
 
         // resources
         this.overlayTexture = ClientResources.TEXTURES
-            .load("menu_panorama_overlay", "textures/gui/title/panorama_overlay.png")
+            .create("menu_panorama_overlay", "textures/gui/title/panorama_overlay.png")
             .resource()
             .setFilters(GlFilter.LINEAR);
 
         this.skybox = ClientResources.SKYBOXES
-            .load("menu_panorama_skybox", "textures/gui/title/panorama_%s.png")
+            .create("menu_panorama_skybox", "textures/gui/title/panorama_%s.png")
             .resource();
 
         this.music = (AlMusic) ClientResources.MUSICS
-            .load("menu_music", "music/beginning2.ogg")
+            .create("menu_music", "music/beginning2.ogg")
             .resource()
             .setLooping(true)
             .setGain(0.1);
@@ -179,7 +179,7 @@ public class MainMenuScreen extends Screen {
     @Override
     public void render() {
         // skybox
-        //skybox.render(camera);
+        skybox.render(camera);
 
         // overlay
         RenderQuad.instance().render(overlayTexture);

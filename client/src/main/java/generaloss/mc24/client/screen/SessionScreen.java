@@ -39,7 +39,7 @@ public class SessionScreen extends Screen {
     public SessionScreen(Main context) {
         super(context, SCREEN_ID);
         this.batch = new TextureBatch();
-        this.crosshair = ClientResources.TEXTURES.load("crosshair", "textures/gui/hud/crosshair.png").resource();
+        this.crosshair = ClientResources.TEXTURES.create("crosshair", "textures/gui/hud/crosshair.png").resource();
     }
 
     @Override

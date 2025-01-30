@@ -5,18 +5,18 @@ import generaloss.mc24.server.block.Block;
 import generaloss.mc24.server.block.StateProperty;
 import generaloss.mc24.server.resourcepack.BlockHandle;
 import generaloss.mc24.server.resourcepack.ResourcePackManager;
-import jpize.util.res.handle.ResourceHandleMap;
+import jpize.util.res.handle.ResHandleMap;
 import jpize.util.time.Stopwatch;
 
 public class ServerRegistries {
 
     public static RegistryStateProperty STATE_PROPERTY;
-    public static ResourceHandleMap<String, BlockHandle> BLOCK;
+    public static ResHandleMap<String, BlockHandle> BLOCK;
     public static RegistryBlockState BLOCK_STATE;
 
     public static void init(ResourcePackManager packManager) {
         STATE_PROPERTY = new RegistryStateProperty();
-        BLOCK = new ResourceHandleMap<>(packManager, (String key, String path) -> new BlockHandle(key, path));
+        BLOCK = new ResHandleMap<>(packManager, (String key, String path) -> new BlockHandle(key, path));
         BLOCK_STATE = new RegistryBlockState();
 
         // STATE_PROPERTIES
@@ -31,8 +31,8 @@ public class ServerRegistries {
         // BLOCKS
         Block.AIR.states().create();
         Block.VOID.states().create();
-        BLOCK.load(new BlockHandle(Block.AIR));
-        BLOCK.load(new BlockHandle(Block.VOID));
+        BLOCK.create(new BlockHandle(Block.AIR));
+        BLOCK.create(new BlockHandle(Block.VOID));
     }
 
     public static void reloadResources() {

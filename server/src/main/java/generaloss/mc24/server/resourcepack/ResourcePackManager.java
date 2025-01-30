@@ -1,7 +1,7 @@
 package generaloss.mc24.server.resourcepack;
 
 import jpize.util.res.Resource;
-import jpize.util.res.handle.IResourceSource;
+import jpize.util.res.IResourceSource;
 
 import java.util.ArrayList;
 import java.util.Collection;

@@ -2,10 +2,10 @@ package generaloss.mc24.client.resource;
 
 import jpize.gl.texture.Texture2D;
 import jpize.util.res.Resource;
-import jpize.util.res.handle.IResourceSource;
-import jpize.util.res.handle.ResourceHandle;
+import jpize.util.res.IResourceSource;
+import jpize.util.res.handle.ResHandle;
 
-public class Texture2DHandle extends ResourceHandle<String, Texture2D> {
+public class Texture2DHandle extends ResHandle<String, Texture2D> {
 
     private final Texture2D texture;
 

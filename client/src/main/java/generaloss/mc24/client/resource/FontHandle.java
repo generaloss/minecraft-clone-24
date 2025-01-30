@@ -2,10 +2,10 @@ package generaloss.mc24.client.resource;
 
 import jpize.util.font.Font;
 import jpize.util.res.Resource;
-import jpize.util.res.handle.IResourceSource;
-import jpize.util.res.handle.ResourceHandle;
+import jpize.util.res.IResourceSource;
+import jpize.util.res.handle.ResHandle;
 
-public class FontHandle extends ResourceHandle<String, Font> {
+public class FontHandle extends ResHandle<String, Font> {
 
     private final Font font;
 

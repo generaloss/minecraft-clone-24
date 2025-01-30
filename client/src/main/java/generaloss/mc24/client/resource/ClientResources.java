@@ -1,19 +1,19 @@
 package generaloss.mc24.client.resource;
 
 import generaloss.mc24.server.block.BlockState;
-import jpize.util.res.handle.IResourceSource;
-import jpize.util.res.handle.ResourceHandleMap;
+import jpize.util.res.IResourceSource;
+import jpize.util.res.handle.ResHandleMap;
 import jpize.util.time.Stopwatch;
 
 public class ClientResources {
 
-    public static final ResourceHandleMap<String, TextureAtlasHandle> ATLASES = new ResourceHandleMap<>();
-    public static final ResourceHandleMap<String, MusicHandle> MUSICS = new ResourceHandleMap<>(MusicHandle::new);
-    public static final ResourceHandleMap<String, ShaderHandle> SHADERS = new ResourceHandleMap<>(ShaderHandle::new);
-    public static final ResourceHandleMap<String, SkyboxHandle> SKYBOXES = new ResourceHandleMap<>(SkyboxHandle::new);
-    public static final ResourceHandleMap<String, Texture2DHandle> TEXTURES = new ResourceHandleMap<>(Texture2DHandle::new);
-    public static final ResourceHandleMap<String, FontHandle> FONTS = new ResourceHandleMap<>(FontHandle::new);
-    public static final ResourceHandleMap<BlockState, BlockModelHandle> BLOCK_STATE_MODELS = new ResourceHandleMap<>(BlockModelHandle::new);
+    public static final ResHandleMap<String, TextureAtlasHandle> ATLASES = new ResHandleMap<>();
+    public static final ResHandleMap<String, MusicHandle> MUSICS = new ResHandleMap<>(MusicHandle::new);
+    public static final ResHandleMap<String, ShaderHandle> SHADERS = new ResHandleMap<>(ShaderHandle::new);
+    public static final ResHandleMap<String, SkyboxHandle> SKYBOXES = new ResHandleMap<>(SkyboxHandle::new);
+    public static final ResHandleMap<String, Texture2DHandle> TEXTURES = new ResHandleMap<>(Texture2DHandle::new);
+    public static final ResHandleMap<String, FontHandle> FONTS = new ResHandleMap<>(FontHandle::new);
+    public static final ResHandleMap<BlockState, BlockModelHandle> BLOCK_STATE_MODELS = new ResHandleMap<>(BlockModelHandle::new);
 
     public static void init(IResourceSource resourceSource) {
         ATLASES.setSource(resourceSource);

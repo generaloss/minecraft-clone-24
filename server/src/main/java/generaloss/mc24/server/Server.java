@@ -66,7 +66,7 @@ public class Server implements Tickable {
         final ZipResource[] blockResources = resourcePackManager.getCorePack().getResource("blocks/").listResources();
         Arrays.sort(blockResources, Comparator.comparingInt(resource -> resource.path().hashCode()));
         for(Resource blockRes: blockResources) {
-            ServerRegistries.BLOCK.load(blockRes.simpleName(), blockRes.path());
+            ServerRegistries.BLOCK.create(blockRes.simpleName(), blockRes.path());
         }
 
         System.out.println("[INFO]: Loaded " + ServerRegistries.BLOCK.size() + " blocks");

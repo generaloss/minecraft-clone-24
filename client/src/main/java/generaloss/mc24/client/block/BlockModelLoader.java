@@ -6,7 +6,7 @@ import jpize.util.math.matrix.Matrix4f;
 import jpize.util.math.vector.Vec3f;
 import jpize.util.region.Region;
 import jpize.util.res.Resource;
-import jpize.util.res.handle.IResourceSource;
+import jpize.util.res.IResourceSource;
 import org.json.JSONArray;
 import org.json.JSONObject;
 

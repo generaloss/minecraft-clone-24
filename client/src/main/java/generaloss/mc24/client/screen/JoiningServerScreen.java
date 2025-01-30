@@ -26,7 +26,7 @@ public class JoiningServerScreen extends Screen {
         this.batch = new TextureBatch();
 
         this.regionBG = new Region();
-        this.background = ClientResources.TEXTURES.load("crosshair", "textures/blocks/dirt.png")
+        this.background = ClientResources.TEXTURES.create("crosshair", "textures/blocks/dirt.png")
             .resource();
     }
 
@@ -57,7 +57,7 @@ public class JoiningServerScreen extends Screen {
         final int countY = 10;
         regionBG.u2 = countY * Jpize.window().getAspectRatio();
         regionBG.v2 = countY;
-        //batch.draw(background, regionBG, 0, 0, Jpize.getWidth(), Jpize.getHeight(), 1F, 1F, 1F, 0.35F);
+        batch.draw(background, regionBG, 0, 0, Jpize.getWidth(), Jpize.getHeight(), 1F, 1F, 1F, 0.35F);
 
         // status
         final Font font = ClientResources.FONTS.get("default").resource();

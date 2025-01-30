@@ -5,10 +5,10 @@ import jpize.gl.texture.Skybox;
 import jpize.util.pixmap.Pixmap;
 import jpize.util.pixmap.PixmapIO;
 import jpize.util.res.Resource;
-import jpize.util.res.handle.IResourceSource;
-import jpize.util.res.handle.ResourceHandle;
+import jpize.util.res.IResourceSource;
+import jpize.util.res.handle.ResHandle;
 
-public class SkyboxHandle extends ResourceHandle<String, Skybox> {
+public class SkyboxHandle extends ResHandle<String, Skybox> {
 
     private static final String[] POSTFIX_ARRAY = { "1", "3", "4", "5", "0", "2" };
 

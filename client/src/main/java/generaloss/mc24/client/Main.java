@@ -91,12 +91,12 @@ public class Main extends JpizeApplication {
         // audio
         AlDevices.openDevice();
         // font
-        ClientResources.FONTS.load("default", "fonts/default/font.fnt");
+        ClientResources.FONTS.create("default", "fonts/default/font.fnt");
 
         // blockstate models
         ServerRegistries.BLOCK_STATE.addRegisterCallback(blockstate -> {
             System.out.println("loaded block state: " + blockstate);
-            ClientResources.BLOCK_STATE_MODELS.load(
+            ClientResources.BLOCK_STATE_MODELS.create(
                 new BlockModelHandle(blockstate, "blocks/" + blockstate.getBlockID() + ".json")
             );
         });

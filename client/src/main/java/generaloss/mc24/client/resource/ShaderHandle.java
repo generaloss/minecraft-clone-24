@@ -2,10 +2,10 @@ package generaloss.mc24.client.resource;
 
 import jpize.gl.shader.Shader;
 import jpize.util.res.Resource;
-import jpize.util.res.handle.IResourceSource;
-import jpize.util.res.handle.ResourceHandle;
+import jpize.util.res.IResourceSource;
+import jpize.util.res.handle.ResHandle;
 
-public class ShaderHandle extends ResourceHandle<String, Shader> {
+public class ShaderHandle extends ResHandle<String, Shader> {
 
     private final Shader shader;
 
