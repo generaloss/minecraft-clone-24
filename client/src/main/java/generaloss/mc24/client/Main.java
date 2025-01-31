@@ -152,28 +152,17 @@ public class Main extends JpizeApplication {
         if(Key.F1.up()){
             resourcePackManager.clear();
             ClientResources.reload();
+            this.retesselateAllChunks();
 
-            for(LevelChunk chunk: level.getChunks()){
-                chunk.freeMesh();
-                level.tesselators().tesselate(chunk);
-            }
         }else if(Key.F2.up()){
             resourcePackManager.clear().putPack(new ResourcePack("test-pack-1.zip"));
             ClientResources.reload();
+            this.retesselateAllChunks();
 
-            for(LevelChunk chunk: level.getChunks()){
-                chunk.freeMesh();
-                level.tesselators().tesselate(chunk);
-            }
         }else if(Key.F3.up()){
-            resourcePackManager.clear();
-            resourcePackManager.putPack(new ResourcePack("test-pack-2.zip"));
+            resourcePackManager.clear().putPack(new ResourcePack("test-pack-2.zip"));
             ClientResources.reload();
-
-            for(LevelChunk chunk: level.getChunks()){
-                chunk.freeMesh();
-                level.tesselators().tesselate(chunk);
-            }
+            this.retesselateAllChunks();
         }
 
         // secreens
@@ -182,6 +171,14 @@ public class Main extends JpizeApplication {
         // font
         final Font font = ClientResources.FONTS.get("default").resource();
         font.getRenderOptions().scale().set(Jpize.getHeight() / font.getHeight() * 0.03F);
+    }
+
+    private void retesselateAllChunks() {
+        level.tesselators().reset();
+        for(LevelChunk chunk: level.getSortedChunks()){
+            chunk.freeMesh();
+            level.tesselators().tesselate(chunk);
+        }
     }
 
     @Override

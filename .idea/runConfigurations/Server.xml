@@ -2,6 +2,7 @@
   <configuration default="false" name="Server" type="Application" factoryName="Application">
     <option name="MAIN_CLASS_NAME" value="generaloss.mc24.server.Main" />
     <module name="server" />
+    <option name="PROGRAM_PARAMETERS" value="-XX:+useZGC" />
     <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/server/run" />
     <method v="2">
       <option name="Make" enabled="true" />

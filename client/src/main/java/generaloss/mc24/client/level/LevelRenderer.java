@@ -30,7 +30,7 @@ public class LevelRenderer {
             .resource();
 
         this.blockAtlasTexture = ClientResources.ATLASES
-            .create(new TextureAtlasHandle("blocks", "textures/blocks/", 512, 512))
+            .create(new TextureAtlasHandle("blocks", "textures/blocks/", 256, 256))
             .resource().getTexture();
 
         // matrix
@@ -39,10 +39,9 @@ public class LevelRenderer {
 
     public void render(PerspectiveCamera camera) {
         shader.bind();
-        System.out.println(blockAtlasTexture);
         shader.uniform("u_texture", blockAtlasTexture);
 
-        final Collection<LevelChunk> chunks = level.getChunks();
+        final Collection<LevelChunk> chunks = level.getSortedChunks();
         for(LevelChunk chunk: chunks){
             final ChunkMesh mesh = chunk.mesh();
             if(mesh == null)

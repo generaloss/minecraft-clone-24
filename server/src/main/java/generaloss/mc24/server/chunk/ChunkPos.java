@@ -1,6 +1,7 @@
 package generaloss.mc24.server.chunk;
 
 import jpize.util.math.Frustum;
+import jpize.util.math.vector.Vec3i;
 
 import java.util.Objects;
 
@@ -51,6 +52,11 @@ public class ChunkPos {
         return z;
     }
 
+    public Vec3i getVec3i() {
+        return new Vec3i(this.getX(), this.getY(), this.getZ());
+    }
+
+
     public int getBlockX() {
         return x * Chunk.SIZE;
     }
@@ -61,6 +67,10 @@ public class ChunkPos {
 
     public int getBlockZ() {
         return z * Chunk.SIZE;
+    }
+
+    public Vec3i getVec3iBlock() {
+        return new Vec3i(this.getBlockX(), this.getBlockY(), this.getBlockZ());
     }
 
 

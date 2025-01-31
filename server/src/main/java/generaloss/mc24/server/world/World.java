@@ -27,7 +27,6 @@ public abstract class World <C extends Chunk<? extends World<C>>> {
         return blockLightEngine;
     }
 
-
     public Collection<C> getChunks() {
         return chunks.values();
     }
