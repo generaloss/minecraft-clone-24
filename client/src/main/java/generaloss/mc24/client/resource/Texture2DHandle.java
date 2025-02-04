@@ -2,7 +2,7 @@ package generaloss.mc24.client.resource;
 
 import jpize.gl.texture.Texture2D;
 import jpize.util.res.Resource;
-import jpize.util.res.IResourceSource;
+import jpize.util.res.ResourceSource;
 import jpize.util.res.handle.ResHandle;
 
 public class Texture2DHandle extends ResHandle<String, Texture2D> {
@@ -15,7 +15,7 @@ public class Texture2DHandle extends ResHandle<String, Texture2D> {
     }
 
     @Override
-    public void load(IResourceSource source, String path) {
+    public void load(ResourceSource source, String path) {
         final Resource resource = source.getResource(path);
         texture.setImage(resource);
     }

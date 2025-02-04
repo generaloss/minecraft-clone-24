@@ -1,14 +1,14 @@
 package generaloss.mc24.server.resourcepack;
 
 import jpize.util.res.Resource;
-import jpize.util.res.IResourceSource;
+import jpize.util.res.ResourceSource;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-public class ResourcePackManager implements IResourceSource {
+public class ResourcePackManager implements ResourceSource {
 
     private final ResourcePack corePack;
     private final List<ResourcePack> packs;

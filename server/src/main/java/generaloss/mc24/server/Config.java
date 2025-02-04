@@ -1,7 +1,7 @@
 package generaloss.mc24.server;
 
 import jpize.util.array.StringList;
-import jpize.util.res.ExternalResource;
+import jpize.util.res.FileResource;
 import jpize.util.res.Resource;
 
 import java.io.PrintWriter;
@@ -43,7 +43,7 @@ public class Config {
         return this;
     }
 
-    public Config save(ExternalResource res) {
+    public Config save(FileResource res) {
         final PrintWriter writer = res.writer();
 
         for(Map.Entry<String, String> entry: table.entrySet()){

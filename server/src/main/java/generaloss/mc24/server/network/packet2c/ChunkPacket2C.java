@@ -4,7 +4,7 @@ import generaloss.mc24.server.chunk.*;
 import generaloss.mc24.server.network.protocol.IClientProtocolGame;
 import jpize.util.io.ExtDataInputStream;
 import jpize.util.io.ExtDataOutputStream;
-import jpize.util.net.tcp.packet.NetPacket;
+import jpize.util.net.packet.NetPacket;
 
 import java.io.IOException;
 

@@ -2,7 +2,7 @@ package generaloss.mc24.server;
 
 import generaloss.mc24.server.resourcepack.ResourcePackManager;
 import jpize.util.io.FastReader;
-import jpize.util.res.ExternalResource;
+import jpize.util.res.FileResource;
 import jpize.util.res.Resource;
 
 public class Main {
@@ -11,7 +11,7 @@ public class Main {
         final ArgsMap argsMap = new ArgsMap(args);
 
         final Config config = new Config();
-        final ExternalResource configRes = Resource.external("./config.txt");
+        final FileResource configRes = Resource.file("./config.txt");
         if(configRes.exists())
             config.load(configRes);
 

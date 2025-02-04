@@ -4,9 +4,8 @@ import generaloss.mc24.server.network.packet2s.EncodeKeyPacket2S;
 import generaloss.mc24.server.network.packet2s.LoginRequestPacket2S;
 import generaloss.mc24.server.network.packet2s.ServerInfoRequestPacket2S;
 import generaloss.mc24.server.network.packet2s.SessionIDPacket2S;
-import jpize.util.net.tcp.packet.INetPacketHandler;
 
-public interface IServerProtocolLogin extends INetPacketHandler {
+public interface IServerProtocolLogin {
 
     void handleServerInfoRequest(ServerInfoRequestPacket2S packet);
 

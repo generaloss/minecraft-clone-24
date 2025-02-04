@@ -5,11 +5,10 @@ import generaloss.mc24.server.network.AccountSession;
 import generaloss.mc24.server.network.connection.ServerConnectionGame;
 import generaloss.mc24.server.network.packet2c.AbilitiesPacket2C;
 import generaloss.mc24.server.network.packet2c.InsertEntityPacket2C;
-import generaloss.mc24.server.network.packet2c.MoveEntityPacket2C;
 import generaloss.mc24.server.network.packet2c.RemoveEntityPacket2C;
 import generaloss.mc24.server.network.protocol.IClientProtocolGame;
 import jpize.util.math.vector.Vec3i;
-import jpize.util.net.tcp.packet.NetPacket;
+import jpize.util.net.packet.NetPacket;
 
 import java.util.Collection;
 import java.util.List;

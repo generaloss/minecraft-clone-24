@@ -7,13 +7,12 @@ import jpize.util.Utils;
 import jpize.util.io.DataStreamWriter;
 import jpize.util.io.ExtDataInputStream;
 import jpize.util.net.tcp.TCPConnection;
-import jpize.util.net.tcp.packet.INetPacketHandler;
 import jpize.util.security.AESKey;
 import jpize.util.security.PrivateRSA;
 
 import java.util.UUID;
 
-public class Connection implements INetPacketHandler {
+public class Connection {
 
     private final RequestListener requestListener;
     private final TCPConnection tcpConnection;

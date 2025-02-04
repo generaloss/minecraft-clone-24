@@ -3,7 +3,7 @@ package generaloss.mc24.client.resource;
 import jpize.gl.texture.GlFilter;
 import jpize.util.atlas.TextureAtlas;
 import jpize.util.res.ZipResource;
-import jpize.util.res.IResourceSource;
+import jpize.util.res.ResourceSource;
 import jpize.util.res.handle.ResHandle;
 
 import java.util.HashMap;
@@ -37,8 +37,8 @@ public class TextureAtlasHandle extends ResHandle<String, TextureAtlas<String>> 
     }
 
     @Override
-    public void load(IResourceSource source, String path) {
-        final ZipResource[] resources = ((ZipResource) source.getResource(path)).listResources();
+    public void load(ResourceSource source, String path) {
+        final ZipResource[] resources = source.getResource(path).asZipRes().listResources();
         for(ZipResource resource: resources) {
             if(resource.isDir())
                 continue;

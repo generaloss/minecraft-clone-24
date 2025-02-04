@@ -3,7 +3,7 @@ package generaloss.mc24.accountservice.network.packet;
 import generaloss.mc24.accountservice.network.Request;
 import jpize.util.io.ExtDataInputStream;
 import jpize.util.io.ExtDataOutputStream;
-import jpize.util.net.tcp.packet.NetPacket;
+import jpize.util.net.packet.NetPacket;
 import jpize.util.security.PublicRSA;
 
 import java.io.IOException;

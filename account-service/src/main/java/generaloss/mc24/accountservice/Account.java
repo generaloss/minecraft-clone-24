@@ -1,6 +1,6 @@
 package generaloss.mc24.accountservice;
 
-import jpize.util.res.ExternalResource;
+import jpize.util.res.FileResource;
 import jpize.util.res.Resource;
 
 import java.io.File;
@@ -38,10 +38,10 @@ public class Account {
     public boolean setNickname(String nickname) {
         validateNickname(nickname);
 
-        if(Resource.external(DIRECTORY + nickname).exists())
+        if(Resource.file(DIRECTORY + nickname).exists())
             return false;
 
-        final ExternalResource direcoryRes = Resource.external(DIRECTORY + nickname);
+        final FileResource direcoryRes = Resource.file(DIRECTORY + nickname);
         direcoryRes.child("/nickname").writeString(nickname);
         if(!direcoryRes.file().renameTo(new File(DIRECTORY + nickname)))
             return false;
@@ -53,7 +53,7 @@ public class Account {
     public boolean setPassword(String password) {
         validatePassword(nickname);
 
-        Resource.external(DIRECTORY + this.nickname + "/password").writeString(nickname);
+        Resource.file(DIRECTORY + this.nickname + "/password").writeString(nickname);
         this.password = password;
         return true;
     }
@@ -73,7 +73,7 @@ public class Account {
     }
 
 
-    public static Account load(ExternalResource resource) {
+    public static Account load(FileResource resource) {
         if(!resource.exists() || resource.isFile())
             throw new IllegalArgumentException("Account does not exist.");
 
@@ -84,28 +84,28 @@ public class Account {
     }
 
     public static Account load(String nickname) {
-        return load(Resource.external(DIRECTORY + nickname));
+        return load(Resource.file(DIRECTORY + nickname));
     }
 
     public static Account create(String nickname, String password) {
         validateNickname(nickname);
         validatePassword(password);
 
-        final ExternalResource direcoryRes = Resource.external(DIRECTORY + nickname);
+        final FileResource direcoryRes = Resource.file(DIRECTORY + nickname);
         if(direcoryRes.exists())
             throw new IllegalArgumentException("Nickname '" + nickname + "' is already in use.");
         direcoryRes.mkdir();
 
-        final ExternalResource nicknameRes = Resource.external(DIRECTORY + nickname + "/nickname");
+        final FileResource nicknameRes = Resource.file(DIRECTORY + nickname + "/nickname");
         nicknameRes.create();
         nicknameRes.writeString(nickname);
 
-        final ExternalResource passwordRes = Resource.external(DIRECTORY + nickname + "/password");
+        final FileResource passwordRes = Resource.file(DIRECTORY + nickname + "/password");
         passwordRes.create();
         passwordRes.writeString(password);
 
         final String creation_date = Calendar.getInstance().getTime().toString();
-        final ExternalResource creationDateRes = Resource.external(DIRECTORY + nickname + "/creation_date");
+        final FileResource creationDateRes = Resource.file(DIRECTORY + nickname + "/creation_date");
         creationDateRes.create();
         creationDateRes.writeString(creation_date);
 
@@ -113,9 +113,9 @@ public class Account {
     }
 
     public static void delete(String nickname) {
-        final ExternalResource directory = Resource.external(DIRECTORY + nickname);
+        final FileResource directory = Resource.file(DIRECTORY + nickname);
         Arrays.stream(directory.listResources())
-            .forEach(ExternalResource::delete);
+            .forEach(FileResource::delete);
         directory.delete();
     }
 

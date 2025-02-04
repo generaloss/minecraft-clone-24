@@ -6,7 +6,7 @@ import generaloss.mc24.server.network.protocol.IServerProtocolGame;
 import generaloss.mc24.server.entity.player.ServerPlayer;
 import jpize.util.net.tcp.TCPConnection;
 import jpize.util.net.tcp.TCPServer;
-import jpize.util.net.tcp.packet.NetPacketDispatcher;
+import jpize.util.net.packet.NetPacketDispatcher;
 import jpize.util.security.RSAKey;
 
 public class NetServer {

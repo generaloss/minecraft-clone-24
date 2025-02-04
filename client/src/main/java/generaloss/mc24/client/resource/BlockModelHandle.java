@@ -4,7 +4,7 @@ import generaloss.mc24.client.block.BlockModel;
 import generaloss.mc24.client.block.BlockModelLoader;
 import generaloss.mc24.server.block.BlockState;
 import jpize.util.res.Resource;
-import jpize.util.res.IResourceSource;
+import jpize.util.res.ResourceSource;
 import jpize.util.res.handle.ResHandle;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -28,7 +28,7 @@ public class BlockModelHandle extends ResHandle<BlockState, BlockModel> {
     }
 
     @Override
-    public void load(IResourceSource source, String path) {
+    public void load(ResourceSource source, String path) {
         final Resource resource = source.getResource(path);
         this.loadVariantsJSON(source, resource);
         // System.out.println("Loaded model of block '" + model.getBlockState().getBlockID() + "' for state '" + registries.BLOCK_STATES.getID(model.getBlockState()) + "'");
@@ -40,7 +40,7 @@ public class BlockModelHandle extends ResHandle<BlockState, BlockModel> {
 
     private static String prevBlockID = null;
 
-    private void loadVariantsJSON(IResourceSource resSource, Resource resource) {
+    private void loadVariantsJSON(ResourceSource resSource, Resource resource) {
         if(!blockstate.getBlockID().equals(prevBlockID))
             System.out.println("Load '" + blockstate.getBlockID() + "' models:");
         prevBlockID = blockstate.getBlockID();
@@ -49,9 +49,9 @@ public class BlockModelHandle extends ResHandle<BlockState, BlockModel> {
         final JSONObject jsonVariants = jsonObject.getJSONObject("variants");
 
         final StringJoiner variantKeyJoiner = new StringJoiner(",");
-        blockstate.getStateProperties().forEach((property, value) -> {
-            variantKeyJoiner.add(property.getName() + "=" + value);
-        });
+        blockstate.getStateProperties().forEach((property, value) ->
+                variantKeyJoiner.add(property.getName() + "=" + value)
+        );
         final String variantKey = variantKeyJoiner.toString();
 
         if(!jsonVariants.has(variantKey))

@@ -1,9 +1,8 @@
 package generaloss.mc24.server.network.protocol;
 
 import generaloss.mc24.server.network.packet2c.*;
-import jpize.util.net.tcp.packet.INetPacketHandler;
 
-public interface IClientProtocolGame extends INetPacketHandler {
+public interface IClientProtocolGame {
 
     void handleChunk(ChunkPacket2C packet);
 

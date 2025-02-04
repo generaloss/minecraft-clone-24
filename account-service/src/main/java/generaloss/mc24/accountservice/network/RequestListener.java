@@ -8,7 +8,7 @@ import generaloss.mc24.accountservice.network.packet.RequestPacket2S;
 import jpize.util.io.ExtDataInputStream;
 import jpize.util.net.tcp.TCPConnection;
 import jpize.util.net.tcp.TCPServer;
-import jpize.util.net.tcp.packet.NetPacketDispatcher;
+import jpize.util.net.packet.NetPacketDispatcher;
 import jpize.util.res.Resource;
 import jpize.util.security.RSAKey;
 
@@ -31,7 +31,7 @@ public class RequestListener implements Closeable {
         this.packetDispatcher = new NetPacketDispatcher()
             .register(EncodeKeyPacket2S.class, RequestPacket2S.class);
 
-        Resource.external("./accounts/").mkdir();
+        Resource.file("./accounts/").mkdir();
 
         this.tcpServer = new TCPServer()
             .setOnConnect(this::onConnect)

@@ -1,7 +1,7 @@
 package generaloss.mc24.client.resource;
 
 import generaloss.mc24.server.block.BlockState;
-import jpize.util.res.IResourceSource;
+import jpize.util.res.ResourceSource;
 import jpize.util.res.handle.ResHandleMap;
 import jpize.util.time.Stopwatch;
 
@@ -15,7 +15,7 @@ public class ClientResources {
     public static final ResHandleMap<String, FontHandle> FONTS = new ResHandleMap<>(FontHandle::new);
     public static final ResHandleMap<BlockState, BlockModelHandle> BLOCK_STATE_MODELS = new ResHandleMap<>(BlockModelHandle::new);
 
-    public static void init(IResourceSource resourceSource) {
+    public static void init(ResourceSource resourceSource) {
         ATLASES.setSource(resourceSource);
         MUSICS.setSource(resourceSource);
         SHADERS.setSource(resourceSource);

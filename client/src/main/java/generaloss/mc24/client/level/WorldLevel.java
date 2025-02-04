@@ -11,21 +11,18 @@ import jpize.util.Disposable;
 import jpize.util.camera.PerspectiveCamera;
 
 import java.util.Collection;
-import java.util.Set;
-import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.stream.Collectors;
 
 public class WorldLevel extends World<LevelChunk> implements Disposable {
 
     private final Main context;
     private final ChunkTesselatorPool tesselators;
     private final LevelRenderer renderer;
-    private final Set<LevelChunk> chunks;
 
     public WorldLevel(Main context) {
         this.context = context;
         this.tesselators = new ChunkTesselatorPool(16, this);
         this.renderer = new LevelRenderer(context, this);
-        this.chunks = new ConcurrentSkipListSet<>();
 
         // light callback
         super.getBlockLightEngine().registerIncreasedCallback((chunk, x, y, z, r, g, b) -> {
@@ -83,13 +80,13 @@ public class WorldLevel extends World<LevelChunk> implements Disposable {
 
 
     public Collection<LevelChunk> getSortedChunks() {
-        return chunks;
+        final Collection<LevelChunk> chunks = this.getChunks();
+        return chunks.stream().sorted().collect(Collectors.toList());
     }
 
     @Override
     public void putChunk(LevelChunk chunk) {
         super.putChunk(chunk);
-        chunks.add(chunk);
         tesselators.tesselate(chunk);
 
         final ChunkPos position = chunk.position();

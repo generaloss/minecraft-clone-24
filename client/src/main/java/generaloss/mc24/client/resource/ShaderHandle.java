@@ -2,7 +2,7 @@ package generaloss.mc24.client.resource;
 
 import jpize.gl.shader.Shader;
 import jpize.util.res.Resource;
-import jpize.util.res.IResourceSource;
+import jpize.util.res.ResourceSource;
 import jpize.util.res.handle.ResHandle;
 
 public class ShaderHandle extends ResHandle<String, Shader> {
@@ -21,7 +21,7 @@ public class ShaderHandle extends ResHandle<String, Shader> {
     }
 
     @Override
-    public void load(IResourceSource source, String path) {
+    public void load(ResourceSource source, String path) {
         final Resource vertexRes = source.getResource(path + ".vsh");
         final Resource fragmentRes = source.getResource(path + ".fsh");
         shader.load(vertexRes, fragmentRes);

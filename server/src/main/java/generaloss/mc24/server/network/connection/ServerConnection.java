@@ -1,10 +1,9 @@
 package generaloss.mc24.server.network.connection;
 
 import generaloss.mc24.server.Server;
-import generaloss.mc24.server.network.packet2c.MoveEntityPacket2C;
 import generaloss.mc24.server.network.protocol.IServerProtocol;
 import jpize.util.net.tcp.TCPConnection;
-import jpize.util.net.tcp.packet.NetPacket;
+import jpize.util.net.packet.NetPacket;
 import jpize.util.security.AESKey;
 
 public abstract class ServerConnection implements IServerProtocol {

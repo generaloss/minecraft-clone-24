@@ -7,14 +7,13 @@ import generaloss.mc24.accountservice.network.packet.RequestPacket2S;
 import jpize.util.io.DataStreamWriter;
 import jpize.util.net.tcp.TCPClient;
 import jpize.util.net.tcp.TCPConnection;
-import jpize.util.net.tcp.packet.NetPacketDispatcher;
-import jpize.util.net.tcp.packet.INetPacketHandler;
+import jpize.util.net.packet.NetPacketDispatcher;
 import jpize.util.security.AESKey;
 import jpize.util.time.TimeUtils;
 
 import java.util.UUID;
 
-public class Request implements INetPacketHandler {
+public class Request {
 
     private final RequestType requestType;
     private final byte[] requestData;

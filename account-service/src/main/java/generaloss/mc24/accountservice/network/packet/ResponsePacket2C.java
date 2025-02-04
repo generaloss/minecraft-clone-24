@@ -4,7 +4,7 @@ import generaloss.mc24.accountservice.network.Request;
 import generaloss.mc24.accountservice.network.ResponseCode;
 import jpize.util.io.ExtDataInputStream;
 import jpize.util.io.ExtDataOutputStream;
-import jpize.util.net.tcp.packet.NetPacket;
+import jpize.util.net.packet.NetPacket;
 import java.io.IOException;
 
 public class ResponsePacket2C extends NetPacket<Request> {

@@ -6,7 +6,7 @@ import jpize.util.math.matrix.Matrix4f;
 import jpize.util.math.vector.Vec3f;
 import jpize.util.region.Region;
 import jpize.util.res.Resource;
-import jpize.util.res.IResourceSource;
+import jpize.util.res.ResourceSource;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -15,7 +15,7 @@ import java.util.Map;
 
 public class BlockModelLoader {
 
-    public static BlockModel loadVariantJSON(BlockState blockstate, JSONObject json, IResourceSource resSource) {
+    public static BlockModel loadVariantJSON(BlockState blockstate, JSONObject json, ResourceSource resSource) {
         final String modelPath = json.getString("model");
 
         // global rotation
@@ -35,7 +35,7 @@ public class BlockModelLoader {
 
     private static void loadModelJSON(BlockModel model, BlockState blockstate, String modelPath,
                                       Matrix4f blockRotationMat, boolean uvLock,
-                                      IResourceSource resSource, Map<String, String> textureMap) {
+                                      ResourceSource resSource, Map<String, String> textureMap) {
 
         final Resource modelResource = resSource.getResource(modelPath);
         if(modelResource == null)

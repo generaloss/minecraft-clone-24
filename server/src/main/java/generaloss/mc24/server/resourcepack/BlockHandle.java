@@ -2,7 +2,7 @@ package generaloss.mc24.server.resourcepack;
 
 import generaloss.mc24.server.block.Block;
 import jpize.util.res.Resource;
-import jpize.util.res.IResourceSource;
+import jpize.util.res.ResourceSource;
 import jpize.util.res.handle.ResHandle;
 
 public class BlockHandle extends ResHandle<String, Block> {
@@ -26,7 +26,7 @@ public class BlockHandle extends ResHandle<String, Block> {
     }
 
     @Override
-    public void load(IResourceSource source, String path) {
+    public void load(ResourceSource source, String path) {
         if(initialized || path == null)
             return;
         initialized = true;

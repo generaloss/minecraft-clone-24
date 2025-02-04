@@ -4,8 +4,8 @@ import generaloss.mc24.client.Main;
 import generaloss.mc24.server.network.packet2c.*;
 import jpize.util.net.tcp.TCPClient;
 import jpize.util.net.tcp.TCPConnection;
-import jpize.util.net.tcp.packet.NetPacket;
-import jpize.util.net.tcp.packet.NetPacketDispatcher;
+import jpize.util.net.packet.NetPacket;
+import jpize.util.net.packet.NetPacketDispatcher;
 
 public class ClientConnection {
 
