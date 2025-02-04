@@ -1,5 +1,5 @@
 <component name="ArtifactManager">
-  <artifact name="core-pack:zip">
+  <artifact build-on-make="true" name="core-pack:zip">
     <output-path>$PROJECT_DIR$/client/run/resource-packs</output-path>
     <root id="root">
       <element id="archive" name="core-pack.zip">
