@@ -1,7 +1,5 @@
 package generaloss.mc24.server.chunk;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.*;
 
 public class IntIDMap <T> implements Iterable<T>{
@@ -25,7 +23,7 @@ public class IntIDMap <T> implements Iterable<T>{
     }
 
     @Override
-    public @NotNull Iterator<T> iterator() {
+    public Iterator<T> iterator() {
         return list.iterator();
     }
 }

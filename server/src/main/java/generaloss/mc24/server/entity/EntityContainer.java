@@ -1,7 +1,5 @@
 package generaloss.mc24.server.entity;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.*;
 
 public class EntityContainer implements Iterable<AbstractEntity> {
@@ -31,7 +29,7 @@ public class EntityContainer implements Iterable<AbstractEntity> {
 
 
     @Override
-    public @NotNull Iterator<AbstractEntity> iterator() {
+    public Iterator<AbstractEntity> iterator() {
         return map.values().iterator();
     }
 

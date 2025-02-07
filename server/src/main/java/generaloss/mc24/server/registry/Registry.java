@@ -1,7 +1,6 @@
 package generaloss.mc24.server.registry;
 
 import generaloss.mc24.server.Identifiable;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -34,7 +33,7 @@ public class Registry<Key, Value> implements Iterable<Value> {
     }
 
     @Override
-    public @NotNull Iterator<Value> iterator() {
+    public Iterator<Value> iterator() {
         return map.values().iterator();
     }
 

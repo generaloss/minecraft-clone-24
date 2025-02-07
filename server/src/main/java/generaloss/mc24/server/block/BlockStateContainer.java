@@ -1,7 +1,6 @@
 package generaloss.mc24.server.block;
 
 import generaloss.mc24.server.registry.ServerRegistries;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -36,7 +35,7 @@ public class BlockStateContainer implements Iterable<BlockState> {
     }
 
     @Override
-    public @NotNull Iterator<BlockState> iterator() {
+    public Iterator<BlockState> iterator() {
         return blockstates.iterator();
     }
 

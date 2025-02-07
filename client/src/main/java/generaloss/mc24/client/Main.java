@@ -7,6 +7,8 @@ import generaloss.mc24.client.resource.ClientResources;
 import generaloss.mc24.client.resource.BlockModelHandle;
 import generaloss.mc24.client.screen.JoiningServerScreen;
 import generaloss.mc24.server.SharedConstants;
+import generaloss.mc24.server.block.BlockState;
+import generaloss.mc24.server.chunk.ChunkPos;
 import generaloss.mc24.server.entity.EntityContainer;
 import generaloss.mc24.server.network.AccountSession;
 import generaloss.mc24.server.network.packet2s.LoginRequestPacket2S;
@@ -24,7 +26,10 @@ import jpize.audio.AlDevices;
 import jpize.gl.Gl;
 import jpize.glfw.input.Key;
 import jpize.util.font.Font;
+import jpize.util.res.FileResource;
 import jpize.util.screen.ScreenManager;
+
+import java.io.PrintWriter;
 
 public class Main extends JpizeApplication {
 
@@ -171,6 +176,44 @@ public class Main extends JpizeApplication {
         // font
         final Font font = ClientResources.FONTS.get("default").resource();
         font.getRenderOptions().scale().set(Jpize.getHeight() / font.getHeight() * 0.03F);
+
+        this.saveChunks();
+    }
+
+    private void saveChunks() {
+        if(Key.LCTRL.pressed() && Key.C.down()) {
+            final FileResource dirRes = FileResource.file("./chunksave/overworld/");
+            dirRes.mkdirs();
+
+            for(LevelChunk chunk: level.getChunks()){
+                final ChunkPos pos = chunk.position();
+                final FileResource res = dirRes.child("chunk" + pos.getX() + "x" + pos.getY() + ".txt");
+                res.create();
+                final PrintWriter writer = res.writer(false);
+                // palette
+                writer.println("#newsection");
+                for(BlockState blockstate: ServerRegistries.BLOCK_STATE.getValues()){
+                    final int ID = ServerRegistries.BLOCK_STATE.getID(blockstate);
+                    writer.print(blockstate.getBlockID() + "/" + ID + "/");
+                    blockstate.getStateProperties().forEach((key, value) -> {
+                        writer.print(key.getName() + ":" + value.toString() + ",");
+                    });
+                    writer.println();
+                }
+
+                writer.println("#newsection");
+                for(byte blockstateID: chunk.getBlockStateIDs().array())
+                    writer.print(blockstateID + ",");
+                writer.println();
+
+                writer.println("#newsection");
+                for(byte blockstateID: chunk.getBlockLight().array())
+                    writer.print(blockstateID + ",");
+                writer.println();
+
+                writer.close();
+            }
+        }
     }
 
     private void retesselateAllChunks() {

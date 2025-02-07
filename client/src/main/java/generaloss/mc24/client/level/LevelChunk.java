@@ -4,7 +4,6 @@ import generaloss.mc24.client.chunkmesh.ChunkMesh;
 import generaloss.mc24.server.chunk.Chunk;
 import generaloss.mc24.server.network.packet2c.ChunkPacket2C;
 import jpize.util.math.vector.Vec3f;
-import org.jetbrains.annotations.NotNull;
 
 public class LevelChunk extends Chunk<WorldLevel> implements Comparable<LevelChunk> {
 
@@ -34,7 +33,7 @@ public class LevelChunk extends Chunk<WorldLevel> implements Comparable<LevelChu
     }
 
     @Override
-    public int compareTo(@NotNull LevelChunk chunk) {
+    public int compareTo(LevelChunk chunk) {
         final Vec3f player_pos = world().context().player().position();
         final float distance0 = player_pos.dst(super.position().getVec3iBlock());
         final float distance1 = player_pos.dst(chunk.position().getVec3iBlock());

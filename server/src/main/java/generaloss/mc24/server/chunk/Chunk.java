@@ -63,7 +63,7 @@ public class Chunk <W extends World<? extends Chunk<W>>> {
             return false;
 
         // get previous state
-        final BlockState previousState = ServerRegistries.BLOCK_STATE.get(blockstateIDs.get(x, y, z));
+        final BlockState prevBlockstate = ServerRegistries.BLOCK_STATE.get(blockstateIDs.get(x, y, z));
 
         // set state ID
         blockstateIDs.set(x, y, z, stateID);
@@ -75,9 +75,9 @@ public class Chunk <W extends World<? extends Chunk<W>>> {
         world.getBlockLightEngine().increase(this, x, y, z, glowing.x, glowing.y, glowing.z);
 
         // remove black area
-        if(glowing.isZero()){
-            final int opacity = 0;//(15 - blockstate.getBlock().properties().getInt("opacity"));
-            this.setBlockLightLevel(x, y, z, opacity, opacity, opacity);
+        final Vec3i prevGlowing = prevBlockstate.getBlock().properties().getVec3i("glowing");
+        if(glowing.x < prevGlowing.x || glowing.y < prevGlowing.y || glowing.z < prevGlowing.z){
+            world.getBlockLightEngine().decrease(this, x, y, z, prevGlowing.x, prevGlowing.y, prevGlowing.z);
         }
         return true;
     }
