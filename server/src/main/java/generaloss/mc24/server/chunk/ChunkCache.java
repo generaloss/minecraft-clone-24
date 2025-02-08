@@ -17,6 +17,7 @@ public class ChunkCache <W extends World<C>, C extends Chunk<? extends W>> {
     private final W world;
     private final Chunk<?>[] chunks;
     private final Vec3i norBlockPos;
+    private boolean hasNullChunks;
 
     public ChunkCache(W world) {
         this.world = world;
@@ -44,9 +45,10 @@ public class ChunkCache <W extends World<C>, C extends Chunk<? extends W>> {
 
 
     public void cacheNeighborsFor(C chunk) {
-        if(chunks[CENTER_CHUNK_INDEX] == chunk)
+        if(!hasNullChunks && chunks[CENTER_CHUNK_INDEX] == chunk)
             return;
 
+        hasNullChunks = false;
         final ChunkPos position = chunk.position();
 
         for(int i = 0; i < 3; i++) {
@@ -59,6 +61,9 @@ public class ChunkCache <W extends World<C>, C extends Chunk<? extends W>> {
                     }
 
                     final C neighbor = world.getChunk(position.getNeighborPacked(i - 1, j - 1, k - 1));
+                    if(neighbor == null)
+                        hasNullChunks = true;
+
                     chunks[index] = neighbor;
                 }
             }

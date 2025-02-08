@@ -1,7 +1,5 @@
 package generaloss.mc24.server.property;
 
-import jpize.util.math.vector.Vec3i;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -63,8 +61,8 @@ public abstract class AbstractPropertiesHolder<T extends AbstractProperty> {
         return (String) this.get(name);
     }
 
-    public Vec3i getVec3i(String name) {
-        return (Vec3i) this.get(name);
+    public int[] getIntArray(String name) {
+        return (int[]) this.get(name);
     }
 
 }

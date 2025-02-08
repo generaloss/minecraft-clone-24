@@ -9,7 +9,7 @@ uniform sampler2D u_texture;
 uniform vec3 u_lightDirection;
 
 void main() {
-    vec4 color = texture(u_texture, f_texcoord) * f_color;
+    vec4 color = vec4(1.0);//texture(u_texture, f_texcoord) * f_color;
     if(color.a <= 0)
         discard;
     color.rgb *= dot(f_normal, u_lightDirection) * 0.15 + 0.85; // shading

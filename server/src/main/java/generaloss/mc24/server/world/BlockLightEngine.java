@@ -4,6 +4,7 @@ import generaloss.mc24.server.Direction;
 import generaloss.mc24.server.block.BlockState;
 import generaloss.mc24.server.chunk.Chunk;
 import generaloss.mc24.server.chunk.ChunkCache;
+import generaloss.mc24.server.event.BlockLightIncreasedCallback;
 import jpize.util.math.vector.Vec3i;
 
 import java.util.List;
@@ -11,38 +12,109 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class BlockLightEngine <W extends World<C>, C extends Chunk<? extends W>> {
-
-    private record Entry(int x, int y, int z, int channel, int level) { }
+public class BlockLightEngine<W extends World<C>, C extends Chunk<? extends W>> {
 
     public static final int MAX_LEVEL = Chunk.SIZE_BOUND;
 
-    private final Queue<Entry> increaseQueue, decreaseQueue;
+    private record Entry(int x, int y, int z, int channel, int level) { }
+
+
     private final ChunkCache<W, C> chunkCache;
+    private final Queue<Entry> increaseQueue;
+    private final Queue<Entry> decreaseQueue;
     private final List<BlockLightIncreasedCallback<W, C>> blockLightIncreasedCallbacks;
+    private final Vec3i tmp_vec;
 
     public BlockLightEngine(W world) {
+        this.chunkCache = new ChunkCache<>(world);
         this.increaseQueue = new ConcurrentLinkedQueue<>();
         this.decreaseQueue = new ConcurrentLinkedQueue<>();
-        this.chunkCache = new ChunkCache<>(world);
         this.blockLightIncreasedCallbacks = new CopyOnWriteArrayList<>();
+        this.tmp_vec = new Vec3i();
     }
 
     public ChunkCache<W, C> chunkCache() {
         return chunkCache;
     }
 
-    public void increase(Chunk<?> chunk, int x, int y, int z, int r, int g, int b) {
-        if(chunk == null || (r == 0 && g == 0 && b == 0))
+
+    public void registerIncreasedCallback(BlockLightIncreasedCallback<W, C> callback) {
+        blockLightIncreasedCallbacks.add(callback);
+    }
+
+    public void unregisterIncreasedCallback(BlockLightIncreasedCallback<W, C> callback) {
+        blockLightIncreasedCallbacks.remove(callback);
+    }
+
+    private void invokeIncreasedCallbacks(C chunk, int x, int y, int z, int r, int g, int b) {
+        for(BlockLightIncreasedCallback<W, C> callback: blockLightIncreasedCallbacks)
+            callback.invoke(chunk, x, y, z, r, g, b);
+    }
+
+
+    private void forEachDirection(int x, int y, int z, DirConsumer consumer) {
+        for(int i = 0; i < 6; i++){
+            final Vec3i normal = Direction.values()[i].getNormal();
+
+            final int neighborX = (x + normal.x);
+            final int neighborY = (y + normal.y);
+            final int neighborZ = (z + normal.z);
+
+            consumer.accept(neighborX, neighborY, neighborZ);
+        }
+    }
+
+    private void addDirectionalEntries(Queue<Entry> queue, int x, int y, int z, int channel, int level) {
+        this.forEachDirection(x, y, z, (neighborX, neighborY, neighborZ) -> {
+
+            final BlockState blockstate = chunkCache.getBlockState(neighborX, neighborY, neighborZ);
+            final int blockOpacity = blockstate.getBlockProperties().getInt("opacity");
+            final int neighborLevel = (level - Math.max(1, blockOpacity));
+
+            queue.add(new Entry(neighborX, neighborY, neighborZ, channel, neighborLevel));
+        });
+    }
+
+
+    private void addIncreaseEntry(int x, int y, int z, int channel, int level) {
+        if(level < 1)
             return;
+        increaseQueue.add(new Entry(x, y, z, channel, level));
+    }
 
-        increaseQueue.add(new Entry(x, y, z, 0, r));
-        increaseQueue.add(new Entry(x, y, z, 1, g));
-        increaseQueue.add(new Entry(x, y, z, 2, b));
+    private void addIncreaseEntry(int x, int y, int z, int levelR, int levelG, int levelB) {
+        this.addIncreaseEntry(x, y, z, 0, levelR);
+        this.addIncreaseEntry(x, y, z, 1, levelG);
+        this.addIncreaseEntry(x, y, z, 2, levelB);
+    }
 
+    public void increase(Chunk<?> chunk, int x, int y, int z, int levelR, int levelG, int levelB) {
+        if(chunk == null)
+            return;
         chunkCache.cacheNeighborsFor((C) chunk);
+
+        this.addIncreaseEntry(x, y, z, levelR, levelG, levelB);
         this.processIncrease();
-        this.invokeIncreasedCallbacks((C) chunk, x, y, z, r, g, b);
+        this.invokeIncreasedCallbacks((C) chunk, x, y, z, levelR, levelG, levelB);
+    }
+
+    public void fillGapWithNeighborMaxLight(Chunk<?> chunk, int x, int y, int z) {
+        if(chunk == null)
+            return;
+        chunkCache.cacheNeighborsFor((C) chunk);
+
+        tmp_vec.zero();
+        this.forEachDirection(x, y, z, (neighborX, neighborY, neighborZ) -> {
+            final int neighborLevelR = chunkCache.getBlockLightLevel(neighborX, neighborY, neighborZ, 0);
+            final int neighborLevelG = chunkCache.getBlockLightLevel(neighborX, neighborY, neighborZ, 1);
+            final int neighborLevelB = chunkCache.getBlockLightLevel(neighborX, neighborY, neighborZ, 2);
+
+            tmp_vec.setMaxComps(neighborLevelR, neighborLevelG, neighborLevelB);
+        });
+
+        this.addIncreaseEntry(x, y, z, tmp_vec.x - 1, tmp_vec.y - 1, tmp_vec.z - 1);
+        this.processIncrease();
+        this.invokeIncreasedCallbacks((C) chunk, x, y, z, tmp_vec.x, tmp_vec.y, tmp_vec.z);
     }
 
     public void processIncrease() {
@@ -60,35 +132,31 @@ public class BlockLightEngine <W extends World<C>, C extends Chunk<? extends W>>
 
             chunkCache.setBlockLightLevel(x, y, z, channel, level);
 
-            for(int i = 0; i < 6; i++) {
-                final Direction dir = Direction.values()[i];
-                final Vec3i normal = dir.getNormal();
-
-                final int nx = (x + normal.x);
-                final int ny = (y + normal.y);
-                final int nz = (z + normal.z);
-
-                final BlockState neighborBlockstate = chunkCache.getBlockState(nx, ny, nz);
-                final int neighborBlockOpacity = neighborBlockstate.blockProperties().getInt("opacity");
-                final int targetNeighborLevel = (level - Math.max(1, neighborBlockOpacity));
-
-                increaseQueue.add(new Entry(nx, ny, nz, channel, targetNeighborLevel));
-            }
+            this.addDirectionalEntries(increaseQueue, x, y, z, channel, level);
         }
     }
 
 
-    public void decrease(Chunk<?> chunk, int x, int y, int z, int r, int g, int b) {
-        if(chunk == null || (r == MAX_LEVEL && g == MAX_LEVEL && b == MAX_LEVEL))
+    private void addDecreaseEntry(int x, int y, int z, int channel, int levelFrom) {
+        if(levelFrom < 1)
             return;
+        decreaseQueue.add(new Entry(x, y, z, channel, levelFrom));
+    }
 
-        decreaseQueue.add(new Entry(x, y, z, 0, r));
-        decreaseQueue.add(new Entry(x, y, z, 1, g));
-        decreaseQueue.add(new Entry(x, y, z, 2, b));
+    private void addDecreaseEntry(int x, int y, int z, int levelFromR, int levelFromG, int levelFromB) {
+        this.addDecreaseEntry(x, y, z, 0, levelFromR);
+        this.addDecreaseEntry(x, y, z, 1, levelFromG);
+        this.addDecreaseEntry(x, y, z, 2, levelFromB);
+    }
 
+    public void decrease(Chunk<?> chunk, int x, int y, int z, int levelFromR, int levelFromG, int levelFromB) {
+        if(chunk == null)
+            return;
         chunkCache.cacheNeighborsFor((C) chunk);
+
+        this.addDecreaseEntry(x, y, z, levelFromR, levelFromG, levelFromB);
         this.processDecrease();
-        this.invokeIncreasedCallbacks((C) chunk, x, y, z, r, g, b); //! decrease
+        this.invokeIncreasedCallbacks((C) chunk, x, y, z, levelFromR, levelFromG, levelFromB); //! decrease
     }
 
     public void processDecrease() {
@@ -98,61 +166,29 @@ public class BlockLightEngine <W extends World<C>, C extends Chunk<? extends W>>
             final int y = entry.y;
             final int z = entry.z;
             final int channel = entry.channel;
-            final int level = entry.level;
 
+            final int level = entry.level;
             if(level < 0)
                 continue;
 
-            final int prevLevel = chunkCache.getBlockLightLevel(x, y, z, channel);
-            if(prevLevel >= level + 1){
-                for(int i = 0; i < 6; i++){
-                    final Direction dir = Direction.values()[i];
-                    final Vec3i normal = dir.getNormal();
-
-                    final int nx = (x + normal.x);
-                    final int ny = (y + normal.y);
-                    final int nz = (z + normal.z);
-
-                    increaseQueue.add(new Entry(nx, ny, nz, channel, prevLevel - 1));
-                }
+            final int blockLevel = chunkCache.getBlockLightLevel(x, y, z, channel);
+            if(level > blockLevel)
+                continue;
+            if(blockLevel >= level + 1) {
+                this.addDirectionalEntries(increaseQueue, x, y, z, channel, blockLevel);
                 continue;
             }
 
-            if(level > prevLevel)
-                continue;
+            final BlockState blockState = chunkCache.getBlockState(x, y, z);
+            final int glowing = blockState.getBlockProperties().getIntArray("glowing")[channel];
+            if(glowing <= level)
+                this.addIncreaseEntry(x, y, z, channel, glowing);
 
             chunkCache.setBlockLightLevel(x, y, z, channel, 0);
-
-            for(int i = 0; i < 6; i++) {
-                final Direction dir = Direction.values()[i];
-                final Vec3i normal = dir.getNormal();
-
-                final int nx = (x + normal.x);
-                final int ny = (y + normal.y);
-                final int nz = (z + normal.z);
-
-                final BlockState neighborBlockstate = chunkCache.getBlockState(x, y, z);
-                final int neighborBlockOpacity = neighborBlockstate.blockProperties().getInt("opacity");
-                final int targetNeighborLevel = (level - Math.max(1, neighborBlockOpacity));
-
-                decreaseQueue.add(new Entry(nx, ny, nz, channel, targetNeighborLevel));
-            }
+            this.addDirectionalEntries(decreaseQueue, x, y, z, channel, level);
         }
+
         this.processIncrease();
-    }
-
-
-    public void registerIncreasedCallback(BlockLightIncreasedCallback<W, C> callback) {
-        blockLightIncreasedCallbacks.add(callback);
-    }
-
-    public void unregisterIncreasedCallback(BlockLightIncreasedCallback<W, C> callback) {
-        blockLightIncreasedCallbacks.remove(callback);
-    }
-
-    private void invokeIncreasedCallbacks(C chunk, int x, int y, int z, int r, int g, int b) {
-        for(BlockLightIncreasedCallback<W, C> callback: blockLightIncreasedCallbacks)
-            callback.invoke(chunk, x, y, z, r, g, b);
     }
 
 }

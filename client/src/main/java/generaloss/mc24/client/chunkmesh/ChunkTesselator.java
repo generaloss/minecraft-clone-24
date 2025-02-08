@@ -114,8 +114,8 @@ public class ChunkTesselator {
                             this.smoothLightForVertex(channel, vertex, direction);
                     }else{
                         vertexLightCache[channel][vertexIndex] = Math.max(
-                                blockCache.getLightLevel(direction.getX(), direction.getY(), direction.getZ(), channel),
-                                blockCache.getLightLevel(0, 0, 0, channel)
+                            blockCache.getLightLevel(direction.getX(), direction.getY(), direction.getZ(), channel),
+                            blockCache.getLightLevel(0, 0, 0, channel)
                         ) / (float) BlockLightEngine.MAX_LEVEL;
                     }
                 }
@@ -124,10 +124,6 @@ public class ChunkTesselator {
             // add face
             final int beginDataIndex = verticesCache.size();
             verticesCache.add(face.getVertexArray());
-
-            // correct face rotation for a right ao/light smoothing
-            // final boolean rotateFace = (smoothLightCache[1][0] + smoothLightCache[1][2] > smoothLightCache[1][1] + smoothLightCache[1][3]);
-            // final int[] rotatedIndices = BlockFace.VERTEX_INDEX_PERMUTATIONS[rotateFace ? 1 : 0];
 
             // correct vertices
             for(int i = 0; i < vertices.length; i++){
@@ -138,8 +134,7 @@ public class ChunkTesselator {
                 final int cacheLightIndex = (cachePosIndex + BlockVertex.LIGHT_OFFSET);
 
                 // rotated
-                final int rotatedVertexIndex = i; // rotatedIndices[i];
-                final BlockVertex rotatedVertex = vertices[rotatedVertexIndex];
+                final BlockVertex rotatedVertex = vertices[i];
 
                 // position
                 verticesCache.set(cachePosIndex + 0, rotatedVertex.getX() + x);
@@ -154,9 +149,9 @@ public class ChunkTesselator {
                 verticesCache.set(cacheTexcoordIndex + 1, (region.v1() + region.getHeight() * rotatedVertex.getV()));
 
                 // color
-                float red   = vertexLightCache[0][rotatedVertexIndex];
-                float green = vertexLightCache[1][rotatedVertexIndex];
-                float blue  = vertexLightCache[2][rotatedVertexIndex];
+                float red   = vertexLightCache[0][i];
+                float green = vertexLightCache[1][i];
+                float blue  = vertexLightCache[2][i];
 
                 // tint
                 if(face.getTintIndex() == 0){

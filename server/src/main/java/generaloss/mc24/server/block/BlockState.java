@@ -44,7 +44,7 @@ public class BlockState {
     }
 
 
-    public BlockPropertiesHolder blockProperties() {
+    public BlockPropertiesHolder getBlockProperties() {
         return block.properties();
     }
 

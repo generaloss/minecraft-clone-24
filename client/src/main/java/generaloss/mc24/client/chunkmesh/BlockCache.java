@@ -46,24 +46,24 @@ public class BlockCache {
         for(int i = 0; i < 3; i++){
             for(int j = 0; j < 3; j++){
                 for(int k = 0; k < 3; k++){
-
                     final int blockIndex = this.blockIndex(i, j, k);
+                    final int lightIndex = this.lightIndex(i, j, k);
+
                     if(blockIndex == CENTER_BLOCK_INDEX){
                         blocks[blockIndex] = centerBlockstate;
-                        continue;
-                    }
 
-                    final int blockX = (x + i - 1);
-                    final int blockY = (y + j - 1);
-                    final int blockZ = (z + k - 1);
+                        for(int channel = 0; channel < 3; channel++)
+                            lightLevels[lightIndex + channel] = chunkCache.getBlockLightLevel(x, y, z, channel);
+                    }else{
+                        final int blockX = (x + i - 1);
+                        final int blockY = (y + j - 1);
+                        final int blockZ = (z + k - 1);
 
-                    final BlockState neighborBlock = chunkCache.getBlockState(blockX, blockY, blockZ);
-                    blocks[blockIndex] = neighborBlock;
+                        final BlockState neighborBlock = chunkCache.getBlockState(blockX, blockY, blockZ);
+                        blocks[blockIndex] = neighborBlock;
 
-                    final int lightIndex = this.lightIndex(i, j, k);
-                    for(int channel = 0; channel < 3; channel++){
-                        final int lightLevel = chunkCache.getBlockLightLevel(blockX, blockY, blockZ, channel);
-                        lightLevels[lightIndex + channel] = lightLevel;
+                        for(int channel = 0; channel < 3; channel++)
+                            lightLevels[lightIndex + channel] = chunkCache.getBlockLightLevel(blockX, blockY, blockZ, channel);
                     }
                 }
             }

@@ -1,7 +1,6 @@
 package generaloss.mc24.server.block;
 
 import generaloss.mc24.server.property.AbstractProperty;
-import jpize.util.math.vector.Vec3i;
 import org.json.JSONArray;
 
 import java.util.HashMap;
@@ -34,9 +33,9 @@ public class BlockProperty extends AbstractProperty {
 
     static {
         register("opacity", 15, object -> object);
-        register("glowing", new Vec3i(), object -> {
+        register("glowing", new int[3], object -> {
             final JSONArray array = (JSONArray) object;
-            return new Vec3i(array.getInt(0), array.getInt(1), array.getInt(2));
+            return new int[] { array.getInt(0), array.getInt(1), array.getInt(2) };
         });
     }
 

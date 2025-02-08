@@ -4,9 +4,8 @@ import generaloss.mc24.server.block.Block;
 import generaloss.mc24.server.block.BlockState;
 import generaloss.mc24.server.registry.ServerRegistries;
 import generaloss.mc24.server.world.World;
-import jpize.util.math.vector.Vec3i;
 
-public class Chunk <W extends World<? extends Chunk<W>>> {
+public class Chunk<W extends World<? extends Chunk<W>>> {
 
     public static final int SIZE = 16;
     public static final int SIZE_BOUND = (SIZE - 1);
@@ -50,9 +49,11 @@ public class Chunk <W extends World<? extends Chunk<W>>> {
     public BlockState getBlockState(int x, int y, int z) {
         if(blockstateIDs.isOutOfBounds(x, y, z))
             return Block.VOID.getDefaultState();
+
         final int stateID = blockstateIDs.get(x, y, z);
         if(stateID == -1)
             return Block.VOID.getDefaultState();
+
         return ServerRegistries.BLOCK_STATE.get(stateID);
     }
 
@@ -62,22 +63,22 @@ public class Chunk <W extends World<? extends Chunk<W>>> {
         if(stateID == -1 || blockstateIDs.isOutOfBounds(x, y, z))
             return false;
 
-        // get previous state
-        final BlockState prevBlockstate = ServerRegistries.BLOCK_STATE.get(blockstateIDs.get(x, y, z));
-
         // set state ID
         blockstateIDs.set(x, y, z, stateID);
 
-        // increase glowing
-        final Vec3i glowing = blockstate.getBlock().properties().getVec3i("glowing");
-        if(blockstate.getStatePropertyValue("lit") != null && !(boolean) blockstate.getStatePropertyValue("lit"))
-            glowing.mul(0);
-        world.getBlockLightEngine().increase(this, x, y, z, glowing.x, glowing.y, glowing.z);
+        // current & previous glowing
+        final int[] glowing = blockstate.getBlockProperties().getIntArray("glowing");
+        final int prevLightR = this.getBlockLightLevel(x, y, z, 0);
+        final int prevLightG = this.getBlockLightLevel(x, y, z, 1);
+        final int prevLightB = this.getBlockLightLevel(x, y, z, 2);
 
-        // remove black area
-        final Vec3i prevGlowing = prevBlockstate.getBlock().properties().getVec3i("glowing");
-        if(glowing.x < prevGlowing.x || glowing.y < prevGlowing.y || glowing.z < prevGlowing.z){
-            world.getBlockLightEngine().decrease(this, x, y, z, prevGlowing.x, prevGlowing.y, prevGlowing.z);
+        // increase/decrease glowing
+        if(glowing[0] < prevLightR || glowing[1] < prevLightG || glowing[2] < prevLightB) {
+            world.getBlockLightEngine().decrease(this, x, y, z, prevLightR, prevLightG, prevLightB);
+        }else if(glowing[0] > prevLightR || glowing[1] > prevLightG || glowing[2] > prevLightB) {
+            world.getBlockLightEngine().increase(this, x, y, z, glowing[0], glowing[1], glowing[2]);
+        }else{
+            world.getBlockLightEngine().fillGapWithNeighborMaxLight(this, x, y, z);
         }
         return true;
     }
