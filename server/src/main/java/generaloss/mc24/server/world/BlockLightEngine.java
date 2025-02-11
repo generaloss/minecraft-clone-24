@@ -79,7 +79,7 @@ public class BlockLightEngine<W extends World<C>, C extends Chunk<? extends W>> 
     private void addIncreaseEntry(int x, int y, int z, int channel, int level) {
         if(level < 1)
             return;
-        increaseQueue.add(new Entry(x, y, z, channel, level));
+        increaseQueue.add(new Entry(x, y, z, channel, Math.min(MAX_LEVEL, level)));
     }
 
     private void addIncreaseEntry(int x, int y, int z, int levelR, int levelG, int levelB) {
@@ -140,7 +140,7 @@ public class BlockLightEngine<W extends World<C>, C extends Chunk<? extends W>> 
     private void addDecreaseEntry(int x, int y, int z, int channel, int levelFrom) {
         if(levelFrom < 1)
             return;
-        decreaseQueue.add(new Entry(x, y, z, channel, levelFrom));
+        decreaseQueue.add(new Entry(x, y, z, channel, Math.min(MAX_LEVEL, levelFrom)));
     }
 
     private void addDecreaseEntry(int x, int y, int z, int levelFromR, int levelFromG, int levelFromB) {

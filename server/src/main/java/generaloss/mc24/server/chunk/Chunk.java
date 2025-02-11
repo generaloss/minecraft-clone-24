@@ -5,19 +5,19 @@ import generaloss.mc24.server.block.BlockState;
 import generaloss.mc24.server.registry.ServerRegistries;
 import generaloss.mc24.server.world.World;
 
-public class Chunk<W extends World<? extends Chunk<W>>> {
+public abstract class Chunk<W extends World<? extends Chunk<W>>> {
 
     public static final int SIZE = 16;
     public static final int SIZE_BOUND = (SIZE - 1);
-    public static final int AREA = SIZE * SIZE;
-    public static final int VOLUME = AREA * SIZE;
+    public static final int AREA = (SIZE * SIZE);
+    public static final int VOLUME = (AREA * SIZE);
 
     private final W world;
     private final ChunkPos position;
-    private final ByteNibbleArray blockstateIDs;
-    private final ByteMultiNibbleArray blockLight;
+    private final ChunkByteArray blockstateIDs;
+    private final ChunkMultiByteArray blockLight;
 
-    public Chunk(W world, ChunkPos position, ByteNibbleArray blockstateIDs, ByteMultiNibbleArray blockLight) {
+    public Chunk(W world, ChunkPos position, ChunkByteArray blockstateIDs, ChunkMultiByteArray blockLight) {
         this.world = world;
         this.position = position;
         this.blockstateIDs = blockstateIDs;
@@ -25,7 +25,7 @@ public class Chunk<W extends World<? extends Chunk<W>>> {
     }
 
     public Chunk(W world, ChunkPos position) {
-        this(world, position, new ByteNibbleArray(), new ByteMultiNibbleArray(3));
+        this(world, position, new ChunkByteArray(), new ChunkMultiByteArray(3));
     }
 
 
@@ -37,11 +37,11 @@ public class Chunk<W extends World<? extends Chunk<W>>> {
         return position;
     }
 
-    public ByteNibbleArray getBlockStateIDs() {
+    public ChunkByteArray getBlockStateIDs() {
         return blockstateIDs;
     }
 
-    public ByteMultiNibbleArray getBlockLight() {
+    public ChunkMultiByteArray getBlockLight() {
         return blockLight;
     }
 

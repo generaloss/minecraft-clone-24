@@ -4,7 +4,6 @@ import generaloss.mc24.client.level.WorldLevel;
 import generaloss.mc24.server.Direction;
 import generaloss.mc24.server.block.BlockState;
 import jpize.util.camera.Camera3D;
-import jpize.util.math.Mathc;
 import jpize.util.math.Maths;
 import jpize.util.math.vector.Vec3f;
 import jpize.util.math.vector.Vec3i;
@@ -48,9 +47,13 @@ public class BlockSelectRay {
         final Vec3f pos = camera.position();
         final Vec3f dir = camera.getDirection();
 
-        final Vec3i step = new Vec3i(Mathc.signum(dir.x), Mathc.signum(dir.y), Mathc.signum(dir.z));
-        final Vec3f delta = new Vec3f(step.x / dir.x, step.y / dir.y, step.z / dir.z);
-        final Vec3f tMax = new Vec3f(Math.min(distance / 2, Math.abs((Math.max(step.x, 0) - Maths.frac(pos.x)) / dir.x)), Math.min(distance / 2, Math.abs((Math.max(step.y, 0) - Maths.frac(pos.y)) / dir.y)), Math.min(distance / 2, Math.abs((Math.max(step.z, 0) - Maths.frac(pos.z)) / dir.z)));
+        final Vec3i step = dir.signum(new Vec3i());
+        final Vec3f delta = step.castFloat().div(dir);
+        final Vec3f tMax = new Vec3f(distance).mul(0.5F).setMinComps(
+            Math.abs((Math.max(step.x, 0) - Maths.frac(pos.x)) / dir.x),
+            Math.abs((Math.max(step.y, 0) - Maths.frac(pos.y)) / dir.y),
+            Math.abs((Math.max(step.z, 0) - Maths.frac(pos.z)) / dir.z)
+        );
 
         destroyPosition.set(pos.xFloor(), pos.yFloor(), pos.zFloor());
         final Vec3i faceNormal = new Vec3i();

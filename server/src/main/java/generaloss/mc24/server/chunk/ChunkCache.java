@@ -72,8 +72,8 @@ public class ChunkCache <W extends World<C>, C extends Chunk<? extends W>> {
 
 
     public C findForBlock(int x, int y, int z) {
-        final int chunkY = Mathc.signum(Maths.floor((float) y / Chunk.SIZE));
         final int chunkX = Mathc.signum(Maths.floor((float) x / Chunk.SIZE));
+        final int chunkY = Mathc.signum(Maths.floor((float) y / Chunk.SIZE));
         final int chunkZ = Mathc.signum(Maths.floor((float) z / Chunk.SIZE));
         final Chunk<?> chunk = this.get(chunkX, chunkY, chunkZ);
         if(chunk == null)

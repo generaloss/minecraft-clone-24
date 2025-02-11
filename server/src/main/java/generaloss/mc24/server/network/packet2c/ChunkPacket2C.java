@@ -26,12 +26,12 @@ public class ChunkPacket2C extends NetPacket<IClientProtocolGame> {
         return new ChunkPos(positionPacked);
     }
 
-    public ByteNibbleArray getBlockstateIDs() {
-        return new ByteNibbleArray(blockstateIDs);
+    public ChunkByteArray getBlockstateIDs() {
+        return new ChunkByteArray(blockstateIDs);
     }
 
-    public ByteMultiNibbleArray getBlockLight() {
-        return new ByteMultiNibbleArray(3, blockLight);
+    public ChunkMultiByteArray getBlockLight() {
+        return new ChunkMultiByteArray(3, blockLight);
     }
 
     @Override
