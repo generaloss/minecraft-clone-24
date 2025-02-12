@@ -16,7 +16,7 @@ import generaloss.mc24.server.registry.ServerRegistries;
 import generaloss.mc24.client.screen.MainMenuScreen;
 import generaloss.mc24.client.player.ClientPlayer;
 import generaloss.mc24.client.screen.SessionScreen;
-import generaloss.mc24.server.ArgsMap;
+import generaloss.mc24.server.common.ArgsMap;
 import generaloss.mc24.server.Server;
 import generaloss.mc24.server.resourcepack.ResourcePack;
 import generaloss.mc24.server.resourcepack.ResourcePackManager;
@@ -195,9 +195,9 @@ public class Main extends JpizeApplication {
                 for(BlockState blockstate: ServerRegistries.BLOCK_STATE.getValues()){
                     final int ID = ServerRegistries.BLOCK_STATE.getID(blockstate);
                     writer.print(blockstate.getBlockID() + "/" + ID + "/");
-                    blockstate.getStateProperties().forEach((key, value) -> {
-                        writer.print(key.getName() + ":" + value.toString() + ",");
-                    });
+                    blockstate.getStateProperties().forEach((key, value) ->
+                        writer.print(key.getName() + ":" + value.toString() + ",")
+                    );
                     writer.println();
                 }
 

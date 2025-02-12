@@ -1,4 +1,4 @@
-package generaloss.mc24.server;
+package generaloss.mc24.server.common;
 
 import java.util.*;
 

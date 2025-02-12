@@ -1,7 +1,7 @@
 package generaloss.mc24.server.registry;
 
-import generaloss.mc24.server.IntRegistry;
 import generaloss.mc24.server.block.BlockState;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;

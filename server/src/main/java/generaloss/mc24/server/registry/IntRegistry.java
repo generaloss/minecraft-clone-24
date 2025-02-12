@@ -1,4 +1,6 @@
-package generaloss.mc24.server;
+package generaloss.mc24.server.registry;
+
+import generaloss.mc24.server.common.ObjectIntMap;
 
 import java.util.Collection;
 
