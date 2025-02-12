@@ -2,7 +2,6 @@ package generaloss.mc24.server.network.connection;
 
 import generaloss.mc24.server.Server;
 import generaloss.mc24.server.block.BlockState;
-import generaloss.mc24.server.chunk.Chunk;
 import generaloss.mc24.server.network.AccountSession;
 import generaloss.mc24.server.network.packet2c.ChunkPacket2C;
 import generaloss.mc24.server.network.packet2c.MoveEntityPacket2C;
@@ -14,8 +13,6 @@ import generaloss.mc24.server.entity.player.ServerPlayer;
 import generaloss.mc24.server.registry.ServerRegistries;
 import generaloss.mc24.server.world.ServerWorld;
 import jpize.util.net.tcp.TCPConnection;
-
-import java.util.Collection;
 
 public class ServerConnectionGame extends ServerConnection implements IServerProtocolGame {
 
@@ -31,12 +28,9 @@ public class ServerConnectionGame extends ServerConnection implements IServerPro
     }
 
     public void sendAllChunks() {
-        final Collection<Chunk<ServerWorld>> chunks = super.server()
-            .worldHolder().getWorld("overworld").getChunks();
-
-        for(Chunk<ServerWorld> chunk: chunks)
-            if(!super.sendPacket(new ChunkPacket2C(chunk)))
-                break;
+        super.server().worldHolder().getWorld("overworld").forEachChunk(chunk ->
+            super.sendPacket(new ChunkPacket2C(chunk))
+        );
     }
 
 
@@ -47,12 +41,12 @@ public class ServerConnectionGame extends ServerConnection implements IServerPro
         final BlockState blockstate = ServerRegistries.BLOCK_STATE.get(packet.getBlockStateID());
         if(blockstate == null)
             return;
-        world.getChunk(packet.getChunkPositionPacked()).setBlockState(
-                packet.getLocalX(), packet.getLocalY(), packet.getLocalZ(), blockstate
+        world.getChunk(packet.getChunkPosition()).setBlockState(
+            packet.getLocalX(), packet.getLocalY(), packet.getLocalZ(), blockstate
         );
         // add an stack
         super.server().net().tcpServer().broadcast(super.tcpConnection(), new SetBlockStatePacket2C(
-            packet.getChunkPositionPacked(),
+            packet.getChunkPosition(),
             packet.getLocalX(), packet.getLocalY(), packet.getLocalZ(),
             packet.getBlockStateID()
         ));

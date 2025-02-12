@@ -5,7 +5,7 @@ import generaloss.mc24.server.block.BlockState;
 import generaloss.mc24.server.registry.ServerRegistries;
 import generaloss.mc24.server.world.World;
 
-public abstract class Chunk<W extends World<? extends Chunk<W>>> {
+public abstract class Chunk<W extends World<? extends Chunk<? extends W>>> {
 
     public static final int SIZE = 16;
     public static final int SIZE_BOUND = (SIZE - 1);

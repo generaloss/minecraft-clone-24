@@ -23,8 +23,11 @@ public class IntSortedList<T> implements Iterable<T> {
     }
 
     
-    public T get(int index) {
-        return list.get(index);
+    public T get(int value) {
+        final int index = this.searchValueIndex(value);
+        if(this.isIndexValid(index))
+            return list.get(index);
+        return null;
     }
 
     public void put(T object) {
@@ -39,7 +42,7 @@ public class IntSortedList<T> implements Iterable<T> {
 
     public T remove(int value) {
         final int index = this.searchValueIndex(value);
-        if(index < list.size()){
+        if(this.isIndexValid(index)){
             return list.remove(index);
         }else{
             System.err.println("Index '" + index + "' is invalid, nothing to remove.");
@@ -74,7 +77,11 @@ public class IntSortedList<T> implements Iterable<T> {
     }
 
     public boolean contains(int index, T object) {
-        return (index < list.size() && list.get(index) == object);
+        return (this.isIndexValid(index) && list.get(index) == object);
+    }
+
+    public boolean isIndexValid(int index) {
+        return (index < list.size());
     }
 
 

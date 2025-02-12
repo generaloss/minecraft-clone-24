@@ -4,13 +4,11 @@ import generaloss.mc24.server.Direction;
 import generaloss.mc24.server.block.BlockState;
 import generaloss.mc24.server.chunk.Chunk;
 import generaloss.mc24.server.chunk.ChunkCache;
-import generaloss.mc24.server.event.BlockLightIncreasedCallback;
+import generaloss.mc24.server.event.Events;
 import jpize.util.math.vector.Vec3i;
 
-import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 public class BlockLightEngine<W extends World<C>, C extends Chunk<? extends W>> {
 
@@ -22,33 +20,17 @@ public class BlockLightEngine<W extends World<C>, C extends Chunk<? extends W>> 
     private final ChunkCache<W, C> chunkCache;
     private final Queue<Entry> increaseQueue;
     private final Queue<Entry> decreaseQueue;
-    private final List<BlockLightIncreasedCallback<W, C>> blockLightIncreasedCallbacks;
     private final Vec3i tmp_vec;
 
     public BlockLightEngine(W world) {
         this.chunkCache = new ChunkCache<>(world);
         this.increaseQueue = new ConcurrentLinkedQueue<>();
         this.decreaseQueue = new ConcurrentLinkedQueue<>();
-        this.blockLightIncreasedCallbacks = new CopyOnWriteArrayList<>();
         this.tmp_vec = new Vec3i();
     }
 
     public ChunkCache<W, C> chunkCache() {
         return chunkCache;
-    }
-
-
-    public void registerIncreasedCallback(BlockLightIncreasedCallback<W, C> callback) {
-        blockLightIncreasedCallbacks.add(callback);
-    }
-
-    public void unregisterIncreasedCallback(BlockLightIncreasedCallback<W, C> callback) {
-        blockLightIncreasedCallbacks.remove(callback);
-    }
-
-    private void invokeIncreasedCallbacks(C chunk, int x, int y, int z, int r, int g, int b) {
-        for(BlockLightIncreasedCallback<W, C> callback: blockLightIncreasedCallbacks)
-            callback.invoke(chunk, x, y, z, r, g, b);
     }
 
 
@@ -95,7 +77,7 @@ public class BlockLightEngine<W extends World<C>, C extends Chunk<? extends W>> 
 
         this.addIncreaseEntry(x, y, z, levelR, levelG, levelB);
         this.processIncrease();
-        this.invokeIncreasedCallbacks((C) chunk, x, y, z, levelR, levelG, levelB);
+        Events.invokeLightIncreased(chunk, x, y, z, levelR, levelG, levelB);
     }
 
     public void fillGapWithNeighborMaxLight(Chunk<?> chunk, int x, int y, int z) {
@@ -114,7 +96,7 @@ public class BlockLightEngine<W extends World<C>, C extends Chunk<? extends W>> 
 
         this.addIncreaseEntry(x, y, z, tmp_vec.x - 1, tmp_vec.y - 1, tmp_vec.z - 1);
         this.processIncrease();
-        this.invokeIncreasedCallbacks((C) chunk, x, y, z, tmp_vec.x, tmp_vec.y, tmp_vec.z);
+        Events.invokeLightIncreased(chunk, x, y, z, tmp_vec.x, tmp_vec.y, tmp_vec.z);
     }
 
     public void processIncrease() {
@@ -156,7 +138,7 @@ public class BlockLightEngine<W extends World<C>, C extends Chunk<? extends W>> 
 
         this.addDecreaseEntry(x, y, z, levelFromR, levelFromG, levelFromB);
         this.processDecrease();
-        this.invokeIncreasedCallbacks((C) chunk, x, y, z, levelFromR, levelFromG, levelFromB); //! decrease
+        Events.invokeLightIncreased(chunk, x, y, z, levelFromR, levelFromG, levelFromB); //! decrease
     }
 
     public void processDecrease() {

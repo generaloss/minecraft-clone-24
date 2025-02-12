@@ -10,7 +10,7 @@ import jpize.util.math.vector.Vec3i;
 
 import java.util.function.Consumer;
 
-public class ChunkCache <W extends World<C>, C extends Chunk<? extends W>> {
+public class ChunkCache<W extends World<? extends C>, C extends Chunk<? extends W>> {
 
     public static final int CENTER_CHUNK_INDEX = 13;
 
@@ -60,7 +60,7 @@ public class ChunkCache <W extends World<C>, C extends Chunk<? extends W>> {
                         continue;
                     }
 
-                    final C neighbor = world.getChunk(position.getNeighborPacked(i - 1, j - 1, k - 1));
+                    final C neighbor = world.getChunk(position.getNeighbor(i - 1, j - 1, k - 1));
                     if(neighbor == null)
                         hasNullChunks = true;
 

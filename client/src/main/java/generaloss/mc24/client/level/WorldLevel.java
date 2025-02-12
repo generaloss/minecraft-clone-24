@@ -4,14 +4,14 @@ import generaloss.mc24.client.Main;
 import generaloss.mc24.client.chunkmesh.ChunkTesselatorPool;
 import generaloss.mc24.server.chunk.Chunk;
 import generaloss.mc24.server.chunk.ChunkPos;
+import generaloss.mc24.server.column.ChunkColumn;
+import generaloss.mc24.server.column.ColumnPos;
+import generaloss.mc24.server.event.Events;
 import generaloss.mc24.server.network.packet2s.SetBlockStatePacket2S;
 import generaloss.mc24.server.registry.ServerRegistries;
 import generaloss.mc24.server.world.World;
 import jpize.util.Disposable;
 import jpize.util.camera.PerspectiveCamera;
-
-import java.util.Collection;
-import java.util.stream.Collectors;
 
 public class WorldLevel extends World<LevelChunk> implements Disposable {
 
@@ -25,20 +25,20 @@ public class WorldLevel extends World<LevelChunk> implements Disposable {
         this.renderer = new LevelRenderer(context, this);
 
         // light callback
-        super.getBlockLightEngine().registerIncreasedCallback((chunk, x, y, z, r, g, b) -> {
+        Events.registerLightIncreased((chunk, x, y, z, r, g, b) -> {
             // tesselate all cached chunks
             super.getBlockLightEngine().chunkCache().forEach(tesselators::tesselate);
         });
 
         // blockstate callback
-        super.registerBlockstateChangedCallback((chunk, localX, localY, localZ, blockstate) -> {
+        Events.registerBlockstateChanged((chunk, localX, localY, localZ, blockstate) -> {
             // send packet
             context.connection().sendPacket(new SetBlockStatePacket2S(
                 chunk.position(), localX, localY, localZ, ServerRegistries.BLOCK_STATE.getID(blockstate)
             ));
 
             // tesselate chunk
-            tesselators.tesselate(chunk);
+            tesselators.tesselate((LevelChunk) chunk);
 
             // tesselate neighbor chunks
             final int chunkX = (localX == 0 ? -1 : (localX == Chunk.SIZE_BOUND ? 1 : 0));
@@ -46,25 +46,25 @@ public class WorldLevel extends World<LevelChunk> implements Disposable {
             final int chunkZ = (localZ == 0 ? -1 : (localZ == Chunk.SIZE_BOUND ? 1 : 0));
             final int count = (Math.abs(chunkX) + Math.abs(chunkY) + Math.abs(chunkZ));
             if(count > 0) {
-                tesselators.tesselate(this.getChunk(chunk.position().getNeighborPacked(chunkX, chunkY, chunkZ)));
+                tesselators.tesselate(this.getChunk(chunk.position().getNeighbor(chunkX, chunkY, chunkZ)));
             }
             if(count > 1) {
                 if(chunkX == 0){
-                    tesselators.tesselate(this.getChunk(chunk.position().getNeighborPacked(0, chunkY, 0)));
-                    tesselators.tesselate(this.getChunk(chunk.position().getNeighborPacked(0, 0, chunkZ)));
+                    tesselators.tesselate(this.getChunk(chunk.position().getNeighbor(0, chunkY, 0)));
+                    tesselators.tesselate(this.getChunk(chunk.position().getNeighbor(0, 0, chunkZ)));
                 }else if(chunkY == 0){
-                    tesselators.tesselate(this.getChunk(chunk.position().getNeighborPacked(chunkX, 0, 0)));
-                    tesselators.tesselate(this.getChunk(chunk.position().getNeighborPacked(0, 0, chunkZ)));
+                    tesselators.tesselate(this.getChunk(chunk.position().getNeighbor(chunkX, 0, 0)));
+                    tesselators.tesselate(this.getChunk(chunk.position().getNeighbor(0, 0, chunkZ)));
                 }else if(chunkZ == 0){
-                    tesselators.tesselate(this.getChunk(chunk.position().getNeighborPacked(chunkX, 0, 0)));
-                    tesselators.tesselate(this.getChunk(chunk.position().getNeighborPacked(0, chunkY, 0)));
+                    tesselators.tesselate(this.getChunk(chunk.position().getNeighbor(chunkX, 0, 0)));
+                    tesselators.tesselate(this.getChunk(chunk.position().getNeighbor(0, chunkY, 0)));
                 }else{
-                    tesselators.tesselate(this.getChunk(chunk.position().getNeighborPacked(0, chunkY, chunkZ)));
-                    tesselators.tesselate(this.getChunk(chunk.position().getNeighborPacked(chunkX, 0, chunkZ)));
-                    tesselators.tesselate(this.getChunk(chunk.position().getNeighborPacked(chunkX, chunkY, 0)));
-                    tesselators.tesselate(this.getChunk(chunk.position().getNeighborPacked(0, 0, chunkZ)));
-                    tesselators.tesselate(this.getChunk(chunk.position().getNeighborPacked(0, chunkY, 0)));
-                    tesselators.tesselate(this.getChunk(chunk.position().getNeighborPacked(chunkX, 0, 0)));
+                    tesselators.tesselate(this.getChunk(chunk.position().getNeighbor(0, chunkY, chunkZ)));
+                    tesselators.tesselate(this.getChunk(chunk.position().getNeighbor(chunkX, 0, chunkZ)));
+                    tesselators.tesselate(this.getChunk(chunk.position().getNeighbor(chunkX, chunkY, 0)));
+                    tesselators.tesselate(this.getChunk(chunk.position().getNeighbor(0, 0, chunkZ)));
+                    tesselators.tesselate(this.getChunk(chunk.position().getNeighbor(0, chunkY, 0)));
+                    tesselators.tesselate(this.getChunk(chunk.position().getNeighbor(chunkX, 0, 0)));
                 }
             }
         });
@@ -79,10 +79,11 @@ public class WorldLevel extends World<LevelChunk> implements Disposable {
     }
 
 
-    public Collection<LevelChunk> getSortedChunks() {
-        final Collection<LevelChunk> chunks = this.getChunks();
-        return chunks.stream().sorted().collect(Collectors.toList());
+    @Override
+    protected ChunkColumn<LevelChunk> createColumn(ColumnPos position) {
+        return new ClientChunkColumn(this, position);
     }
+
 
     @Override
     public void putChunk(LevelChunk chunk) {
@@ -90,12 +91,12 @@ public class WorldLevel extends World<LevelChunk> implements Disposable {
         tesselators.tesselate(chunk);
 
         final ChunkPos position = chunk.position();
-        tesselators.tesselate(super.getChunk(position.getNeighborPacked( 1,  0,  0)));
-        tesselators.tesselate(super.getChunk(position.getNeighborPacked( 0,  1,  0)));
-        tesselators.tesselate(super.getChunk(position.getNeighborPacked( 0,  0,  1)));
-        tesselators.tesselate(super.getChunk(position.getNeighborPacked(-1,  0,  0)));
-        tesselators.tesselate(super.getChunk(position.getNeighborPacked( 0, -1,  0)));
-        tesselators.tesselate(super.getChunk(position.getNeighborPacked( 0,  0, -1)));
+        tesselators.tesselate(super.getChunk(position.getNeighbor( 1,  0,  0)));
+        tesselators.tesselate(super.getChunk(position.getNeighbor( 0,  1,  0)));
+        tesselators.tesselate(super.getChunk(position.getNeighbor( 0,  0,  1)));
+        tesselators.tesselate(super.getChunk(position.getNeighbor(-1,  0,  0)));
+        tesselators.tesselate(super.getChunk(position.getNeighbor( 0, -1,  0)));
+        tesselators.tesselate(super.getChunk(position.getNeighbor( 0,  0, -1)));
     }
 
 
@@ -109,10 +110,12 @@ public class WorldLevel extends World<LevelChunk> implements Disposable {
 
 
     public void reset() {
-        super.clearChunks();
+        super.clearColumns();
         tesselators.reset();
-        for(LevelChunk chunk: this.getChunks())
+        super.forEachChunk(chunk -> {
             chunk.freeMesh();
+            return true;
+        });
     }
 
     @Override

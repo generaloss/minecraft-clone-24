@@ -11,8 +11,6 @@ import jpize.util.camera.PerspectiveCamera;
 import jpize.util.math.matrix.Matrix4f;
 import jpize.util.math.vector.Vec3f;
 
-import java.util.Collection;
-
 public class LevelRenderer {
 
     public static final Vec3f LIGHT_DIRECTION = new Vec3f(-0.3F, -1F, -0.7F);
@@ -41,20 +39,20 @@ public class LevelRenderer {
         shader.bind();
         shader.uniform("u_texture", blockAtlasTexture);
 
-        final Collection<LevelChunk> chunks = level.getSortedChunks();
-        for(LevelChunk chunk: chunks){
+        level.forEachChunk(chunk -> {
             final ChunkMesh mesh = chunk.mesh();
             if(mesh == null)
-                continue;
+                return true;
 
             final ChunkPos position = chunk.position();
             if(!position.isVisible(camera.frustum()))
-                continue;
+                return true;
 
             matrix.set(camera.getCombined()).translate(position.getBlockX(), position.getBlockY(), position.getBlockZ());
             shader.uniform("u_combined", matrix);
             mesh.render();
-        }
+            return true;
+        });
     }
 
 }

@@ -10,12 +10,12 @@ import java.io.IOException;
 
 public class SetBlockStatePacket2S extends NetPacket<IServerProtocolGame> {
 
-    private long chunkPositionPacked;
+    private ChunkPos chunkPosition;
     private int localX, localY, localZ;
     private int blockstateID;
 
     public SetBlockStatePacket2S(ChunkPos chunkPosition, int localX, int localY, int localZ, int blockstateID) {
-        this.chunkPositionPacked = chunkPosition.pack();
+        this.chunkPosition = chunkPosition;
         this.localX = localX;
         this.localY = localY;
         this.localZ = localZ;
@@ -25,8 +25,8 @@ public class SetBlockStatePacket2S extends NetPacket<IServerProtocolGame> {
     public SetBlockStatePacket2S() { }
 
 
-    public long getChunkPositionPacked() {
-        return chunkPositionPacked;
+    public ChunkPos getChunkPosition() {
+        return chunkPosition;
     }
 
     public int getLocalX() {
@@ -48,13 +48,13 @@ public class SetBlockStatePacket2S extends NetPacket<IServerProtocolGame> {
 
     @Override
     public void write(ExtDataOutputStream stream) throws IOException {
-        stream.writeLong(chunkPositionPacked);
+        stream.writeLong(chunkPosition.getPacked());
         stream.writeInts(localX, localY, localZ, blockstateID);
     }
 
     @Override
     public void read(ExtDataInputStream stream) throws IOException {
-        chunkPositionPacked = stream.readLong();
+        chunkPosition = ChunkPos.unpack(stream.readLong());
         localX = stream.readInt();
         localY = stream.readInt();
         localZ = stream.readInt();

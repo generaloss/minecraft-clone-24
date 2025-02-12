@@ -1,6 +1,5 @@
 package generaloss.mc24.client;
 
-import generaloss.mc24.client.level.LevelChunk;
 import generaloss.mc24.client.level.WorldLevel;
 import generaloss.mc24.client.network.ClientConnection;
 import generaloss.mc24.client.resource.ClientResources;
@@ -185,7 +184,7 @@ public class Main extends JpizeApplication {
             final FileResource dirRes = FileResource.file("./chunksave/overworld/");
             dirRes.mkdirs();
 
-            for(LevelChunk chunk: level.getChunks()){
+            level.forEachChunk(chunk -> {
                 final ChunkPos pos = chunk.position();
                 final FileResource res = dirRes.child("chunk" + pos.getX() + "x" + pos.getY() + ".txt");
                 res.create();
@@ -212,16 +211,18 @@ public class Main extends JpizeApplication {
                 writer.println();
 
                 writer.close();
-            }
+                return true;
+            });
         }
     }
 
     private void retesselateAllChunks() {
         level.tesselators().reset();
-        for(LevelChunk chunk: level.getSortedChunks()){
+        level.forEachChunk(chunk -> {
             chunk.freeMesh();
             level.tesselators().tesselate(chunk);
-        }
+            return true;
+        });
     }
 
     @Override

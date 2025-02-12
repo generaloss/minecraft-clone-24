@@ -1,12 +1,15 @@
 package generaloss.mc24.server.world;
 
 import generaloss.mc24.server.Server;
-import generaloss.mc24.server.chunk.Chunk;
+import generaloss.mc24.server.chunk.ServerChunk;
 import generaloss.mc24.server.chunkload.WorldChunkLoader;
+import generaloss.mc24.server.column.ChunkColumn;
+import generaloss.mc24.server.column.ColumnPos;
+import generaloss.mc24.server.column.ServerChunkColumn;
 import generaloss.mc24.server.worldgen.IChunkGenerator;
 import jpize.util.time.Tickable;
 
-public class ServerWorld extends World<Chunk<ServerWorld>> implements Tickable {
+public class ServerWorld extends World<ServerChunk> implements Tickable {
 
     private final Server server;
     private final String ID;
@@ -46,6 +49,11 @@ public class ServerWorld extends World<Chunk<ServerWorld>> implements Tickable {
     @Override
     public void tick() {
 
+    }
+
+    @Override
+    protected ChunkColumn<ServerChunk> createColumn(ColumnPos position) {
+        return new ServerChunkColumn(this, position);
     }
 
 }

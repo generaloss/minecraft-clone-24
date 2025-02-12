@@ -6,39 +6,55 @@ import generaloss.mc24.server.world.World;
 
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public abstract class ChunkColumn<W extends World<? extends Chunk<W>>> {
+public abstract class ChunkColumn<C extends Chunk<? extends World<C>>> {
 
-    private final IntSortedList<Chunk<W>> chunks;
+    private final World<C> world;
+    private final ColumnPos position;
+    private final IntSortedList<C> chunks;
 
-    public ChunkColumn() {
-        this.chunks = new IntSortedList<>(
-            new CopyOnWriteArrayList<>(),
+    public ChunkColumn(World<C> world, ColumnPos position) {
+        this.world = world;
+        this.position = position;
+        this.chunks = new IntSortedList<>(new CopyOnWriteArrayList<>(),
             chunk -> chunk.position().getY()
         );
     }
 
-    public Iterable<Chunk<W>> chunks() {
+    public World<C> world() {
+        return world;
+    }
+
+    public ColumnPos position() {
+        return position;
+    }
+
+
+    public int size() {
+        return chunks.size();
+    }
+
+    public Iterable<C> getChunks() {
         return chunks.list();
     }
 
-    public Iterable<Chunk<W>> chunks(int startChunkY, int endChunkY) {
+    public Iterable<C> getChunks(int startChunkY, int endChunkY) {
         return chunks.sublist(startChunkY, endChunkY);
     }
 
 
-    public Chunk<W> getChunk(int chunkY) {
+    public C getChunk(int chunkY) {
         return chunks.get(chunkY);
     }
 
-    public void putChunk(Chunk<W> chunk) {
+    public void putChunk(C chunk) {
         chunks.put(chunk);
     }
 
-    public Chunk<W> removeChunk(Chunk<W> chunk) {
+    public C removeChunk(C chunk) {
         return chunks.remove(chunk);
     }
 
-    public Chunk<W> removeChunk(int chunkY) {
+    public C removeChunk(int chunkY) {
         return chunks.remove(chunkY);
     }
 

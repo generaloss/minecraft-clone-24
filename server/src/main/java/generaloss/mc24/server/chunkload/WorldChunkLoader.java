@@ -1,8 +1,8 @@
 package generaloss.mc24.server.chunkload;
 
-import generaloss.mc24.server.chunk.Chunk;
 import generaloss.mc24.server.chunk.ChunkPos;
 import generaloss.mc24.server.chunk.ServerChunk;
+import generaloss.mc24.server.column.ChunkColumn;
 import generaloss.mc24.server.world.ServerWorld;
 
 import java.util.Collection;
@@ -52,13 +52,13 @@ public class WorldChunkLoader {
                     this.loadChunk(-r, y, i);
             }
         }
-        for(Chunk<ServerWorld> chunk: world.getChunks()) {
-            if(chunk instanceof ServerChunk serverChunk) {
-                world.getChunkGenerator().generateDecoration(serverChunk);
-                serverChunk.markLoaded();
+        for(ChunkColumn<ServerChunk> column: world.getColumns()) {
+            for(ServerChunk chunk: column.getChunks()){
+                world.getChunkGenerator().generateDecoration(chunk);
+                chunk.markLoaded();
             }
         }
-        System.out.println("[INFO]: " + world.getChunks().size() + " chunks loaded.");
+        System.out.println("[INFO]: " + world.getColumns().size() + " chunks loaded.");
     }
 
     private void loadChunk(int chunkX, int chunkY, int chunkZ) {
@@ -66,6 +66,8 @@ public class WorldChunkLoader {
         final ServerChunk chunk = new ServerChunk(world, position);
         world.getChunkGenerator().generateBase(chunk);
         world.putChunk(chunk);
+        if(world.getChunk(chunk.position()) == null)
+            System.out.println(chunk.position());
     }
 
 }

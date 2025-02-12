@@ -15,7 +15,7 @@ public class ChunkPacket2C extends NetPacket<IClientProtocolGame> {
     private byte[] blockLight;
 
     public ChunkPacket2C(Chunk<?> chunk) {
-        this.positionPacked = chunk.position().pack();
+        this.positionPacked = chunk.position().getPacked();
         this.blockstateIDs = chunk.getBlockStateIDs().array();
         this.blockLight = chunk.getBlockLight().array();
     }
