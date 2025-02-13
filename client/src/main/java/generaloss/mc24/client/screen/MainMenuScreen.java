@@ -38,7 +38,6 @@ public class MainMenuScreen extends Screen {
     private TextField nicknameField;
     private TextField passwordField;
     private String serverInfo = "Server Info: (press 'Ctrl + I' to ping server)";
-    private String disconnectMessage = "";
     private String accountStatus = "Account status: ";
     private final ExecutorService executors;
 
@@ -72,6 +71,7 @@ public class MainMenuScreen extends Screen {
     public void init() {
         this.nicknameField = new TextField(10, 650, ClientResources.FONTS.get("default").resource());
         this.nicknameField.setHint("nickname");
+        this.nicknameField.setFocused(true);
 
         this.passwordField = new TextField(10, 600, ClientResources.FONTS.get("default").resource());
         this.passwordField.setHint("password");
@@ -113,6 +113,7 @@ public class MainMenuScreen extends Screen {
         if(Key.LCTRL.pressed() && Key.L.down()) {
             executors.execute(() -> {
                 final String nickname = nicknameField.getText();
+                accountStatus = "Login status: Logging...";
                 final Response response = Request.sendLogin(SharedConstants.ACCOUNTS_HOST, nickname, passwordField.getText());
                 if(response.getCode().noError()){
                     final AccountSession session = new AccountSession(response.readUUID(), nickname);
@@ -147,7 +148,7 @@ public class MainMenuScreen extends Screen {
         if(Key.LCTRL.pressed() && Key.S.down())
             serverAddressField.setText("mineclone.ignorelist.com:22854");
         // exit
-        if(Key.ESCAPE.down())
+        if(Key.LCTRL.pressed() && Key.ESCAPE.down())
             Jpize.exit();
         // tab fields
         if(Key.TAB.down()) {
@@ -168,12 +169,6 @@ public class MainMenuScreen extends Screen {
 
     public void onServerInfo(String motd, String version, long ping) {
         serverInfo = "Server info: " + motd + ", " + version + ", " + ping + "ms.";
-    }
-
-    public void onDisconnect(String message) {
-        super.context.disconnectSession();
-        super.getManager().setCurrent(MainMenuScreen.SCREEN_ID);
-        disconnectMessage = "Disconnection: " + message;
     }
 
     @Override
@@ -208,11 +203,9 @@ public class MainMenuScreen extends Screen {
         position += font.getLineAdvanceScaled();
         font.drawText(batch, "'Ctrl + S' - paste server IP", 10F, position);
         position += font.getLineAdvanceScaled();
-        font.drawText(batch, "'ESCAPE' - quit / to main menu", 10F, position);
+        font.drawText(batch, "'Ctrl + ESCAPE' - quit / to main menu", 10F, position);
         position += font.getLineAdvanceScaled();
         font.drawText(batch, serverInfo, 10F, position);
-        position += font.getLineAdvanceScaled();
-        font.drawText(batch, disconnectMessage, 10F, position);
         position += font.getLineAdvanceScaled();
         font.drawText(batch, accountStatus, 10F, position);
 

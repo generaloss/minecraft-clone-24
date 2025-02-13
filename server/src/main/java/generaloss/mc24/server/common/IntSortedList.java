@@ -32,37 +32,24 @@ public class IntSortedList<T> implements Iterable<T> {
 
     public void put(T object) {
         final int index = this.indexOf(object);
-        if(this.contains(index, object)){
-            System.err.println("Object '" + object + "' already contains at " + index);
-            return;
+        if(this.isIndexValid(index)){
+            list.set(index, object);
+        }else{
+            list.add(index, object);
         }
-        list.add(index, object);
     }
 
 
     public T remove(int value) {
         final int index = this.searchValueIndex(value);
-        if(this.isIndexValid(index)){
+        if(this.isIndexValid(index))
             return list.remove(index);
-        }else{
-            System.err.println("Index '" + index + "' is invalid, nothing to remove.");
-            return null;
-        }
-    }
-
-    public T remove(int value, T object) {
-        final int index = this.searchValueIndex(value);
-        if(this.contains(index, object)){
-            return list.remove(index);
-        }else{
-            System.err.println("No object '" + object + "' to remove.");
-            return null;
-        }
+        return null;
     }
 
     public T remove(T object) {
         final int value = valueFunc.apply(object);
-        return this.remove(value, object);
+        return this.remove(value);
     }
 
 
@@ -76,11 +63,7 @@ public class IntSortedList<T> implements Iterable<T> {
         return list.contains(object);
     }
 
-    public boolean contains(int index, T object) {
-        return (this.isIndexValid(index) && list.get(index) == object);
-    }
-
-    public boolean isIndexValid(int index) {
+    private boolean isIndexValid(int index) {
         return (index < list.size());
     }
 

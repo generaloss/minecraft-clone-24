@@ -1,7 +1,7 @@
 package generaloss.mc24.client.network;
 
 import generaloss.mc24.client.Main;
-import generaloss.mc24.client.screen.MainMenuScreen;
+import generaloss.mc24.client.screen.DisconnectScreen;
 import generaloss.mc24.server.network.packet2c.DisconnectPacket2C;
 import generaloss.mc24.server.network.protocol.IClientProtocol;
 import jpize.app.Jpize;
@@ -45,10 +45,14 @@ public abstract class ClientProtocol implements IClientProtocol {
     }
 
 
+    @Override
     public void handleDisconnect(DisconnectPacket2C packet) {
-        tcpConnection.close();
-        final MainMenuScreen screen = context.screens().get(MainMenuScreen.SCREEN_ID);
-        Jpize.syncExecutor().exec(() -> screen.onDisconnect(packet.getMessage()));
+        final DisconnectScreen screen = context.screens().get(DisconnectScreen.SCREEN_ID);
+        Jpize.syncExecutor().exec(() -> {
+            context.disconnectSession();
+            screen.setMessage(packet.getMessage());
+            screen.setCurrent();
+        });
     }
 
 }

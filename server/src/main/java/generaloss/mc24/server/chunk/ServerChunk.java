@@ -15,7 +15,7 @@ public class ServerChunk extends Chunk<ServerWorld> {
     }
 
     public void markLoaded() {
-        this.loaded = true;
+        loaded = true;
     }
 
 }

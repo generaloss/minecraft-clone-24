@@ -3,36 +3,35 @@ package generaloss.mc24.server.network.connection;
 import generaloss.mc24.server.Server;
 import generaloss.mc24.server.block.BlockState;
 import generaloss.mc24.server.network.AccountSession;
-import generaloss.mc24.server.network.packet2c.ChunkPacket2C;
 import generaloss.mc24.server.network.packet2c.MoveEntityPacket2C;
 import generaloss.mc24.server.network.packet2c.SetBlockStatePacket2C;
+import generaloss.mc24.server.network.packet2s.InitSessionPacket2S;
 import generaloss.mc24.server.network.packet2s.PlayerMovePacket2S;
 import generaloss.mc24.server.network.packet2s.SetBlockStatePacket2S;
 import generaloss.mc24.server.network.protocol.IServerProtocolGame;
-import generaloss.mc24.server.entity.player.ServerPlayer;
+import generaloss.mc24.server.player.ServerPlayer;
 import generaloss.mc24.server.registry.ServerRegistries;
 import generaloss.mc24.server.world.ServerWorld;
 import jpize.util.net.tcp.TCPConnection;
 
 public class ServerConnectionGame extends ServerConnection implements IServerProtocolGame {
 
-    private final ServerPlayer player;
+    private final AccountSession session;
+    private ServerPlayer player;
 
     public ServerConnectionGame(Server server, TCPConnection tcpConnection, AccountSession session) {
         super(server, tcpConnection);
-        this.player = server.players().createPlayer(session, this);
+        this.session = session;
     }
 
     public ServerPlayer player() {
         return player;
     }
 
-    public void sendAllChunks() {
-        super.server().worldHolder().getWorld("overworld").forEachChunk(chunk ->
-            super.sendPacket(new ChunkPacket2C(chunk))
-        );
+    @Override
+    public void handleInitSession(InitSessionPacket2S packet) {
+        this.player = super.server().players().createPlayer(session, this);
     }
-
 
     @Override
     public void handleSetBlockState(SetBlockStatePacket2S packet) {

@@ -8,7 +8,7 @@ public interface IClientProtocolGame {
 
     void handleSetBlockState(SetBlockStatePacket2C packet);
 
-    void handleAbilitiesPacket(AbilitiesPacket2C packet);
+    void handleInitPlayer(InitPlayerPacket2C packet);
 
     void handleInsertEntity(InsertEntityPacket2C packet);
 

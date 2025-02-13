@@ -1,12 +1,12 @@
 package generaloss.mc24.server;
 
 import generaloss.mc24.server.network.connection.NetServer;
-import generaloss.mc24.server.entity.player.PlayerList;
+import generaloss.mc24.server.player.PlayerList;
 import generaloss.mc24.server.registry.ServerRegistries;
 import generaloss.mc24.server.resourcepack.ResourcePackManager;
 import generaloss.mc24.server.world.ServerWorld;
 import generaloss.mc24.server.world.WorldHolder;
-import generaloss.mc24.server.worldgen.ChunkGenerator01;
+import generaloss.mc24.server.worldgen.ChunkGenerator2DNoise;
 import jpize.util.res.Resource;
 import jpize.util.res.ZipResource;
 import jpize.util.time.TickGenerator;
@@ -73,7 +73,7 @@ public class Server implements Tickable {
         System.out.println("[INFO]: Created " + ServerRegistries.BLOCK_STATE.size() + " block states");
 
         if(dedicated)
-            worldHolder.putWorld(new ServerWorld(this, "overworld", new ChunkGenerator01()));
+            worldHolder.putWorld(new ServerWorld(this, "overworld", new ChunkGenerator2DNoise()));
     }
     
     public void run(int port) {

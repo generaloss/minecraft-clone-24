@@ -3,7 +3,7 @@ package generaloss.mc24.server.network.connection;
 import generaloss.mc24.server.Server;
 import generaloss.mc24.server.network.packet2s.*;
 import generaloss.mc24.server.network.protocol.IServerProtocolGame;
-import generaloss.mc24.server.entity.player.ServerPlayer;
+import generaloss.mc24.server.player.ServerPlayer;
 import jpize.util.net.tcp.TCPConnection;
 import jpize.util.net.tcp.TCPServer;
 import jpize.util.net.packet.NetPacketDispatcher;
@@ -25,7 +25,8 @@ public class NetServer {
             EncodeKeyPacket2S.class,
             SessionIDPacket2S.class,
             SetBlockStatePacket2S.class,
-            PlayerMovePacket2S.class
+            PlayerMovePacket2S.class,
+            InitSessionPacket2S.class
         );
         this.tcpServer = new TCPServer()
             .setOnConnect(this::onConnect)

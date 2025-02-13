@@ -107,15 +107,25 @@ public abstract class Chunk<W extends World<? extends Chunk<? extends W>>> {
     }
 
 
-    public interface Vec3iConsumer {
+    public interface XYZConsumer {
         void accept(int x, int y, int z);
     }
 
-    public void forEach(Vec3iConsumer consumer) {
+    public void forEach(XYZConsumer consumer) {
         for (int y = 0; y < Chunk.SIZE; y++)
             for (int x = 0; x < Chunk.SIZE; x++)
                 for (int z = 0; z < Chunk.SIZE; z++)
                     consumer.accept(x, y, z);
+    }
+
+    public interface XZConsumer {
+        void accept(int x, int z);
+    }
+
+    public void forEach(XZConsumer consumer) {
+        for (int x = 0; x < Chunk.SIZE; x++)
+            for (int z = 0; z < Chunk.SIZE; z++)
+                consumer.accept(x, z);
     }
 
 }

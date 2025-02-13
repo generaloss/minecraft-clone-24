@@ -1,14 +1,21 @@
 package generaloss.mc24.client.network;
 
 import generaloss.mc24.client.Main;
+import generaloss.mc24.client.screen.JoiningServerScreen;
 import generaloss.mc24.client.screen.MainMenuScreen;
+import generaloss.mc24.client.screen.SessionScreen;
 import generaloss.mc24.server.network.AccountSession;
+import generaloss.mc24.server.network.packet2c.LoginStatePacket2C;
 import generaloss.mc24.server.network.packet2c.PublicKeyPacket2C;
 import generaloss.mc24.server.network.packet2c.ServerInfoResponsePacket2C;
+import generaloss.mc24.server.network.packet2c.InitSessionPacket2C;
 import generaloss.mc24.server.network.packet2s.EncodeKeyPacket2S;
+import generaloss.mc24.server.network.packet2s.InitSessionPacket2S;
 import generaloss.mc24.server.network.packet2s.SessionIDPacket2S;
 import generaloss.mc24.server.network.protocol.IClientProtocolLogin;
+import jpize.app.Jpize;
 import jpize.util.net.tcp.TCPConnection;
+import jpize.util.screen.ScreenManager;
 import jpize.util.security.AESKey;
 
 import java.util.UUID;
@@ -38,10 +45,24 @@ public class ClientProtocolLogin extends ClientProtocol implements IClientProtoc
         // send sessionID
         final AccountSession session = super.context().session();
         final UUID sessionID = (session == null ? null : session.getID());
-        if(!super.sendPacket(new SessionIDPacket2S(sessionID == null ? UUID.randomUUID() : sessionID)))
-            return;
-        // set game protocol
+        super.sendPacket(new SessionIDPacket2S(sessionID == null ? UUID.randomUUID() : sessionID));
+    }
+
+    @Override
+    public void handleLoginState(LoginStatePacket2C packet) {
+        final JoiningServerScreen screen = super.context().screens().get(JoiningServerScreen.SCREEN_ID);
+        screen.setStatus(packet.getMessage());
+    }
+
+    @Override
+    public void handleInitSession(InitSessionPacket2C packet) {
         super.setProtocol(new ClientProtocolGame(super.context(), super.tcpConnection()));
+        super.sendPacket(new InitSessionPacket2S());
+        // set session screen
+        final ScreenManager<String> screens = super.context().screens();
+        Jpize.syncExecutor().exec(() ->
+            screens.setCurrent(SessionScreen.SCREEN_ID)
+        );
     }
 
 }

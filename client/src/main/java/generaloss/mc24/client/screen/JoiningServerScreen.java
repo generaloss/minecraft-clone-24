@@ -26,7 +26,7 @@ public class JoiningServerScreen extends Screen {
         this.batch = new TextureBatch();
 
         this.regionBG = new Region();
-        this.background = ClientResources.TEXTURES.create("crosshair", "textures/blocks/dirt.png")
+        this.background = ClientResources.TEXTURES.create("dirt", "textures/blocks/dirt.png")
             .resource();
     }
 
@@ -37,7 +37,7 @@ public class JoiningServerScreen extends Screen {
     @Override
     public void show() {
         Gl.clearColor(0, 0, 0);
-        this.setStatus("Joining server...");
+        this.setStatus("Connecting to the server..");
     }
 
     @Override

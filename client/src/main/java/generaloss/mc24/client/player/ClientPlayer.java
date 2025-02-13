@@ -2,7 +2,7 @@ package generaloss.mc24.client.player;
 
 import generaloss.mc24.client.Main;
 import generaloss.mc24.server.network.packet2s.PlayerMovePacket2S;
-import generaloss.mc24.server.entity.player.AbstractPlayer;
+import generaloss.mc24.server.player.AbstractPlayer;
 import jpize.app.Jpize;
 import jpize.glfw.input.Key;
 import jpize.util.camera.PerspectiveCamera;

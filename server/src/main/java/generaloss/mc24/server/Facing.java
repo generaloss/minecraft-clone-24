@@ -53,7 +53,6 @@ public enum Facing {
     }
 
     public static Facing byAngle(float yaw) {
-        System.out.println(yaw);
         if(yaw >= -45 && yaw <  45) return SOUTH;
         if(yaw >=  45 && yaw < 135) return WEST;
         if(yaw < -45 && yaw >= -135) return EAST;

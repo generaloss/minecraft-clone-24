@@ -6,9 +6,7 @@ import generaloss.mc24.server.Server;
 import generaloss.mc24.server.ServerPropertiesHolder;
 import generaloss.mc24.server.SharedConstants;
 import generaloss.mc24.server.network.AccountSession;
-import generaloss.mc24.server.network.packet2c.DisconnectPacket2C;
-import generaloss.mc24.server.network.packet2c.PublicKeyPacket2C;
-import generaloss.mc24.server.network.packet2c.ServerInfoResponsePacket2C;
+import generaloss.mc24.server.network.packet2c.*;
 import generaloss.mc24.server.network.packet2s.EncodeKeyPacket2S;
 import generaloss.mc24.server.network.packet2s.LoginRequestPacket2S;
 import generaloss.mc24.server.network.packet2s.ServerInfoRequestPacket2S;
@@ -42,9 +40,12 @@ public class ServerConnectionLogin extends ServerConnection implements IServerPr
     public void handleLoginRequest(LoginRequestPacket2S packet) {
         final String serverVersion = super.server().properties().getString("version");
         final String clientVersion = packet.getClientVersion();
-        if(!serverVersion.equals(clientVersion))
+        if(!serverVersion.equals(clientVersion)){
             super.sendPacket(new DisconnectPacket2C("Client version '" + clientVersion + "' does not match server version '" + serverVersion + "'"));
+            super.disconnect();
+        }
 
+        super.sendPacket(new LoginStatePacket2C("Encrypt connection.."));
         final PublicRSA publicKey = super.server().net().getEncryptionKey().getPublic();
         super.sendPacket(new PublicKeyPacket2C(publicKey));
     }
@@ -62,19 +63,27 @@ public class ServerConnectionLogin extends ServerConnection implements IServerPr
         // validate session
         final Response hasSessionResponse = Request.sendHasSession(SharedConstants.ACCOUNTS_HOST, packet.getSessionID());
         if(!hasSessionResponse.getCode().noError() || !hasSessionResponse.readBoolean()){
-            super.sendPacket(new DisconnectPacket2C("session expired"));
+            super.sendPacket(new DisconnectPacket2C("invalid session"));
+            super.disconnect();
+            return;
+        }
+
+        super.sendPacket(new LoginStatePacket2C("Validate session.."));
+
+        final UUID sessionID = packet.getSessionID();
+        final Response sessionInfoResponse = Request.sendGetSessionInfo(SharedConstants.ACCOUNTS_HOST, sessionID);
+        if(sessionInfoResponse.getCode().noError()) {
+            // set game protocol
+            final String username = sessionInfoResponse.readString();
+            final AccountSession session = new AccountSession(sessionID, username);
+
+            final ServerConnectionGame gameProtocol = new ServerConnectionGame(super.server(), super.tcpConnection(), session);
+            super.setProtocol(gameProtocol);
+
+            super.sendPacket(new InitSessionPacket2C());
         }else{
-            final UUID sessionID = packet.getSessionID();
-            final Response sessionInfoResponse = Request.sendGetSessionInfo(SharedConstants.ACCOUNTS_HOST, sessionID);
-            if(sessionInfoResponse.getCode().noError()) {
-                // set game protocol
-                final String username = sessionInfoResponse.readString();
-                final AccountSession session = new AccountSession(sessionID, username);
-                final ServerConnectionGame gameProtocol = new ServerConnectionGame(super.server(), super.tcpConnection(), session);
-                super.setProtocol(gameProtocol);
-            }else{
-                super.sendPacket(new DisconnectPacket2C("session expired"));
-            }
+            super.sendPacket(new DisconnectPacket2C("invalid session"));
+            super.disconnect();
         }
     }
 

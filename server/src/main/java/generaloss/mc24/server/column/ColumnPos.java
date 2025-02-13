@@ -50,7 +50,7 @@ public class ColumnPos {
     }
 
     public long getNeighborPacked(int dx, int dz) {
-        return ColumnPos.pack(x + dx,  z + dz);
+        return ColumnPos.pack(x + dx, z + dz);
     }
 
 

@@ -25,10 +25,12 @@ public class ClientConnection {
             DisconnectPacket2C.class,
             ChunkPacket2C.class,
             SetBlockStatePacket2C.class,
-            AbilitiesPacket2C.class,
+            InitPlayerPacket2C.class,
             InsertEntityPacket2C.class,
             RemoveEntityPacket2C.class,
-            MoveEntityPacket2C.class
+            MoveEntityPacket2C.class,
+            LoginStatePacket2C.class,
+            InitSessionPacket2C.class
         );
     }
 
@@ -59,9 +61,9 @@ public class ClientConnection {
 
     private void onReceive(TCPConnection tcpConnection, byte[] bytes) {
         if(!packetDispatcher.readPacket(bytes, tcpConnection.attachment()))
-            System.err.println("Cannot read packet.");
+            System.err.println("[WARN]: Cannot read packet.");
         if(packetDispatcher.handlePackets() == 0)
-            System.err.println("Cannot handle packets.");
+            System.err.println("[WARN]: Cannot handle packets.");
     }
 
     public void sendPacket(NetPacket<?> packet) {

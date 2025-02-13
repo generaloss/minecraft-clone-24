@@ -4,6 +4,7 @@ import generaloss.mc24.client.level.WorldLevel;
 import generaloss.mc24.client.network.ClientConnection;
 import generaloss.mc24.client.resource.ClientResources;
 import generaloss.mc24.client.resource.BlockModelHandle;
+import generaloss.mc24.client.screen.DisconnectScreen;
 import generaloss.mc24.client.screen.JoiningServerScreen;
 import generaloss.mc24.server.SharedConstants;
 import generaloss.mc24.server.block.BlockState;
@@ -112,6 +113,7 @@ public class Main extends JpizeApplication {
         screens.register(MainMenuScreen.SCREEN_ID, new MainMenuScreen(this));
         screens.register(SessionScreen.SCREEN_ID, new SessionScreen(this));
         screens.register(JoiningServerScreen.SCREEN_ID, new JoiningServerScreen(this));
+        screens.register(DisconnectScreen.SCREEN_ID, new DisconnectScreen(this));
 
         // set menu screen
         screens.setCurrent(MainMenuScreen.SCREEN_ID);
@@ -240,8 +242,8 @@ public class Main extends JpizeApplication {
 
     @Override
     public void dispose() {
-        if(session != null)
-            session.logout("qwe");
+        // if(session != null)
+        //     session.logout("qwe");
         level.dispose();
         screens.dispose();
         ClientResources.dispose();
