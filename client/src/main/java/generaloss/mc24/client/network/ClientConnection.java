@@ -19,6 +19,7 @@ public class ClientConnection {
             .setOnConnect(this::onConnect)
             .setOnDisconnect(this::onDisconnect)
             .setOnReceive(this::onReceive);
+
         this.packetDispatcher = new NetPacketDispatcher().register(
             ServerInfoResponsePacket2C.class,
             PublicKeyPacket2C.class,
@@ -60,8 +61,10 @@ public class ClientConnection {
     }
 
     private void onReceive(TCPConnection tcpConnection, byte[] bytes) {
-        if(!packetDispatcher.readPacket(bytes, tcpConnection.attachment()))
+        if(!packetDispatcher.readPacket(bytes, tcpConnection.attachment())){
             System.err.println("[WARN]: Cannot read packet.");
+            context.closeSession();
+        }
         if(packetDispatcher.handlePackets() == 0)
             System.err.println("[WARN]: Cannot handle packets.");
     }
