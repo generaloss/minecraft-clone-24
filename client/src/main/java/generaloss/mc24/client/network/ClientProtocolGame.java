@@ -3,12 +3,15 @@ package generaloss.mc24.client.network;
 import generaloss.mc24.client.Main;
 import generaloss.mc24.client.level.LevelChunk;
 import generaloss.mc24.client.level.WorldLevel;
+import generaloss.mc24.client.screen.SessionScreen;
 import generaloss.mc24.server.block.BlockState;
 import generaloss.mc24.server.entity.AbstractEntity;
 import generaloss.mc24.server.network.packet2c.*;
 import generaloss.mc24.server.network.protocol.IClientProtocolGame;
 import generaloss.mc24.server.registry.ServerRegistries;
+import jpize.app.Jpize;
 import jpize.util.net.tcp.TCPConnection;
+import jpize.util.screen.ScreenManager;
 
 public class ClientProtocolGame extends ClientProtocol implements IClientProtocolGame {
 
@@ -34,6 +37,11 @@ public class ClientProtocolGame extends ClientProtocol implements IClientProtoco
     @Override
     public void handleInitPlayer(InitPlayerPacket2C packet) {
         packet.applyTo(super.context().player());
+        // set session screen
+        final ScreenManager<String> screens = super.context().screens();
+        Jpize.syncExecutor().exec(() ->
+            screens.setCurrent(SessionScreen.SCREEN_ID)
+        );
     }
 
     @Override

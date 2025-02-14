@@ -80,6 +80,7 @@ public class ServerConnectionLogin extends ServerConnection implements IServerPr
             final ServerConnectionGame gameProtocol = new ServerConnectionGame(super.server(), super.tcpConnection(), session);
             super.setProtocol(gameProtocol);
 
+            super.sendPacket(new LoginStatePacket2C("Init session.."));
             super.sendPacket(new InitSessionPacket2C());
         }else{
             super.sendPacket(new DisconnectPacket2C("invalid session"));
