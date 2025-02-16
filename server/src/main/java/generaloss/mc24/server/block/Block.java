@@ -13,7 +13,7 @@ public class Block implements Identifiable<String> {
     public static final Block AIR = new Block().setID("air");
     public static final Block VOID = new Block().setID("void");
     static{
-        AIR.properties().set("opacity", 0);
+        AIR.properties().set(BlockProperty.OPACITY, 0);
     }
 
     private String ID;

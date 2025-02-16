@@ -1,7 +1,6 @@
 package generaloss.mc24.server.worldgen;
 
 import generaloss.mc24.server.block.BlockState;
-import generaloss.mc24.server.chunk.Chunk;
 import generaloss.mc24.server.chunk.ServerChunk;
 import generaloss.mc24.server.registry.ServerRegistries;
 import jpize.util.math.FastNoise;
@@ -13,7 +12,9 @@ public class ChunkGenerator2DNoise implements IChunkGenerator {
 
     public ChunkGenerator2DNoise() {
         this.noise = new FastNoise(345)
-                .setFrequency(1 / 48F);
+            .setFrequency(1F / 292F)
+            .setFractalOctaves(3)
+            .setFractalType(FastNoise.FractalType.FBM);
     }
 
     @Override
@@ -26,10 +27,16 @@ public class ChunkGenerator2DNoise implements IChunkGenerator {
             final int worldX = (chunkLocalX + x);
             final int worldZ = (chunkLocalZ + z);
 
-            final float height = noise.get(worldX, worldZ) * 15;
-            for(int y = 0; y < Chunk.SIZE; y++)
-                if(y + chunkLocalY < height)
-                    chunk.setBlockState(x, y, z, ServerRegistries.BLOCK.get("stone").resource().getDefaultState());
+            final int height = (Math.round(noise.get(worldX, worldZ) * 25 - chunkLocalY));
+            if(height < 0)
+                return;
+
+            chunk.setBlockState(x, height, z, ServerRegistries.BLOCK.get("grass_block").resource().getDefaultState());
+            chunk.setBlockState(x, height - 1, z, ServerRegistries.BLOCK.get("dirt").resource().getDefaultState());
+            chunk.setBlockState(x, height - 2, z, ServerRegistries.BLOCK.get("dirt").resource().getDefaultState());
+
+            for(int y = 0; y < height - 2; y++)
+                chunk.setBlockState(x, y, z, ServerRegistries.BLOCK.get("stone").resource().getDefaultState());
         });
     }
 
@@ -48,10 +55,6 @@ public class ChunkGenerator2DNoise implements IChunkGenerator {
             // torches
             if((blockstate.isBlockID("air")) && Maths.randomBoolean(0.0002F))
                 chunk.setBlockState(x, y, z, ServerRegistries.BLOCK.get("torch").resource().getDefaultState());
-
-            // grass_block
-            if(blockstate.isBlockID("stone") && chunk.getBlockState(x, y + 1, z).isBlockID("void", "air"))
-                chunk.setBlockState(x, y, z, ServerRegistries.BLOCK.get("grass_block").resource().getDefaultState());
         });
     }
 

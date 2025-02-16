@@ -25,14 +25,14 @@ public class IntSortedList<T> implements Iterable<T> {
     
     public T get(int value) {
         final int index = this.searchValueIndex(value);
-        if(this.isIndexValid(index))
+        if(this.isIndexValid(index) && this.valueByIndex(index) == value)
             return list.get(index);
         return null;
     }
 
     public void put(T object) {
         final int index = this.indexOf(object);
-        if(this.isIndexValid(index)){
+        if(this.isIndexValid(index) && list.get(index) == object){
             list.set(index, object);
         }else{
             list.add(index, object);
@@ -40,22 +40,33 @@ public class IntSortedList<T> implements Iterable<T> {
     }
 
 
-    public T remove(int value) {
+    public T remove(int value, T object) {
         final int index = this.searchValueIndex(value);
-        if(this.isIndexValid(index))
+        if(this.isIndexValid(index) && list.get(index) == object)
             return list.remove(index);
         return null;
     }
 
     public T remove(T object) {
         final int value = valueFunc.apply(object);
-        return this.remove(value);
+        return this.remove(value, object);
+    }
+
+    public T remove(int value) {
+        final T object = this.get(value);
+        if(object != null)
+            return this.remove(object);
+        return null;
     }
 
 
     public int indexOf(T object) {
         final int value = valueFunc.apply(object);
         return this.searchValueIndex(value);
+    }
+
+    private int valueByIndex(int index) {
+        return valueFunc.apply(list.get(index));
     }
 
 

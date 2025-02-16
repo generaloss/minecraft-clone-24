@@ -23,20 +23,21 @@ public class BlockProperty extends AbstractProperty {
 
     private static final Map<String, BlockProperty> PROPERTIES = new HashMap<>();
 
-    public static void register(String name, Object defaultValue, Function<Object, Object> jsonLoader) {
-        PROPERTIES.put(name, new BlockProperty(name, defaultValue, jsonLoader));
-    }
-
     public static BlockProperty get(String name) {
         return PROPERTIES.get(name);
     }
 
-    static {
-        register("opacity", 15, object -> object);
-        register("glowing", new int[3], object -> {
-            final JSONArray array = (JSONArray) object;
-            return new int[] { array.getInt(0), array.getInt(1), array.getInt(2) };
-        });
+    public static BlockProperty register(String name, Object defaultValue, Function<Object, Object> jsonLoader) {
+        final BlockProperty property = new BlockProperty(name, defaultValue, jsonLoader);
+        PROPERTIES.put(name, property);
+        return property;
     }
+
+
+    public static final BlockProperty OPACITY = register("opacity", 15, object -> object);
+    public static final BlockProperty GLOWING = register("glowing", new int[3], object -> {
+        final JSONArray array = (JSONArray) object;
+        return new int[] { array.getInt(0), array.getInt(1), array.getInt(2) };
+    });
 
 }

@@ -29,16 +29,14 @@ public class ServerConnectionLogin extends ServerConnection implements IServerPr
     @Deprecated
     public void handleServerInfoRequest(ServerInfoRequestPacket2S packet) {
         final ServerPropertiesHolder serverProperties = super.server().properties();
-        super.sendPacket(new ServerInfoResponsePacket2C(
-            serverProperties.getString("motd"),
-            serverProperties.getString("version"),
-            packet.getTimestamp()
-        ));
+        final String motd = serverProperties.get("motd");
+        final String version = serverProperties.get("version");
+        super.sendPacket(new ServerInfoResponsePacket2C(motd, version, packet.getTimestamp()));
     }
 
     @Override
     public void handleLoginRequest(LoginRequestPacket2S packet) {
-        final String serverVersion = super.server().properties().getString("version");
+        final String serverVersion = super.server().properties().get("version");
         final String clientVersion = packet.getClientVersion();
         if(!serverVersion.equals(clientVersion)){
             super.sendPacket(new DisconnectPacket2C("Client version '" + clientVersion + "' does not match server version '" + serverVersion + "'"));

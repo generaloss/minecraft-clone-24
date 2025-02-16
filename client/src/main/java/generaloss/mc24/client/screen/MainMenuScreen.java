@@ -138,8 +138,8 @@ public class MainMenuScreen extends Screen {
             final String[] serverAddress = serverAddressField.getText().split(":");
             try{
                 final int port = Integer.parseInt(serverAddress[1]);
-                super.context.connection().connect(serverAddress[0], port);
-                super.context.connection().sendPacket(new ServerInfoRequestPacket2S(System.currentTimeMillis()));
+                super.context.net().connect(serverAddress[0], port);
+                super.context.net().sendPacket(new ServerInfoRequestPacket2S(System.currentTimeMillis()));
             }catch(NumberFormatException | ArrayIndexOutOfBoundsException | IllegalStateException e){
                 serverInfo = "Server Info: Invalid address (press 'Ctrl + I' to ping server)";
             }

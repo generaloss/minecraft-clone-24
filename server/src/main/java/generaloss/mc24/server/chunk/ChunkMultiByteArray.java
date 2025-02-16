@@ -35,12 +35,16 @@ public class ChunkMultiByteArray {
         return array[this.indexBy(layer, x, y, z)];
     }
 
-    public boolean isOutOfBounds(int layer, int x, int y, int z) {
+    public boolean isOutOfBounds(int x, int y, int z) {
         return (
-            layer < 0 || x < 0 || y < 0 || z < 0 ||
-            layer >= layersNumber || x > Chunk.SIZE_BOUND ||
+            x < 0 || y < 0 || z < 0 ||
+            x > Chunk.SIZE_BOUND ||
             y > Chunk.SIZE_BOUND || z > Chunk.SIZE_BOUND
         );
+    }
+
+    public boolean isOutOfBounds(int layer, int x, int y, int z) {
+        return (layer < 0 || layer >= layersNumber || this.isOutOfBounds(x, y, z));
     }
 
 }

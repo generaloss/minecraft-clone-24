@@ -6,8 +6,8 @@ public class ServerChunk extends Chunk<ServerWorld> {
 
     private boolean loaded;
 
-    public ServerChunk(ServerWorld world, ChunkPos position) {
-        super(world, position);
+    public ServerChunk(ServerWorld world, ChunkPos position, boolean hasSkylight) {
+        super(world, position, hasSkylight);
     }
 
     public boolean isLoaded() {

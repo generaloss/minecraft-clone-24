@@ -10,50 +10,50 @@ import java.io.IOException;
 
 public class ChunkPacket2C extends NetPacket<IClientProtocolGame> {
 
-    private long positionPacked;
-    private byte[] blockstateIDs;
-    private byte[] blockLight;
+    private ChunkPos position;
+    private ChunkStorage storage;
 
     public ChunkPacket2C(Chunk<?> chunk) {
-        this.positionPacked = chunk.position().getPacked();
-        this.blockstateIDs = chunk.getBlockStateIDs().array();
-        this.blockLight = chunk.getBlockLight().array();
+        this.position = chunk.position();
+        this.storage = chunk.storage();
     }
 
     public ChunkPacket2C() { }
 
     public ChunkPos getPosition() {
-        return new ChunkPos(positionPacked);
+        return position;
     }
 
-    public ChunkByteArray getBlockstateIDs() {
-        return new ChunkByteArray(blockstateIDs);
-    }
-
-    public ChunkMultiByteArray getBlockLight() {
-        return new ChunkMultiByteArray(3, blockLight);
+    public ChunkStorage getStorage() {
+        return storage;
     }
 
     @Override
     public void write(ExtDataOutputStream stream) throws IOException {
-        stream.writeLong(positionPacked);
-        stream.writeByteArray(blockstateIDs);
-        stream.writeByteArray(blockLight);
-        if(blockstateIDs.length != Chunk.SIZE * Chunk.SIZE * Chunk.SIZE)
-            System.err.println("bsi: " + blockstateIDs.length);
-        if(blockLight.length != Chunk.SIZE * Chunk.SIZE * Chunk.SIZE * 3)
-            System.err.println("bl: " + blockLight.length);
+        // position
+        stream.writeInts(position.getX(), position.getY(), position.getZ());
+        // storage
+        stream.writeByteArray(storage.blockstates().array());
+        stream.writeByteArray(storage.blocklight().array());
+
+        final boolean hasSkylight = storage.hasSkylight();
+        stream.writeBoolean(hasSkylight);
+        if(hasSkylight)
+            stream.writeByteArray(storage.skylight().array());
     }
 
     @Override
     public void read(ExtDataInputStream stream) throws IOException {
-        positionPacked = stream.readLong();
-        blockstateIDs = stream.readByteArray();
-        blockLight = stream.readByteArray();
-        if(blockstateIDs.length != Chunk.SIZE * Chunk.SIZE * Chunk.SIZE)
-            System.err.println("bsi: " + blockstateIDs.length);
-        if(blockLight.length != Chunk.SIZE * Chunk.SIZE * Chunk.SIZE * 3)
-            System.err.println("bl: " + blockLight.length);
+        // position
+        position = new ChunkPos(stream.readInt(), stream.readInt(), stream.readInt());
+        // storage
+        final ChunkByteArray blockstates = new ChunkByteArray(stream.readByteArray());
+        final ChunkMultiByteArray blocklight = new ChunkMultiByteArray(3, stream.readByteArray());
+
+        final boolean hasSkylight = stream.readBoolean();
+        final ChunkMultiByteArray skylight = (hasSkylight ? new ChunkMultiByteArray(3, stream.readByteArray()) : null);
+
+        storage = new ChunkStorage(blockstates, blocklight, skylight);
     }
 
     @Override

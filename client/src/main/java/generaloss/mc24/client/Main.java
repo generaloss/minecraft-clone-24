@@ -1,7 +1,7 @@
 package generaloss.mc24.client;
 
 import generaloss.mc24.client.level.WorldLevel;
-import generaloss.mc24.client.network.ClientConnection;
+import generaloss.mc24.client.network.ClientNetConnection;
 import generaloss.mc24.client.resource.ClientResources;
 import generaloss.mc24.client.resource.BlockModelHandle;
 import generaloss.mc24.client.screen.DisconnectScreen;
@@ -39,7 +39,7 @@ public class Main extends JpizeApplication {
     private final WorldLevel level;
     private final EntityContainer entities;
     private final ClientPlayer player;
-    private final ClientConnection connection;
+    private final ClientNetConnection net;
     private AccountSession session;
 
     public Main() {
@@ -50,7 +50,7 @@ public class Main extends JpizeApplication {
         this.level = new WorldLevel(this);
         this.entities = new EntityContainer();
         this.player = new ClientPlayer(this);
-        this.connection = new ClientConnection(this);
+        this.net = new ClientNetConnection(this);
     }
 
     public ResourcePackManager resourcePackManager() {
@@ -77,8 +77,8 @@ public class Main extends JpizeApplication {
         return player;
     }
 
-    public ClientConnection connection() {
-        return connection;
+    public ClientNetConnection net() {
+        return net;
     }
 
 
@@ -124,15 +124,15 @@ public class Main extends JpizeApplication {
         //if(host.equals("localhost"))
         //    localServer.run(port);
         System.out.println("[INFO]: Connecting to server " + host + ":" + port);
-        connection.connect(host, port);
-
         screens.setCurrent(JoiningServerScreen.SCREEN_ID);
 
-        connection.sendPacket(new LoginRequestPacket2S(SharedConstants.VERSION));
+        net.connect(host, port);
+
+        net.sendPacket(new LoginRequestPacket2S(SharedConstants.VERSION));
     }
 
     public void disconnectSession() {
-        connection.disconnect();
+        net.disconnect();
         this.closeSession();
         // localServer.stop();
     }
@@ -203,14 +203,26 @@ public class Main extends JpizeApplication {
                 }
 
                 writer.println("#newsection");
-                for(byte blockstateID: chunk.getBlockStateIDs().array())
+                for(byte blockstateID: chunk.storage().blockstates().array())
                     writer.print(blockstateID + ",");
                 writer.println();
 
                 writer.println("#newsection");
-                for(byte blockstateID: chunk.getBlockLight().array())
+                for(byte blockstateID: chunk.storage().blocklight().array())
                     writer.print(blockstateID + ",");
                 writer.println();
+
+                writer.println("#newsection");
+
+                final boolean hasSkylight = chunk.storage().hasSkylight();
+                writer.println("hasSkylight=" + hasSkylight);
+                writer.println();
+
+                if(hasSkylight) {
+                    for(byte blockstateID: chunk.storage().skylight().array())
+                        writer.print(blockstateID + ",");
+                    writer.println();
+                }
 
                 writer.close();
                 return true;

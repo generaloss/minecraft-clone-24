@@ -60,7 +60,7 @@ public class ClientPlayer extends AbstractPlayer {
         super.position().add(velocity);
 
         if(velocity.len() > 0.01F && frame % 3 == 0)
-            context.connection().sendPacket(new PlayerMovePacket2S(super.position()));
+            context.net().sendPacket(new PlayerMovePacket2S(super.position()));
 
         // camera
         camera.rotation().setRotation(super.rotation());

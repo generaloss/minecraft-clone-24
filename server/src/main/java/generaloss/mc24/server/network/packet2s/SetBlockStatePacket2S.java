@@ -48,13 +48,13 @@ public class SetBlockStatePacket2S extends NetPacket<IServerProtocolGame> {
 
     @Override
     public void write(ExtDataOutputStream stream) throws IOException {
-        stream.writeLong(chunkPosition.getPacked());
+        stream.writeInts(chunkPosition.getX(), chunkPosition.getY(), chunkPosition.getZ());
         stream.writeInts(localX, localY, localZ, blockstateID);
     }
 
     @Override
     public void read(ExtDataInputStream stream) throws IOException {
-        chunkPosition = ChunkPos.unpack(stream.readLong());
+        chunkPosition = new ChunkPos(stream.readInt(), stream.readInt(), stream.readInt());
         localX = stream.readInt();
         localY = stream.readInt();
         localZ = stream.readInt();

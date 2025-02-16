@@ -10,10 +10,7 @@ public class LevelChunk extends Chunk<WorldLevel> implements Comparable<LevelChu
     private ChunkMesh mesh;
 
     public LevelChunk(WorldLevel level, ChunkPacket2C packet) {
-        super(
-            level, packet.getPosition(), packet.getBlockstateIDs(),
-            packet.getBlockLight()
-        );
+        super(level, packet.getPosition(), packet.getStorage());
     }
 
     public ChunkMesh mesh() {

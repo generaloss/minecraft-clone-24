@@ -33,7 +33,7 @@ public class WorldLevel extends World<LevelChunk> implements Disposable {
         // blockstate callback
         Events.registerBlockstateChanged((chunk, localX, localY, localZ, blockstate) -> {
             // send packet
-            context.connection().sendPacket(new SetBlockStatePacket2S(
+            context.net().sendPacket(new SetBlockStatePacket2S(
                 chunk.position(), localX, localY, localZ, ServerRegistries.BLOCK_STATE.getID(blockstate)
             ));
 

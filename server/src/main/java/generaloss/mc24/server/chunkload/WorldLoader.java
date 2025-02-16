@@ -41,7 +41,7 @@ public class WorldLoader {
         System.out.println("[INFO]: Preparing spawn area..");
         for(int y = -2; y < 2; y++){
             this.loadChunk(0, y, 0);
-            for(int r = 0; r < 12; r++){
+            for(int r = 0; r < 10; r++){
                 for(int i = -r; i <= r - 1; i++)
                     this.loadChunk(i, y, r);
                 for(int i = -r + 1; i <= r; i++)
@@ -63,7 +63,7 @@ public class WorldLoader {
 
     private void loadChunk(int chunkX, int chunkY, int chunkZ) {
         final ChunkPos position = new ChunkPos(chunkX, chunkY, chunkZ);
-        final ServerChunk chunk = new ServerChunk(world, position);
+        final ServerChunk chunk = new ServerChunk(world, position, false);
         world.getChunkGenerator().generateBase(chunk);
         world.putChunk(chunk);
     }

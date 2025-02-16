@@ -44,7 +44,6 @@ public class NetServer {
 
 
     public void onConnect(TCPConnection tcpConnection) {
-        tcpConnection.setTcpNoDelay(true);
         tcpConnection.attach(new ServerConnectionLogin(server, tcpConnection));
     }
 

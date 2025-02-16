@@ -1,6 +1,7 @@
 package generaloss.mc24.server.world;
 
 import generaloss.mc24.server.Direction;
+import generaloss.mc24.server.block.BlockProperty;
 import generaloss.mc24.server.block.BlockState;
 import generaloss.mc24.server.chunk.Chunk;
 import generaloss.mc24.server.chunk.ChunkCache;
@@ -50,7 +51,7 @@ public class BlockLightEngine<W extends World<C>, C extends Chunk<? extends W>> 
         this.forEachDirection(x, y, z, (neighborX, neighborY, neighborZ) -> {
 
             final BlockState blockstate = chunkCache.getBlockState(neighborX, neighborY, neighborZ);
-            final int blockOpacity = blockstate.getBlockProperties().getInt("opacity");
+            final int blockOpacity = blockstate.getBlockProperties().get(BlockProperty.OPACITY);
             final int neighborLevel = (level - Math.max(1, blockOpacity));
 
             queue.add(new Entry(neighborX, neighborY, neighborZ, channel, neighborLevel));
@@ -94,7 +95,16 @@ public class BlockLightEngine<W extends World<C>, C extends Chunk<? extends W>> 
             tmp_vec.setMaxComps(neighborLevelR, neighborLevelG, neighborLevelB);
         });
 
-        this.addIncreaseEntry(x, y, z, tmp_vec.x - 1, tmp_vec.y - 1, tmp_vec.z - 1);
+        // minus opacity
+        final BlockState blockstate = chunkCache.getBlockState(x, y, z);
+        final int blockOpacity = blockstate.getBlockProperties().get(BlockProperty.OPACITY);
+        tmp_vec.sub(
+            Math.max(1, blockOpacity),
+            Math.max(1, blockOpacity),
+            Math.max(1, blockOpacity)
+        );
+
+        this.addIncreaseEntry(x, y, z, tmp_vec.x, tmp_vec.y, tmp_vec.z);
         this.processIncrease();
         Events.invokeLightIncreased(chunk, x, y, z, tmp_vec.x, tmp_vec.y, tmp_vec.z);
     }
@@ -162,9 +172,10 @@ public class BlockLightEngine<W extends World<C>, C extends Chunk<? extends W>> 
             }
 
             final BlockState blockState = chunkCache.getBlockState(x, y, z);
-            final int glowing = blockState.getBlockProperties().getIntArray("glowing")[channel];
-            if(glowing <= level)
-                this.addIncreaseEntry(x, y, z, channel, glowing);
+            final int[] glowing = blockState.getBlockProperties().get(BlockProperty.GLOWING);
+            final int glowingLevel = glowing[channel];
+            if(glowingLevel <= level)
+                this.addIncreaseEntry(x, y, z, channel, glowingLevel);
 
             chunkCache.setBlockLightLevel(x, y, z, channel, 0);
             this.addDirectionalEntries(decreaseQueue, x, y, z, channel, level);
