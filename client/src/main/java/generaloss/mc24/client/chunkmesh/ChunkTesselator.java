@@ -36,7 +36,7 @@ public class ChunkTesselator {
         this.status = TesselatorStatus.FREE;
         this.verticesCache = new FloatList();
         this.blockCache = new BlockCache();
-        this.vertexLightCache = new float[3][BlockFace.VERTICES_NUMBER];
+        this.vertexLightCache = new float[4][BlockFace.VERTICES_NUMBER];
     }
 
     public TesselatorStatus getStatus() {
@@ -108,10 +108,9 @@ public class ChunkTesselator {
 
             for(int vertexIndex = 0; vertexIndex < vertices.length; vertexIndex++){
                 final BlockVertex vertex = vertices[vertexIndex];
-                for(int channel = 0; channel < 3; channel++){
-                    if(SessionScreen.AO && face.isSolid()){
-                        vertexLightCache[channel][vertexIndex] =
-                            this.smoothLightForVertex(channel, vertex, direction);
+                for(int channel = 0; channel < 4; channel++){
+                    if(face.isSolid() && SessionScreen.AO){
+                        vertexLightCache[channel][vertexIndex] = this.smoothLightForVertex(channel, vertex, direction);
                     }else{
                         vertexLightCache[channel][vertexIndex] = (Math.max(
                             blockCache.getLightLevel(direction.getX(), direction.getY(), direction.getZ(), channel),
@@ -131,7 +130,8 @@ public class ChunkTesselator {
                 final int cachePosIndex = (i * BlockVertex.SIZE + beginDataIndex);
                 final int cacheTexcoordIndex = (cachePosIndex + BlockVertex.TEXCOORD_OFFSET);
                 final int cacheColorIndex = (cachePosIndex + BlockVertex.COLOR_OFFSET);
-                final int cacheLightIndex = (cachePosIndex + BlockVertex.LIGHT_OFFSET);
+                final int cacheBlocklightIndex = (cachePosIndex + BlockVertex.BLOCKLIGHT_OFFSET);
+                final int cacheSkylightIndex = (cachePosIndex + BlockVertex.SKYLIGHT_OFFSET);
 
                 // rotated
                 final BlockVertex rotatedVertex = vertices[i];
@@ -148,24 +148,23 @@ public class ChunkTesselator {
                 verticesCache.set(cacheTexcoordIndex + 0, (region.u1() + region.getWidth()  * rotatedVertex.getU()));
                 verticesCache.set(cacheTexcoordIndex + 1, (region.v1() + region.getHeight() * rotatedVertex.getV()));
 
-                // color
-                float red   = vertexLightCache[0][i];
-                float green = vertexLightCache[1][i];
-                float blue  = vertexLightCache[2][i];
-
-                // tint
+                // color / tint
                 if(face.getTintIndex() == 0){
                     final int chunkBlockX = chunkCache.getCenterChunk().position().getBlockX();
                     final int chunkBlockY = chunkCache.getCenterChunk().position().getBlockY();
                     final int chunkBlockZ = chunkCache.getCenterChunk().position().getBlockZ();
-                    red   *= (noiseR.get(x + chunkBlockX, y + chunkBlockY, z + chunkBlockZ) * 0.5F + 0.5F) * 0.3F - 0.15F + 0.55F; // 0.55F;
-                    green *= (noiseG.get(x + chunkBlockX, y + chunkBlockY, z + chunkBlockZ) * 0.5F + 0.5F) * 0.3F - 0.15F + 0.75F; // 0.75F;
-                    blue  *= (noiseB.get(x + chunkBlockX, y + chunkBlockY, z + chunkBlockZ) * 0.5F + 0.5F) * 0.3F - 0.15F + 0.3F;  // 0.3F;
+                    verticesCache.set(cacheColorIndex + 0, (noiseR.get(x + chunkBlockX, y + chunkBlockY, z + chunkBlockZ) * 0.5F + 0.5F) * 0.3F - 0.15F + 0.55F);
+                    verticesCache.set(cacheColorIndex + 1, (noiseG.get(x + chunkBlockX, y + chunkBlockY, z + chunkBlockZ) * 0.5F + 0.5F) * 0.3F - 0.15F + 0.75F);
+                    verticesCache.set(cacheColorIndex + 2, (noiseB.get(x + chunkBlockX, y + chunkBlockY, z + chunkBlockZ) * 0.5F + 0.5F) * 0.3F - 0.15F + 0.30F);
                 }
 
-                verticesCache.set(cacheLightIndex + 0, red  );
-                verticesCache.set(cacheLightIndex + 1, green);
-                verticesCache.set(cacheLightIndex + 2, blue );
+                // block light
+                verticesCache.set(cacheBlocklightIndex + 0, vertexLightCache[0][i]);
+                verticesCache.set(cacheBlocklightIndex + 1, vertexLightCache[1][i]);
+                verticesCache.set(cacheBlocklightIndex + 2, vertexLightCache[2][i]);
+
+                // sky light
+                verticesCache.set(cacheSkylightIndex, vertexLightCache[3][i]);
             }
         }
     }
@@ -178,7 +177,7 @@ public class ChunkTesselator {
     private void tesselate(LevelChunk chunk) {
         stopwatch.reset();
 
-        chunkCache.cacheNeighborsFor(chunk);
+        chunkCache.initFor(chunk);
         chunk.forEach((x, y, z) -> {
             // blockstate
             final BlockState blockstate = chunk.getBlockState(x, y, z);
@@ -190,7 +189,7 @@ public class ChunkTesselator {
             if(model == null)
                 return;
 
-            blockCache.cacheNeighborsFor(x, y, z, blockstate, chunkCache);
+            blockCache.initFor(x, y, z, blockstate, chunkCache);
 
             // add none faces
             this.addFaces(x, y, z, model, Direction.NONE, false);

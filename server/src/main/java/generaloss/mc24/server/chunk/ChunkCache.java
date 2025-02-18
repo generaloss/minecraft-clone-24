@@ -46,7 +46,7 @@ public class ChunkCache<C extends Chunk> {
     }
 
 
-    public void cacheNeighborsFor(C chunk) {
+    public void initFor(C chunk) {
         if(!hasNullChunks && chunks[CENTER_CHUNK_INDEX] == chunk)
             return;
 

@@ -13,13 +13,13 @@ public abstract class ChunkColumn<C extends Chunk> {
 
     private final World<C> world;
     private final ColumnPos position;
-    private final ColumnHeightMap heightmap;
+    private final ColumnHeightMap<C> heightmap;
     private final IntSortedList<C> chunks;
 
     public ChunkColumn(World<C> world, ColumnPos position) {
         this.world = world;
         this.position = position;
-        this.heightmap = new ColumnHeightMap(this, (blockstate -> {
+        this.heightmap = new ColumnHeightMap<>(this, (blockstate -> {
             final int opacity = blockstate.getBlockProperties().get(BlockProperty.OPACITY);
             return (opacity != 0);
         }));
@@ -36,7 +36,7 @@ public abstract class ChunkColumn<C extends Chunk> {
         return position;
     }
 
-    public ColumnHeightMap heightmap() {
+    public ColumnHeightMap<C> heightmap() {
         return heightmap;
     }
 
@@ -81,10 +81,6 @@ public abstract class ChunkColumn<C extends Chunk> {
 
     public int getHeight(int x, int z) {
         return heightmap.max().get(x, z);
-    }
-
-    public int getDepth(int x, int z) {
-        return heightmap.min().get(x, z);
     }
 
 

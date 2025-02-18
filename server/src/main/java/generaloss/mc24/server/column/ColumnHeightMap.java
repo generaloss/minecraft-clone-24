@@ -3,23 +3,26 @@ package generaloss.mc24.server.column;
 import generaloss.mc24.server.block.BlockState;
 import generaloss.mc24.server.chunk.Chunk;
 import generaloss.mc24.server.chunk.ChunkPos;
+import generaloss.mc24.server.world.World;
 
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.function.Predicate;
 
-public class ColumnHeightMap {
+public class ColumnHeightMap<C extends Chunk> {
 
     public static final int NO_HEIGHT = Integer.MIN_VALUE;
 
-    private final ChunkColumn<? extends Chunk> column;
+    private final World<C> world;
+    private final ChunkColumn<C> column;
     private final Predicate<BlockState> predicate;
-    private final ColumnIntArray max, min;
+    private final ColumnIntArray max;
 
-    public ColumnHeightMap(ChunkColumn<? extends Chunk> column, Predicate<BlockState> predicate) {
+    public ColumnHeightMap(ChunkColumn<C> column, Predicate<BlockState> predicate) {
+        this.world = column.world();
         this.column = column;
         this.predicate = predicate;
-        this.min = new ColumnIntArray(NO_HEIGHT);
         this.max = new ColumnIntArray(NO_HEIGHT);
     }
 
@@ -27,94 +30,66 @@ public class ColumnHeightMap {
         return max;
     }
 
-    public ColumnIntArray min() {
-        return min;
+    public void onClientCreatedChunk(ChunkColumn<C> column, C chunk) {
+        final int chunkBlockY = chunk.position().getBlockY();
+        column.forEach((localX, localZ) -> {
+            final int prevHeight = max.get(localX, localZ);
+            if(prevHeight > chunkBlockY)
+                return;
+
+            for(int localY = Chunk.SIZE_BOUND; localY >= 0; localY--){
+                final BlockState blockstate = chunk.getBlockState(localX, localY, localZ);
+                if(predicate.test(blockstate)) {
+                    max.set(localX, localZ, chunkBlockY + localY);
+                    return;
+                }
+            }
+        });
     }
 
-    public void updateHeightAndDepth(int localX, int y, int localZ, BlockState blockstate) {
-        this.updateHeight(localX, y, localZ, blockstate);
-        this.updateDepth(localX, y, localZ, blockstate);
-    }
-
-    public void updateHeight(int localX, int y, int localZ, BlockState blockstate) {
-        final int height = max.get(localX, localZ);
-        if(height > y) // impossible with height=NO_HEIGHT
+    public void updateHeight(int localX, int newHeight, int localZ, BlockState blockstate) {
+        final int prevHeight = max.get(localX, localZ);
+        if(prevHeight > newHeight)
             return;
 
         final boolean isOpaque = predicate.test(blockstate);
-        if(height == y){ // impossible with height=NO_HEIGHT
-            if(!isOpaque) {
-                int topChunkY = ChunkPos.byBlock(--y);
-                final List<? extends Chunk> chunks = column.getChunksTo(topChunkY);
-                Collections.reverse(chunks);
+        if(prevHeight == NO_HEIGHT) {
+            if(!isOpaque)
+                return;
 
-                Chunk chunk = chunks.iterator().next();
-                while(chunk != null) {
-                    int localY = (y & Chunk.SIZE_BOUND);
-                    do{
+            max.set(localX, localZ, newHeight);
+        }
+
+        if(prevHeight == newHeight){
+            if(!isOpaque) {
+                int topChunkY = ChunkPos.byBlock(newHeight);
+                final List<C> chunks = column.getChunksTo(topChunkY);
+                Collections.reverse(chunks);
+                final Iterator<C> chunkIterator = chunks.iterator();
+                do {
+                    final C chunk = chunkIterator.next();
+
+                    int localY = (newHeight & Chunk.SIZE_BOUND);
+                    do {
                         final BlockState downBlockstate = chunk.getBlockState(localX, localY, localZ);
                         if(predicate.test(downBlockstate)) {
-                            max.set(localX, localZ, y);
+                            max.set(localX, localZ, newHeight);
+
+                            // update skylight
+                            world.getSkyLightEngine().onHeightUpdatedDown(column, localX, localZ, prevHeight, newHeight);
                             return;
                         }
-                        y--;
+                        newHeight--;
                         localY--;
                     }while(localY >= 0);
-
-                    // next chunk down
-                    chunk = chunks.iterator().next();
-                }
+                }while(chunkIterator.hasNext());
             }
         }else if(isOpaque){
-            max.set(localX, localZ, y);
+            max.set(localX, localZ, newHeight);
+
+            // update skylight
+            world.getSkyLightEngine().onHeightUpdatedUp(column, localX, localZ, prevHeight, newHeight);
         }
-    }
-
-    public void updateDepth(int localX, int y, int localZ, BlockState blockstate) {
-        final int depth = min.get(localX, localZ);
-        if(depth != NO_HEIGHT && depth < y)
-            return;
-
-        final boolean isOpaque = predicate.test(blockstate);
-        if(depth == y){ // impossible with depth=NO_HEIGHT
-            if(!isOpaque) {
-                int downChunkY = ChunkPos.byBlock(++y);
-                final List<? extends Chunk> chunks = column.getChunksFrom(downChunkY);
-
-                Chunk chunk = chunks.iterator().next();
-                while(chunk != null) {
-                    int localY = (y & Chunk.SIZE_BOUND);
-                    do{
-                        final BlockState upBlockstate = chunk.getBlockState(localX, localY, localZ);
-                        if(predicate.test(upBlockstate)) {
-                            min.set(localX, localZ, y);
-                            return;
-                        }
-                        y++;
-                        localY++;
-                    }while(localY < Chunk.SIZE);
-
-                    // next chunk up
-                    chunk = chunks.iterator().next();
-                }
-            }
-        }else if(isOpaque){
-            min.set(localX, localZ, y);
-        }
-    }
-
-
-    public void updateHeightAndDepth() {
-        this.updateHeight();
-        this.updateDepth();
-    }
-
-    public void updateHeight() {
-
-    }
-
-    public void updateDepth() {
-
     }
 
 }

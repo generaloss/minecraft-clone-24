@@ -9,18 +9,20 @@ public class BlockVertex {
     public static final int TEXCOORD_SIZE = 2;
     public static final int COLOR_SIZE = 4;
     public static final int NORMAL_SIZE = 3;
-    public static final int LIGHT_SIZE = 3;
-    public static final int SIZE = (POSITION_SIZE + TEXCOORD_SIZE + COLOR_SIZE + NORMAL_SIZE + LIGHT_SIZE);
+    public static final int BLOCKLIGHT_SIZE = 3;
+    public static final int SKYLIGHT_SIZE = 1;
+    public static final int SIZE = (POSITION_SIZE + TEXCOORD_SIZE + COLOR_SIZE + NORMAL_SIZE + BLOCKLIGHT_SIZE + SKYLIGHT_SIZE);
 
     public static final int[] ATTRIBUTE_SIZE_ARRAY = {
-        POSITION_SIZE, TEXCOORD_SIZE, COLOR_SIZE, NORMAL_SIZE, LIGHT_SIZE,
+        POSITION_SIZE, TEXCOORD_SIZE, COLOR_SIZE, NORMAL_SIZE, BLOCKLIGHT_SIZE, SKYLIGHT_SIZE,
     };
 
     public static final int POSITION_OFFSET = 0;
     public static final int TEXCOORD_OFFSET = (POSITION_OFFSET + POSITION_SIZE);
     public static final int COLOR_OFFSET = (TEXCOORD_OFFSET + TEXCOORD_SIZE);
     public static final int NORMAL_OFFSET = (COLOR_OFFSET + COLOR_SIZE);
-    public static final int LIGHT_OFFSET = (NORMAL_OFFSET + NORMAL_SIZE);
+    public static final int BLOCKLIGHT_OFFSET = (NORMAL_OFFSET + NORMAL_SIZE);
+    public static final int SKYLIGHT_OFFSET = (BLOCKLIGHT_OFFSET + BLOCKLIGHT_SIZE);
 
     private final float[] array;
 
@@ -30,7 +32,8 @@ public class BlockVertex {
             u, v,       // texcoords
             r, g, b, a, // color
             0F, 0F, 0F, // normal
-            0F, 0F, 0F  // light
+            0F, 0F, 0F, // blocklight
+            0F,         // skylight
         };
     }
 
@@ -140,22 +143,31 @@ public class BlockVertex {
     }
 
 
-    public float getLightR() {
-        return array[LIGHT_OFFSET + 0];
+    public float getBlockLightR() {
+        return array[BLOCKLIGHT_OFFSET + 0];
     }
 
-    public float getLightG() {
-        return array[LIGHT_OFFSET + 1];
+    public float getBlockLightG() {
+        return array[BLOCKLIGHT_OFFSET + 1];
     }
 
-    public float getLightB() {
-        return array[LIGHT_OFFSET + 2];
+    public float getBlockLightB() {
+        return array[BLOCKLIGHT_OFFSET + 2];
     }
 
-    public void setLight(float r, float g, float b) {
-        array[LIGHT_OFFSET + 0] = r;
-        array[LIGHT_OFFSET + 1] = g;
-        array[LIGHT_OFFSET + 2] = b;
+    public void setBlockLight(float r, float g, float b) {
+        array[BLOCKLIGHT_OFFSET + 0] = r;
+        array[BLOCKLIGHT_OFFSET + 1] = g;
+        array[BLOCKLIGHT_OFFSET + 2] = b;
+    }
+
+
+    public float getSkyLight() {
+        return array[SKYLIGHT_OFFSET];
+    }
+
+    public void setSkyLight(float value) {
+        array[SKYLIGHT_OFFSET] = value;
     }
 
 }

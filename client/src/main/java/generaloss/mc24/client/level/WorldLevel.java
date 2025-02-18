@@ -91,6 +91,8 @@ public class WorldLevel extends World<LevelChunk> implements Disposable {
         final LevelChunk chunk = new LevelChunk(column, position, storage);
         column.putChunk(chunk);
 
+        column.heightmap().onClientCreatedChunk(column, chunk);
+
         tesselators.tesselate(chunk);
         tesselators.tesselate(super.getChunk(position.getNeighbor( 1,  0,  0)));
         tesselators.tesselate(super.getChunk(position.getNeighbor( 0,  1,  0)));

@@ -15,7 +15,7 @@ public class BlockCache {
 
     public BlockCache() {
         this.blocks = new BlockState[3 * 3 * 3];
-        this.lightLevels = new int[3 * 3 * 3 * 3];
+        this.lightLevels = new int[3 * 3 * 3 * 4];
     }
 
 
@@ -33,7 +33,7 @@ public class BlockCache {
 
 
     private int lightIndex(int i, int j, int k) {
-        return (i * 27 + j * 9 + k * 3);
+        return (i * 36 + j * 12 + k * 4);
     }
 
     public int getLightLevel(int i, int j, int k, int channel) {
@@ -41,7 +41,7 @@ public class BlockCache {
     }
 
 
-    public void cacheNeighborsFor(int x, int y, int z, BlockState centerBlockstate, ChunkCache<LevelChunk> chunkCache) {
+    public void initFor(int x, int y, int z, BlockState centerBlockstate, ChunkCache<LevelChunk> chunkCache) {
         for(int i = 0; i < 3; i++){
             for(int j = 0; j < 3; j++){
                 for(int k = 0; k < 3; k++){
@@ -52,7 +52,8 @@ public class BlockCache {
                         blocks[blockIndex] = centerBlockstate;
 
                         for(int channel = 0; channel < 3; channel++)
-                            lightLevels[lightIndex + channel] = chunkCache.getLightLevel(x, y, z, channel);
+                            lightLevels[lightIndex + channel] = chunkCache.getBlockLightLevel(x, y, z, channel);
+                        lightLevels[lightIndex + 3] = chunkCache.getSkyLightLevel(x, y, z);
                     }else{
                         final int blockX = (x + i - 1);
                         final int blockY = (y + j - 1);
@@ -62,7 +63,8 @@ public class BlockCache {
                         blocks[blockIndex] = neighborBlock;
 
                         for(int channel = 0; channel < 3; channel++)
-                            lightLevels[lightIndex + channel] = chunkCache.getLightLevel(blockX, blockY, blockZ, channel);
+                            lightLevels[lightIndex + channel] = chunkCache.getBlockLightLevel(blockX, blockY, blockZ, channel);
+                        lightLevels[lightIndex + 3] = chunkCache.getSkyLightLevel(blockX, blockY, blockZ);
                     }
                 }
             }

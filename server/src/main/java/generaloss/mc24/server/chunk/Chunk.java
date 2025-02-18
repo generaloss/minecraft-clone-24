@@ -74,7 +74,7 @@ public abstract class Chunk {
         blockstates.set(x, y, z, stateID);
 
         // update heightmap
-        column.heightmap().updateHeightAndDepth(x, position.getBlockY() + y, z, blockstate);
+        column.heightmap().updateHeight(x, position.getBlockY() + y, z, blockstate);
 
         // current & previous glowing
         final int[] glowing = blockstate.getBlockProperties().get(BlockProperty.GLOWING);

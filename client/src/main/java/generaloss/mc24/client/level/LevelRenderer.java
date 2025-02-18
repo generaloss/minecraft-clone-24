@@ -5,9 +5,12 @@ import generaloss.mc24.client.chunkmesh.ChunkMesh;
 import generaloss.mc24.client.resource.ClientResources;
 import generaloss.mc24.client.resource.TextureAtlasHandle;
 import generaloss.mc24.server.chunk.ChunkPos;
+import jpize.app.Jpize;
+import jpize.gl.Gl;
 import jpize.gl.shader.Shader;
 import jpize.gl.texture.Texture2D;
 import jpize.util.camera.PerspectiveCamera;
+import jpize.util.math.Mathc;
 import jpize.util.math.matrix.Matrix4f;
 import jpize.util.math.vector.Vec3f;
 
@@ -19,6 +22,7 @@ public class LevelRenderer {
     private final Shader shader;
     private final Texture2D blockAtlasTexture;
     private final Matrix4f matrix;
+    private float time;
 
     public LevelRenderer(Main context, WorldLevel level) {
         this.level = level;
@@ -28,7 +32,7 @@ public class LevelRenderer {
             .resource();
 
         this.blockAtlasTexture = ClientResources.ATLASES
-            .create(new TextureAtlasHandle("blocks", "textures/blocks/", 256, 256))
+            .create(new TextureAtlasHandle("blocks", "textures/blocks/", 512, 512))
             .resource().getTexture();
 
         // matrix
@@ -36,8 +40,14 @@ public class LevelRenderer {
     }
 
     public void render(PerspectiveCamera camera) {
+        time += Jpize.getDeltaTime();
+        final float skylightFactor = Mathc.cos(time * 0.75) * 0.5F + 0.5F;
+
+        Gl.clearColor(0.4 * skylightFactor, 0.6 * skylightFactor, 0.9 * skylightFactor);
+
         shader.bind();
         shader.uniform("u_texture", blockAtlasTexture);
+        shader.uniform("u_skylightFactor", skylightFactor);
 
         level.forEachChunk(chunk -> {
             final ChunkMesh mesh = chunk.mesh();

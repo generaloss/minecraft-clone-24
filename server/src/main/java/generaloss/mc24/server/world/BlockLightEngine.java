@@ -75,7 +75,7 @@ public class BlockLightEngine<C extends Chunk> {
     public void increase(Chunk chunk, int x, int y, int z, int levelR, int levelG, int levelB) {
         if(chunk == null)
             return;
-        chunkCache.cacheNeighborsFor((C) chunk);
+        chunkCache.initFor((C) chunk);
 
         this.addIncreaseEntry(x, y, z, levelR, levelG, levelB);
         this.processIncrease();
@@ -85,7 +85,7 @@ public class BlockLightEngine<C extends Chunk> {
     public void fillGapWithNeighborMaxLight(Chunk chunk, int x, int y, int z) {
         if(chunk == null)
             return;
-        chunkCache.cacheNeighborsFor((C) chunk);
+        chunkCache.initFor((C) chunk);
 
         tmp_vec.zero();
         this.forEachDirection(x, y, z, (neighborX, neighborY, neighborZ) -> {
@@ -145,7 +145,7 @@ public class BlockLightEngine<C extends Chunk> {
     public void decrease(Chunk chunk, int x, int y, int z, int levelFromR, int levelFromG, int levelFromB) {
         if(chunk == null)
             return;
-        chunkCache.cacheNeighborsFor((C) chunk);
+        chunkCache.initFor((C) chunk);
 
         this.addDecreaseEntry(x, y, z, levelFromR, levelFromG, levelFromB);
         this.processDecrease();

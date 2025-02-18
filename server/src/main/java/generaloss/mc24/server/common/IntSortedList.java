@@ -92,12 +92,9 @@ public class IntSortedList<T> implements Iterable<T> {
         final int startIndex = this.searchValueIndex(startValue);
         final int endIndex = this.searchValueIndex(endValue + 1);
 
-        final List<T> sublist = list.subList(startIndex, endIndex);
-        if(reversed){
-            final List<T> reversedList = new ArrayList<>(sublist);
-            Collections.reverse(reversedList);
-            return reversedList;
-        }
+        final List<T> sublist = new ArrayList<>(list.subList(startIndex, endIndex));
+        if(reversed)
+            Collections.reverse(sublist);
         return sublist;
     }
 
@@ -106,12 +103,12 @@ public class IntSortedList<T> implements Iterable<T> {
         final int endIndex = list.size();
         if(startIndex > endIndex)
             return Collections.emptyList();
-        return list.subList(startIndex, endIndex);
+        return new ArrayList<>(list.subList(startIndex, endIndex));
     }
 
     public List<T> sublistTo(int endValue) {
         final int endIndex = this.searchValueIndex(endValue + 1);
-        return list.subList(0, endIndex);
+        return new ArrayList<>(list.subList(0, endIndex));
     }
 
     @Override

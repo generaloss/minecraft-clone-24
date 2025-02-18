@@ -48,7 +48,7 @@ public class ColumnCache<C extends Chunk> {
     }
 
 
-    public void cacheNeighborsFor(ChunkColumn<C> column) {
+    public void initFor(ChunkColumn<C> column) {
         if(!hasNullColumns && columns[CENTER_COLUMN_INDEX] == column)
             return;
 
@@ -91,13 +91,6 @@ public class ColumnCache<C extends Chunk> {
         if(column == null)
             return ColumnHeightMap.NO_HEIGHT;
         return column.getHeight(norBlockPos.x, norBlockPos.z);
-    }
-
-    public int getDepth(int x, int z) {
-        final ChunkColumn<C> column = this.findForBlock(x, z);
-        if(column == null)
-            return ColumnHeightMap.NO_HEIGHT;
-        return column.getDepth(norBlockPos.x, norBlockPos.z);
     }
 
 
