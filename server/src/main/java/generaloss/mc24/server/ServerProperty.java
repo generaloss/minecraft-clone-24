@@ -1,6 +1,6 @@
 package generaloss.mc24.server;
 
-import generaloss.mc24.server.property.AbstractProperty;
+import generaloss.mc24.server.common.AbstractProperty;
 
 import java.util.HashMap;
 import java.util.Map;

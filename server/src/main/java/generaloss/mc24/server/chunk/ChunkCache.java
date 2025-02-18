@@ -4,6 +4,7 @@ import generaloss.mc24.server.block.Block;
 import generaloss.mc24.server.block.BlockProperty;
 import generaloss.mc24.server.block.BlockState;
 import generaloss.mc24.server.registry.ServerRegistries;
+import generaloss.mc24.server.world.SkyLightEngine;
 import generaloss.mc24.server.world.World;
 import jpize.util.math.Mathc;
 import jpize.util.math.Maths;
@@ -11,18 +12,18 @@ import jpize.util.math.vector.Vec3i;
 
 import java.util.function.Consumer;
 
-public class ChunkCache<W extends World<? extends C>, C extends Chunk<? extends W>> {
+public class ChunkCache<C extends Chunk> {
 
     public static final int CENTER_CHUNK_INDEX = 13;
 
-    private final W world;
-    private final Chunk<?>[] chunks;
+    private final World<C> world;
+    private final Chunk[] chunks;
     private final Vec3i norBlockPos;
     private boolean hasNullChunks;
 
-    public ChunkCache(W world) {
+    public ChunkCache(World<C> world) {
         this.world = world;
-        this.chunks = new Chunk<?>[3 * 3 * 3];
+        this.chunks = new Chunk[3 * 3 * 3];
         this.norBlockPos = new Vec3i();
     }
 
@@ -31,7 +32,7 @@ public class ChunkCache<W extends World<? extends C>, C extends Chunk<? extends 
     }
 
     public void forEach(Consumer<C> consumer) {
-        for(Chunk<?> chunk: chunks)
+        for(Chunk chunk: chunks)
             consumer.accept((C) chunk);
     }
 
@@ -40,7 +41,7 @@ public class ChunkCache<W extends World<? extends C>, C extends Chunk<? extends 
         return (i * 9 + j * 3 + k);
     }
 
-    public Chunk<?> get(int i, int j, int k) {
+    public Chunk get(int i, int j, int k) {
         return chunks[this.index(i + 1, j + 1, k + 1)];
     }
 
@@ -76,7 +77,7 @@ public class ChunkCache<W extends World<? extends C>, C extends Chunk<? extends 
         final int chunkX = Mathc.signum(Maths.floor((float) x / Chunk.SIZE));
         final int chunkY = Mathc.signum(Maths.floor((float) y / Chunk.SIZE));
         final int chunkZ = Mathc.signum(Maths.floor((float) z / Chunk.SIZE));
-        final Chunk<?> chunk = this.get(chunkX, chunkY, chunkZ);
+        final Chunk chunk = this.get(chunkX, chunkY, chunkZ);
         if(chunk == null)
             return null;
 
@@ -107,6 +108,20 @@ public class ChunkCache<W extends World<? extends C>, C extends Chunk<? extends 
         if(chunk == null)
             return 0;
         return chunk.getBlockLightLevel(norBlockPos.x, norBlockPos.y, norBlockPos.z, channel);
+    }
+
+    public int getSkyLightLevel(int x, int y, int z) {
+        final C chunk = this.findForBlock(x, y, z);
+        if(chunk == null)
+            return SkyLightEngine.MAX_LEVEL;
+        return chunk.getSkyLightLevel(norBlockPos.x, norBlockPos.y, norBlockPos.z);
+    }
+
+    public int getLightLevel(int x, int y, int z, int channel) {
+        final C chunk = this.findForBlock(x, y, z);
+        if(chunk == null)
+            return SkyLightEngine.MAX_LEVEL;
+        return chunk.getLightLevel(norBlockPos.x, norBlockPos.y, norBlockPos.z, channel);
     }
 
     public boolean setBlockLightLevel(int x, int y, int z, int channel, int lightLevel) {

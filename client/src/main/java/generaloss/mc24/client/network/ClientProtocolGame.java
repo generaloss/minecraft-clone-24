@@ -5,6 +5,7 @@ import generaloss.mc24.client.level.LevelChunk;
 import generaloss.mc24.client.level.WorldLevel;
 import generaloss.mc24.client.screen.SessionScreen;
 import generaloss.mc24.server.block.BlockState;
+import generaloss.mc24.server.chunk.ChunkPos;
 import generaloss.mc24.server.entity.AbstractEntity;
 import generaloss.mc24.server.network.packet2c.*;
 import generaloss.mc24.server.network.protocol.IClientProtocolGame;
@@ -21,9 +22,9 @@ public class ClientProtocolGame extends ClientProtocol implements IClientProtoco
 
     @Override
     public void handleChunk(ChunkPacket2C packet) {
+        final ChunkPos position = packet.getPosition();
         final WorldLevel level = super.context().level();
-        final LevelChunk chunk = new LevelChunk(level, packet);
-        level.putChunk(chunk);
+        level.createChunk(packet.getPosition(), packet.getStorage());
     }
 
     @Override

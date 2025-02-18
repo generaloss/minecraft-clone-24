@@ -1,5 +1,7 @@
 package generaloss.mc24.server.common;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Function;
@@ -80,9 +82,36 @@ public class IntSortedList<T> implements Iterable<T> {
 
 
     public List<T> sublist(int startValue, int endValue) {
+        final boolean reversed = (startValue > endValue);
+        if(reversed) { // swap start & end with xor
+            startValue ^= endValue;
+            endValue ^= startValue;
+            startValue ^= endValue;
+        }
+
         final int startIndex = this.searchValueIndex(startValue);
-        final int endIndex = this.searchValueIndex(endValue);
+        final int endIndex = this.searchValueIndex(endValue + 1);
+
+        final List<T> sublist = list.subList(startIndex, endIndex);
+        if(reversed){
+            final List<T> reversedList = new ArrayList<>(sublist);
+            Collections.reverse(reversedList);
+            return reversedList;
+        }
+        return sublist;
+    }
+
+    public List<T> sublistFrom(int startValue) {
+        final int startIndex = this.searchValueIndex(startValue);
+        final int endIndex = list.size();
+        if(startIndex > endIndex)
+            return Collections.emptyList();
         return list.subList(startIndex, endIndex);
+    }
+
+    public List<T> sublistTo(int endValue) {
+        final int endIndex = this.searchValueIndex(endValue + 1);
+        return list.subList(0, endIndex);
     }
 
     @Override

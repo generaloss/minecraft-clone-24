@@ -4,6 +4,7 @@ import generaloss.mc24.client.Main;
 import generaloss.mc24.client.chunkmesh.ChunkTesselatorPool;
 import generaloss.mc24.server.chunk.Chunk;
 import generaloss.mc24.server.chunk.ChunkPos;
+import generaloss.mc24.server.chunk.ChunkStorage;
 import generaloss.mc24.server.column.ChunkColumn;
 import generaloss.mc24.server.column.ColumnPos;
 import generaloss.mc24.server.event.Events;
@@ -81,22 +82,23 @@ public class WorldLevel extends World<LevelChunk> implements Disposable {
 
     @Override
     protected ChunkColumn<LevelChunk> createColumn(ColumnPos position) {
-        return new ClientChunkColumn(this, position);
+        return new LevelChunkColumn(this, position);
     }
 
-
     @Override
-    public void putChunk(LevelChunk chunk) {
-        super.putChunk(chunk);
-        tesselators.tesselate(chunk);
+    public LevelChunk createChunk(ChunkPos position, ChunkStorage storage) {
+        final LevelChunkColumn column = (LevelChunkColumn) super.createAndGetColumn(position.getX(), position.getZ());
+        final LevelChunk chunk = new LevelChunk(column, position, storage);
+        column.putChunk(chunk);
 
-        final ChunkPos position = chunk.position();
+        tesselators.tesselate(chunk);
         tesselators.tesselate(super.getChunk(position.getNeighbor( 1,  0,  0)));
         tesselators.tesselate(super.getChunk(position.getNeighbor( 0,  1,  0)));
         tesselators.tesselate(super.getChunk(position.getNeighbor( 0,  0,  1)));
         tesselators.tesselate(super.getChunk(position.getNeighbor(-1,  0,  0)));
         tesselators.tesselate(super.getChunk(position.getNeighbor( 0, -1,  0)));
         tesselators.tesselate(super.getChunk(position.getNeighbor( 0,  0, -1)));
+        return chunk;
     }
 
 

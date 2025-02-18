@@ -29,10 +29,6 @@ public enum Facing {
         return normal.x;
     }
 
-    public int getY() {
-        return normal.y;
-    }
-
     public int getZ() {
         return normal.z;
     }

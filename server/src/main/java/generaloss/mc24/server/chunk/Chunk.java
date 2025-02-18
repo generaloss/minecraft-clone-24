@@ -3,33 +3,43 @@ package generaloss.mc24.server.chunk;
 import generaloss.mc24.server.block.Block;
 import generaloss.mc24.server.block.BlockProperty;
 import generaloss.mc24.server.block.BlockState;
+import generaloss.mc24.server.column.ChunkColumn;
+import generaloss.mc24.server.common.XYZConsumer;
+import generaloss.mc24.server.common.XZConsumer;
 import generaloss.mc24.server.registry.ServerRegistries;
+import generaloss.mc24.server.world.SkyLightEngine;
 import generaloss.mc24.server.world.World;
 
-public abstract class Chunk<W extends World<? extends Chunk<? extends W>>> {
+public abstract class Chunk {
 
     public static final int SIZE = 16;
     public static final int SIZE_BOUND = (SIZE - 1);
     public static final int AREA = (SIZE * SIZE);
     public static final int VOLUME = (AREA * SIZE);
 
-    private final W world;
+    private final World<?> world;
+    private final ChunkColumn<?> column;
     private final ChunkPos position;
     private final ChunkStorage storage;
 
-    public Chunk(W world, ChunkPos position, ChunkStorage storage) {
-        this.world = world;
+    public Chunk(ChunkColumn<?> column, ChunkPos position, ChunkStorage storage) {
+        this.world = column.world();
+        this.column = column;
         this.position = position;
         this.storage = storage;
     }
 
-    public Chunk(W world, ChunkPos position, boolean hasSkylight) {
-        this(world, position, new ChunkStorage(hasSkylight));
+    public Chunk(ChunkColumn<?> column, ChunkPos position, boolean hasSkylight) {
+        this(column, position, new ChunkStorage(hasSkylight));
     }
 
 
-    public W world() {
+    public World<?> world() {
         return world;
+    }
+
+    public ChunkColumn<?> column() {
+        return column;
     }
 
     public ChunkPos position() {
@@ -62,6 +72,9 @@ public abstract class Chunk<W extends World<? extends Chunk<? extends W>>> {
 
         // set state ID
         blockstates.set(x, y, z, stateID);
+
+        // update heightmap
+        column.heightmap().updateHeightAndDepth(x, position.getBlockY() + y, z, blockstate);
 
         // current & previous glowing
         final int[] glowing = blockstate.getBlockProperties().get(BlockProperty.GLOWING);
@@ -108,19 +121,37 @@ public abstract class Chunk<W extends World<? extends Chunk<? extends W>>> {
     }
 
 
-    public interface XYZConsumer {
-        void accept(int x, int y, int z);
+    public byte getSkyLightLevel(int x, int y, int z) {
+        final ChunkByteArray skylight = storage.skylight();
+        if(skylight.isOutOfBounds(x, y, z))
+            return SkyLightEngine.MAX_LEVEL;
+        return skylight.get(x, y, z);
     }
+
+    public boolean setSkyLightLevel(int x, int y, int z, int level) {
+        final ChunkByteArray skylight = storage.skylight();
+        if(skylight.isOutOfBounds(x, y, z))
+            return false;
+        skylight.set(x, y, z, level);
+        return true;
+    }
+
+
+    public int getLightLevel(int x, int y, int z, int channel) {
+        final ChunkByteArray skylight = storage.skylight();
+        if(skylight.isOutOfBounds(x, y, z))
+            return SkyLightEngine.MAX_LEVEL;
+
+        final ChunkMultiByteArray blocklight = storage.blocklight();
+        return Math.max(skylight.get(x, y, z), blocklight.get(channel, x, y, z));
+    }
+
 
     public void forEach(XYZConsumer consumer) {
         for(int y = 0; y < Chunk.SIZE; y++)
             for(int x = 0; x < Chunk.SIZE; x++)
                 for(int z = 0; z < Chunk.SIZE; z++)
                     consumer.accept(x, y, z);
-    }
-
-    public interface XZConsumer {
-        void accept(int x, int z);
     }
 
     public void forEach(XZConsumer consumer) {

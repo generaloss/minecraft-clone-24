@@ -2,5 +2,6 @@
 ![preview](preview.png)
 
 ## Features
-* Multiplayer
+* Multiplayer & public server
 * Resource pack hot swap
+* RGB block light

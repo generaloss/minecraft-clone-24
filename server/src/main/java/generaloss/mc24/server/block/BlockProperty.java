@@ -1,6 +1,6 @@
 package generaloss.mc24.server.block;
 
-import generaloss.mc24.server.property.AbstractProperty;
+import generaloss.mc24.server.common.AbstractProperty;
 import org.json.JSONArray;
 
 import java.util.HashMap;

@@ -1,6 +1,7 @@
 package generaloss.mc24.server.chunk;
 
 import jpize.util.math.Frustum;
+import jpize.util.math.Maths;
 import jpize.util.math.vector.Vec3i;
 
 import java.util.Objects;
@@ -78,6 +79,11 @@ public class ChunkPos {
     @Override
     public int hashCode() {
         return Objects.hash(x, y, z);
+    }
+
+
+    public static int byBlock(int position) {
+        return Maths.floor((float) position / Chunk.SIZE);
     }
 
 }

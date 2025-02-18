@@ -49,7 +49,7 @@ public class SessionScreen extends Screen {
 
     @Override
     public void show() {
-        Gl.clearColor(0.25F, 0.35F, 0.5F); // sky color
+        Gl.clearColor(0.4F, 0.6F, 0.9F); // sky color
         final PerspectiveCamera camera = super.context.player().camera();
         camera.resize(Jpize.getWidth(), Jpize.getHeight());
         super.context.player().input().enable();

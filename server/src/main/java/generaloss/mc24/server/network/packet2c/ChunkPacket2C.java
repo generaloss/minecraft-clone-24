@@ -13,7 +13,7 @@ public class ChunkPacket2C extends NetPacket<IClientProtocolGame> {
     private ChunkPos position;
     private ChunkStorage storage;
 
-    public ChunkPacket2C(Chunk<?> chunk) {
+    public ChunkPacket2C(Chunk chunk) {
         this.position = chunk.position();
         this.storage = chunk.storage();
     }
@@ -51,7 +51,7 @@ public class ChunkPacket2C extends NetPacket<IClientProtocolGame> {
         final ChunkMultiByteArray blocklight = new ChunkMultiByteArray(3, stream.readByteArray());
 
         final boolean hasSkylight = stream.readBoolean();
-        final ChunkMultiByteArray skylight = (hasSkylight ? new ChunkMultiByteArray(3, stream.readByteArray()) : null);
+        final ChunkByteArray skylight = (hasSkylight ? new ChunkByteArray(stream.readByteArray()) : null);
 
         storage = new ChunkStorage(blockstates, blocklight, skylight);
     }

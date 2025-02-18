@@ -23,7 +23,7 @@ import java.util.concurrent.ExecutorService;
 
 public class ChunkTesselator {
 
-    private final ChunkCache<WorldLevel, LevelChunk> chunkCache;
+    private final ChunkCache<LevelChunk> chunkCache;
     private final ChunkMeshCache meshCache;
     private volatile TesselatorStatus status;
     private final FloatList verticesCache;

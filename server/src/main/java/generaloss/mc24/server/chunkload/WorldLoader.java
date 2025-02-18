@@ -1,6 +1,7 @@
 package generaloss.mc24.server.chunkload;
 
 import generaloss.mc24.server.chunk.ChunkPos;
+import generaloss.mc24.server.chunk.ChunkStorage;
 import generaloss.mc24.server.chunk.ServerChunk;
 import generaloss.mc24.server.column.ChunkColumn;
 import generaloss.mc24.server.world.ServerWorld;
@@ -41,7 +42,7 @@ public class WorldLoader {
         System.out.println("[INFO]: Preparing spawn area..");
         for(int y = -2; y < 2; y++){
             this.loadChunk(0, y, 0);
-            for(int r = 0; r < 10; r++){
+            for(int r = 0; r < 6; r++){
                 for(int i = -r; i <= r - 1; i++)
                     this.loadChunk(i, y, r);
                 for(int i = -r + 1; i <= r; i++)
@@ -58,14 +59,16 @@ public class WorldLoader {
                 chunk.markLoaded();
             }
         }
+        for(ChunkColumn<ServerChunk> column: world.getColumns())
+            world.getSkyLightEngine().diffuseSkyLight(column);
+
         System.out.println("[INFO]: " + world.getColumns().size() + " chunks loaded.");
     }
 
     private void loadChunk(int chunkX, int chunkY, int chunkZ) {
         final ChunkPos position = new ChunkPos(chunkX, chunkY, chunkZ);
-        final ServerChunk chunk = new ServerChunk(world, position, false);
+        final ServerChunk chunk = world.createChunk(position, new ChunkStorage(true));
         world.getChunkGenerator().generateBase(chunk);
-        world.putChunk(chunk);
     }
 
 }

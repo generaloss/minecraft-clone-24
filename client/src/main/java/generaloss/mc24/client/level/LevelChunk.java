@@ -2,16 +2,28 @@ package generaloss.mc24.client.level;
 
 import generaloss.mc24.client.chunkmesh.ChunkMesh;
 import generaloss.mc24.server.chunk.Chunk;
-import generaloss.mc24.server.network.packet2c.ChunkPacket2C;
+import generaloss.mc24.server.chunk.ChunkPos;
+import generaloss.mc24.server.chunk.ChunkStorage;
 import jpize.util.math.vector.Vec3f;
 
-public class LevelChunk extends Chunk<WorldLevel> implements Comparable<LevelChunk> {
+public class LevelChunk extends Chunk implements Comparable<LevelChunk> {
 
     private ChunkMesh mesh;
 
-    public LevelChunk(WorldLevel level, ChunkPacket2C packet) {
-        super(level, packet.getPosition(), packet.getStorage());
+    public LevelChunk(LevelChunkColumn column, ChunkPos position, ChunkStorage storage) {
+        super(column, position, storage);
     }
+
+    @Override
+    public WorldLevel world() {
+        return (WorldLevel) super.world();
+    }
+
+    @Override
+    public LevelChunkColumn column() {
+        return (LevelChunkColumn) super.column();
+    }
+
 
     public ChunkMesh mesh() {
         return mesh;

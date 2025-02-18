@@ -1,5 +1,7 @@
 package generaloss.mc24.server.chunk;
 
+import java.util.Arrays;
+
 public class ChunkMultiByteArray {
 
     private final int layersNumber;
@@ -12,6 +14,11 @@ public class ChunkMultiByteArray {
 
     public ChunkMultiByteArray(int layersNumber) {
         this(layersNumber, new byte[layersNumber * Chunk.VOLUME]);
+    }
+
+    public ChunkMultiByteArray(int layersNumber, byte initValue) {
+        this(layersNumber);
+        Arrays.fill(array, initValue);
     }
 
     public int getLayersNumber() {
@@ -27,8 +34,8 @@ public class ChunkMultiByteArray {
         return (layer * Chunk.VOLUME + x * Chunk.AREA + y * Chunk.SIZE + z);
     }
 
-    public void set(int layer, int x, int y, int z, int ID) {
-        array[this.indexBy(layer, x, y, z)] = (byte) ID;
+    public void set(int layer, int x, int y, int z, int value) {
+        array[this.indexBy(layer, x, y, z)] = (byte) value;
     }
 
     public byte get(int layer, int x, int y, int z) {

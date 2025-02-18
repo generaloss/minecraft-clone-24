@@ -1,6 +1,8 @@
 package generaloss.mc24.server.world;
 
 import generaloss.mc24.server.Server;
+import generaloss.mc24.server.chunk.ChunkPos;
+import generaloss.mc24.server.chunk.ChunkStorage;
 import generaloss.mc24.server.chunk.ServerChunk;
 import generaloss.mc24.server.chunkload.WorldLoader;
 import generaloss.mc24.server.column.ChunkColumn;
@@ -54,6 +56,14 @@ public class ServerWorld extends World<ServerChunk> implements Tickable {
     @Override
     protected ChunkColumn<ServerChunk> createColumn(ColumnPos position) {
         return new ServerChunkColumn(this, position);
+    }
+
+    @Override
+    public ServerChunk createChunk(ChunkPos position, ChunkStorage storage) {
+        final ServerChunkColumn column = (ServerChunkColumn) super.createAndGetColumn(position.getX(), position.getZ());
+        final ServerChunk chunk = new ServerChunk(column, position, storage);
+        column.putChunk(chunk);
+        return chunk;
     }
 
 }

@@ -5,32 +5,33 @@ import generaloss.mc24.server.block.BlockProperty;
 import generaloss.mc24.server.block.BlockState;
 import generaloss.mc24.server.chunk.Chunk;
 import generaloss.mc24.server.chunk.ChunkCache;
+import generaloss.mc24.server.common.DirConsumer;
 import generaloss.mc24.server.event.Events;
 import jpize.util.math.vector.Vec3i;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-public class BlockLightEngine<W extends World<C>, C extends Chunk<? extends W>> {
+public class BlockLightEngine<C extends Chunk> {
 
     public static final int MAX_LEVEL = Chunk.SIZE_BOUND;
 
     private record Entry(int x, int y, int z, int channel, int level) { }
 
 
-    private final ChunkCache<W, C> chunkCache;
+    private final ChunkCache<C> chunkCache;
     private final Queue<Entry> increaseQueue;
     private final Queue<Entry> decreaseQueue;
     private final Vec3i tmp_vec;
 
-    public BlockLightEngine(W world) {
+    public BlockLightEngine(World<C> world) {
         this.chunkCache = new ChunkCache<>(world);
         this.increaseQueue = new ConcurrentLinkedQueue<>();
         this.decreaseQueue = new ConcurrentLinkedQueue<>();
         this.tmp_vec = new Vec3i();
     }
 
-    public ChunkCache<W, C> chunkCache() {
+    public ChunkCache<C> chunkCache() {
         return chunkCache;
     }
 
@@ -71,7 +72,7 @@ public class BlockLightEngine<W extends World<C>, C extends Chunk<? extends W>> 
         this.addIncreaseEntry(x, y, z, 2, levelB);
     }
 
-    public void increase(Chunk<?> chunk, int x, int y, int z, int levelR, int levelG, int levelB) {
+    public void increase(Chunk chunk, int x, int y, int z, int levelR, int levelG, int levelB) {
         if(chunk == null)
             return;
         chunkCache.cacheNeighborsFor((C) chunk);
@@ -81,7 +82,7 @@ public class BlockLightEngine<W extends World<C>, C extends Chunk<? extends W>> 
         Events.invokeLightIncreased(chunk, x, y, z, levelR, levelG, levelB);
     }
 
-    public void fillGapWithNeighborMaxLight(Chunk<?> chunk, int x, int y, int z) {
+    public void fillGapWithNeighborMaxLight(Chunk chunk, int x, int y, int z) {
         if(chunk == null)
             return;
         chunkCache.cacheNeighborsFor((C) chunk);
@@ -141,7 +142,7 @@ public class BlockLightEngine<W extends World<C>, C extends Chunk<? extends W>> 
         this.addDecreaseEntry(x, y, z, 2, levelFromB);
     }
 
-    public void decrease(Chunk<?> chunk, int x, int y, int z, int levelFromR, int levelFromG, int levelFromB) {
+    public void decrease(Chunk chunk, int x, int y, int z, int levelFromR, int levelFromG, int levelFromB) {
         if(chunk == null)
             return;
         chunkCache.cacheNeighborsFor((C) chunk);

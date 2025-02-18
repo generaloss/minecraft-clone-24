@@ -64,7 +64,7 @@ public class BinarySearchColumn extends JpizeApplication {
 
         batch.position().y += (offsetY[1] + Jpize.getHalfHeight());
         numOffsetY = 0;
-        for(Integer height: list.sublist(3, 8)){
+        for(Integer height: list.sublistTo(-2)){
             numOffsetY += (80 + 5);
             batch.drawRectRGB(-40, -40 + numOffsetY, 80, 80, 0x654545);
 
@@ -106,13 +106,13 @@ public class BinarySearchColumn extends JpizeApplication {
     private void handleHeightInput() {
         if(Key.P.pressed()) {
             final int num = this.getPressedNum();
-            if(num != -1){
+            if(num != Integer.MIN_VALUE){
                 list.put(num);
                 this.centerContent();
             }
         }else if(Key.R.pressed()) {
             final int num = this.getPressedNum();
-            if(num != -1){
+            if(num != Integer.MIN_VALUE){
                 list.remove(num);
                 this.centerContent();
             }
@@ -120,17 +120,17 @@ public class BinarySearchColumn extends JpizeApplication {
     }
 
     private int getPressedNum() {
-        if(Key.NUM_0.down()) return 0;
-        if(Key.NUM_1.down()) return 1;
-        if(Key.NUM_2.down()) return 2;
-        if(Key.NUM_3.down()) return 3;
-        if(Key.NUM_4.down()) return 4;
-        if(Key.NUM_5.down()) return 5;
-        if(Key.NUM_6.down()) return 6;
-        if(Key.NUM_7.down()) return 7;
-        if(Key.NUM_8.down()) return 8;
-        if(Key.NUM_9.down()) return 9;
-        return -1;
+        if(Key.NUM_0.down()) return 0 - 5;
+        if(Key.NUM_1.down()) return 1 - 5;
+        if(Key.NUM_2.down()) return 2 - 5;
+        if(Key.NUM_3.down()) return 3 - 5;
+        if(Key.NUM_4.down()) return 4 - 5;
+        if(Key.NUM_5.down()) return 5 - 5;
+        if(Key.NUM_6.down()) return 6 - 5;
+        if(Key.NUM_7.down()) return 7 - 5;
+        if(Key.NUM_8.down()) return 8 - 5;
+        if(Key.NUM_9.down()) return 9 - 5;
+        return Integer.MIN_VALUE;
     }
 
 

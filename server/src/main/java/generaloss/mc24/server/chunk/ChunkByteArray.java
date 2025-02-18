@@ -1,5 +1,7 @@
 package generaloss.mc24.server.chunk;
 
+import java.util.Arrays;
+
 public class ChunkByteArray {
 
     private final byte[] array;
@@ -12,6 +14,11 @@ public class ChunkByteArray {
         this(new byte[Chunk.VOLUME]);
     }
 
+    public ChunkByteArray(byte initValue) {
+        this();
+        Arrays.fill(array, initValue);
+    }
+
     public byte[] array() {
         return array;
     }
@@ -21,8 +28,8 @@ public class ChunkByteArray {
         return (x * Chunk.AREA + y * Chunk.SIZE + z);
     }
 
-    public void set(int x, int y, int z, int ID) {
-        array[this.indexBy(x, y, z)] = (byte) ID;
+    public void set(int x, int y, int z, int value) {
+        array[this.indexBy(x, y, z)] = (byte) value;
     }
 
     public byte get(int x, int y, int z) {

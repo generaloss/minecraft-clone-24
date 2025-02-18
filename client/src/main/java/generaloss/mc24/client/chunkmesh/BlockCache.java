@@ -1,7 +1,6 @@
 package generaloss.mc24.client.chunkmesh;
 
 import generaloss.mc24.client.level.LevelChunk;
-import generaloss.mc24.client.level.WorldLevel;
 import generaloss.mc24.server.Direction;
 import generaloss.mc24.server.block.BlockState;
 import generaloss.mc24.server.chunk.ChunkCache;
@@ -42,7 +41,7 @@ public class BlockCache {
     }
 
 
-    public void cacheNeighborsFor(int x, int y, int z, BlockState centerBlockstate, ChunkCache<WorldLevel, LevelChunk> chunkCache) {
+    public void cacheNeighborsFor(int x, int y, int z, BlockState centerBlockstate, ChunkCache<LevelChunk> chunkCache) {
         for(int i = 0; i < 3; i++){
             for(int j = 0; j < 3; j++){
                 for(int k = 0; k < 3; k++){
@@ -53,7 +52,7 @@ public class BlockCache {
                         blocks[blockIndex] = centerBlockstate;
 
                         for(int channel = 0; channel < 3; channel++)
-                            lightLevels[lightIndex + channel] = chunkCache.getBlockLightLevel(x, y, z, channel);
+                            lightLevels[lightIndex + channel] = chunkCache.getLightLevel(x, y, z, channel);
                     }else{
                         final int blockX = (x + i - 1);
                         final int blockY = (y + j - 1);
@@ -63,7 +62,7 @@ public class BlockCache {
                         blocks[blockIndex] = neighborBlock;
 
                         for(int channel = 0; channel < 3; channel++)
-                            lightLevels[lightIndex + channel] = chunkCache.getBlockLightLevel(blockX, blockY, blockZ, channel);
+                            lightLevels[lightIndex + channel] = chunkCache.getLightLevel(blockX, blockY, blockZ, channel);
                     }
                 }
             }

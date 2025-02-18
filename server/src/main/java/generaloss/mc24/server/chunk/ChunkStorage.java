@@ -4,9 +4,9 @@ public class ChunkStorage {
 
     private final ChunkByteArray blockstates;
     private final ChunkMultiByteArray blocklight;
-    private final ChunkMultiByteArray skylight;
+    private final ChunkByteArray skylight;
 
-    public ChunkStorage(ChunkByteArray blockstates, ChunkMultiByteArray blocklight, ChunkMultiByteArray skylight) {
+    public ChunkStorage(ChunkByteArray blockstates, ChunkMultiByteArray blocklight, ChunkByteArray skylight) {
         this.blockstates = blockstates;
         this.blocklight = blocklight;
         this.skylight = skylight;
@@ -16,7 +16,7 @@ public class ChunkStorage {
         this(
             new ChunkByteArray(),
             new ChunkMultiByteArray(3),
-            (hasSkylight ? new ChunkMultiByteArray(3) : null)
+            (hasSkylight ? new ChunkByteArray() : null)
         );
     }
 
@@ -29,7 +29,7 @@ public class ChunkStorage {
         return blocklight;
     }
 
-    public ChunkMultiByteArray skylight() {
+    public ChunkByteArray skylight() {
         return skylight;
     }
 
