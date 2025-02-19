@@ -82,6 +82,7 @@ public abstract class Chunk {
             world.getBlockLightEngine().increase(this, x, y, z, glowing[0], glowing[1], glowing[2]);
         // fill gap with light
         world.getBlockLightEngine().fillGapWithNeighborMaxLight(this, x, y, z);
+        world.getSkyLightEngine().fillGapWithNeighborMaxLight(column, x, y, z);
     }
 
 
