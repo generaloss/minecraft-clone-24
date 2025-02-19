@@ -62,7 +62,7 @@ public class ColumnHeightMap<C extends Chunk> {
 
         if(prevHeight == newHeight){
             if(!isOpaque) {
-                int topChunkY = ChunkPos.byBlock(newHeight);
+                final int topChunkY = ChunkPos.byBlock(newHeight);
                 final List<C> chunks = column.getChunksTo(topChunkY);
                 Collections.reverse(chunks);
                 final Iterator<C> chunkIterator = chunks.iterator();

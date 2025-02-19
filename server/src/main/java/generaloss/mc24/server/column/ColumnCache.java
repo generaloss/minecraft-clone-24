@@ -1,12 +1,9 @@
 package generaloss.mc24.server.column;
 
 import generaloss.mc24.server.block.Block;
-import generaloss.mc24.server.block.BlockProperty;
 import generaloss.mc24.server.block.BlockState;
 import generaloss.mc24.server.chunk.Chunk;
-import generaloss.mc24.server.chunk.ChunkPos;
-import generaloss.mc24.server.registry.ServerRegistries;
-import generaloss.mc24.server.world.SkyLightEngine;
+import generaloss.mc24.server.light.SkyLightEngine;
 import generaloss.mc24.server.world.World;
 import jpize.util.math.Mathc;
 import jpize.util.math.Maths;
@@ -94,66 +91,60 @@ public class ColumnCache<C extends Chunk> {
     }
 
 
-    public C findChunkForBlock(int x, int y, int z) {
+    public BlockState getBlockState(int x, int y, int z) {
         final ChunkColumn<C> column = this.findForBlock(x, z);
         if(column == null)
-            return null;
-
-        final C chunk = column.getChunk(ChunkPos.byBlock(y));
-        if(chunk == null)
-            return null;
-
-        // normalize y
-        norBlockPos.y = (y & Chunk.SIZE_BOUND);
-        return chunk;
-    }
-
-    public BlockState getBlockState(int x, int y, int z) {
-        final C chunk = this.findChunkForBlock(x, y, z);
-        if(chunk == null)
             return Block.VOID.getDefaultState();
-        final byte stateID = chunk.storage().blockstates().get(norBlockPos.x, norBlockPos.y, norBlockPos.z);
-        return ServerRegistries.BLOCK_STATE.get(stateID);
+        return column.getBlockState(norBlockPos.x, y, norBlockPos.z);
     }
 
     public boolean setBlockState(int x, int y, int z, BlockState blockstate) {
-        final C chunk = this.findChunkForBlock(x, y, z);
-        if(chunk == null)
+        final ChunkColumn<C> column = this.findForBlock(x, z);
+        if(column == null)
             return false;
-        return chunk.setBlockState(norBlockPos.x, norBlockPos.y, norBlockPos.z, blockstate);
+        return column.setBlockState(norBlockPos.x, y, norBlockPos.z, blockstate);
     }
 
     public byte getBlockLightLevel(int x, int y, int z, int channel) {
-        final C chunk = this.findChunkForBlock(x, y, z);
-        if(chunk == null)
+        final ChunkColumn<C> column = this.findForBlock(x, z);
+        if(column == null)
             return 0;
-        return chunk.getBlockLightLevel(norBlockPos.x, norBlockPos.y, norBlockPos.z, channel);
+        return column.getBlockLightLevel(norBlockPos.x, y, norBlockPos.z, channel);
+    }
+
+    public boolean setBlockLightLevel(int x, int y, int z, int channel, int level) {
+        final ChunkColumn<C> column = this.findForBlock(x, z);
+        if(column == null)
+            return false;
+        return column.setBlockLightLevel(norBlockPos.x, y, norBlockPos.z, channel, level);
+    }
+
+    public boolean setBlockLightLevel(int x, int y, int z, int redLevel, int greenLevel, int blueLevel) {
+        final ChunkColumn<C> column = this.findForBlock(x, z);
+        if(column == null)
+            return false;
+        return column.setBlockLightLevel(norBlockPos.x, y, norBlockPos.z, redLevel, greenLevel, blueLevel);
     }
 
     public int getSkyLightLevel(int x, int y, int z) {
-        final C chunk = this.findChunkForBlock(x, y, z);
-        if(chunk == null)
+        final ChunkColumn<C> column = this.findForBlock(x, z);
+        if(column == null)
             return SkyLightEngine.MAX_LEVEL;
-        return chunk.getSkyLightLevel(norBlockPos.x, norBlockPos.y, norBlockPos.z);
+        return column.getSkyLightLevel(norBlockPos.x, y, norBlockPos.z);
+    }
+
+    public boolean setSkyLightLevel(int x, int y, int z, int level) {
+        final ChunkColumn<C> column = this.findForBlock(x, z);
+        if(column == null)
+            return false;
+        return column.setSkyLightLevel(norBlockPos.x, y, norBlockPos.z, level);
     }
 
     public int getLightLevel(int x, int y, int z, int channel) {
-        final C chunk = this.findChunkForBlock(x, y, z);
-        if(chunk == null)
+        final ChunkColumn<C> column = this.findForBlock(x, z);
+        if(column == null)
             return SkyLightEngine.MAX_LEVEL;
-        return chunk.getLightLevel(norBlockPos.x, norBlockPos.y, norBlockPos.z, channel);
-    }
-
-    public boolean setBlockLightLevel(int x, int y, int z, int channel, int lightLevel) {
-        final C chunk = this.findChunkForBlock(x, y, z);
-        if(chunk == null)
-            return false;
-
-        final int opacity = this.getBlockState(x, y, z).getBlockProperties().get(BlockProperty.OPACITY);
-        if(opacity + lightLevel > 15)
-            throw new RuntimeException("(" + x + ", " + y + ", " + z + "): opacity="+ opacity +", lightLevel="+lightLevel + ", sum="+(opacity +lightLevel) + " > 15");
-
-        return chunk.setBlockLightLevel(norBlockPos.x, norBlockPos.y, norBlockPos.z, channel, lightLevel);
+        return column.getLightLevel(norBlockPos.x, y, norBlockPos.z, channel);
     }
 
 }

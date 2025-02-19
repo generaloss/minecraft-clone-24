@@ -1,6 +1,6 @@
 package generaloss.mc24.client.block;
 
-import generaloss.mc24.server.Direction;
+import generaloss.mc24.server.common.Direction;
 import jpize.util.array.FloatList;
 import jpize.util.math.vector.Vec3f;
 

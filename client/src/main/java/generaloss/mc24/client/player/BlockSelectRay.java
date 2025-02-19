@@ -1,7 +1,7 @@
 package generaloss.mc24.client.player;
 
 import generaloss.mc24.client.level.WorldLevel;
-import generaloss.mc24.server.Direction;
+import generaloss.mc24.server.common.Direction;
 import generaloss.mc24.server.block.BlockState;
 import jpize.util.camera.Camera3D;
 import jpize.util.math.Maths;

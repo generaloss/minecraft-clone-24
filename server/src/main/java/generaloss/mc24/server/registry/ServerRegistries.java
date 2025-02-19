@@ -1,6 +1,6 @@
 package generaloss.mc24.server.registry;
 
-import generaloss.mc24.server.Facing;
+import generaloss.mc24.server.common.Facing;
 import generaloss.mc24.server.block.Block;
 import generaloss.mc24.server.block.StateProperty;
 import generaloss.mc24.server.resourcepack.BlockHandle;

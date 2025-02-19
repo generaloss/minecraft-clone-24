@@ -1,7 +1,7 @@
 package generaloss.mc24.client.chunkmesh;
 
 import generaloss.mc24.client.level.LevelChunk;
-import generaloss.mc24.server.Direction;
+import generaloss.mc24.server.common.Direction;
 import generaloss.mc24.server.block.BlockState;
 import generaloss.mc24.server.chunk.ChunkCache;
 

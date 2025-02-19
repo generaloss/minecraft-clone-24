@@ -16,7 +16,6 @@ public class ChunkPos {
         this.z = z;
     }
 
-
     public int getX() {
         return x;
     }
@@ -51,15 +50,16 @@ public class ChunkPos {
     }
 
 
+    public ChunkPos getNeighbor(int dx, int dy, int dz) {
+        return new ChunkPos(x + dx, y + dy, z + dz);
+    }
+
+
     public boolean isVisible(Frustum frustum) {
         final int x = this.getBlockX();
         final int y = this.getBlockY();
         final int z = this.getBlockZ();
         return frustum.isAABoxIn(x, y, z, x + Chunk.SIZE, y + Chunk.SIZE, z + Chunk.SIZE);
-    }
-
-    public ChunkPos getNeighbor(int dx, int dy, int dz) {
-        return new ChunkPos(x + dx, y + dy, z + dz);
     }
 
 

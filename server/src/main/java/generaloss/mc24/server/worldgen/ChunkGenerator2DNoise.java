@@ -1,6 +1,7 @@
 package generaloss.mc24.server.worldgen;
 
 import generaloss.mc24.server.block.BlockState;
+import generaloss.mc24.server.chunk.Chunk;
 import generaloss.mc24.server.chunk.ServerChunk;
 import generaloss.mc24.server.registry.ServerRegistries;
 import jpize.util.math.FastNoise;
@@ -28,12 +29,12 @@ public class ChunkGenerator2DNoise implements IChunkGenerator {
             final int worldZ = (chunkLocalZ + z);
 
             final int height = (Math.round(noise.get(worldX, worldZ) * 25 - chunkLocalY));
-            if(height < 0)
+            if(height < 0 || height > Chunk.SIZE_BOUND)
                 return;
 
             chunk.setBlockState(x, height, z, ServerRegistries.BLOCK.get("grass_block").resource().getDefaultState());
-            chunk.setBlockState(x, height - 1, z, ServerRegistries.BLOCK.get("dirt").resource().getDefaultState());
-            chunk.setBlockState(x, height - 2, z, ServerRegistries.BLOCK.get("dirt").resource().getDefaultState());
+            if(height >= 1) chunk.setBlockState(x, height - 1, z, ServerRegistries.BLOCK.get("dirt").resource().getDefaultState());
+            if(height >= 2) chunk.setBlockState(x, height - 2, z, ServerRegistries.BLOCK.get("dirt").resource().getDefaultState());
 
             for(int y = 0; y < height - 2; y++)
                 chunk.setBlockState(x, y, z, ServerRegistries.BLOCK.get("stone").resource().getDefaultState());

@@ -4,7 +4,7 @@ import generaloss.mc24.client.Main;
 import generaloss.mc24.client.player.BlockSelectRay;
 import generaloss.mc24.client.player.ClientPlayer;
 import generaloss.mc24.client.resource.ClientResources;
-import generaloss.mc24.server.Facing;
+import generaloss.mc24.server.common.Facing;
 import generaloss.mc24.server.block.Block;
 import generaloss.mc24.server.block.BlockState;
 import generaloss.mc24.server.block.StateProperty;

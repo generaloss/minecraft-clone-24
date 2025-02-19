@@ -1,6 +1,6 @@
 package generaloss.mc24.server.registry;
 
-import generaloss.mc24.server.Identifiable;
+import generaloss.mc24.server.common.Identifiable;
 
 import java.util.Collection;
 import java.util.HashMap;

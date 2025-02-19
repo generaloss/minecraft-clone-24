@@ -1,28 +1,23 @@
-package generaloss.mc24.server.world;
+package generaloss.mc24.server.light;
 
-import generaloss.mc24.server.Direction;
 import generaloss.mc24.server.block.BlockProperty;
 import generaloss.mc24.server.block.BlockState;
 import generaloss.mc24.server.chunk.Chunk;
 import generaloss.mc24.server.chunk.ChunkCache;
-import generaloss.mc24.server.common.DirConsumer;
+import generaloss.mc24.server.common.DirectionConsumer;
 import generaloss.mc24.server.event.Events;
+import generaloss.mc24.server.world.World;
 import jpize.util.math.vector.Vec3i;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-public class BlockLightEngine<C extends Chunk> {
-
-    public static final int MAX_LEVEL = Chunk.SIZE_BOUND;
-
-    private record Entry(int x, int y, int z, int channel, int level) { }
-
+public class BlockLightEngine<C extends Chunk> extends LightEngine {
 
     private final ChunkCache<C> chunkCache;
-    private final Queue<Entry> increaseQueue;
-    private final Queue<Entry> decreaseQueue;
     private final Vec3i tmp_vec;
+    private final Queue<BlockLightEntry> increaseQueue;
+    private final Queue<BlockLightEntry> decreaseQueue;
 
     public BlockLightEngine(World<C> world) {
         this.chunkCache = new ChunkCache<>(world);
@@ -36,37 +31,13 @@ public class BlockLightEngine<C extends Chunk> {
     }
 
 
-    private void forEachDirection(int x, int y, int z, DirConsumer consumer) {
-        for(int i = 0; i < 6; i++){
-            final Vec3i normal = Direction.values()[i].getNormal();
-
-            final int neighborX = (x + normal.x);
-            final int neighborY = (y + normal.y);
-            final int neighborZ = (z + normal.z);
-
-            consumer.accept(neighborX, neighborY, neighborZ);
-        }
-    }
-
-    private void addDirectionalEntries(Queue<Entry> queue, int x, int y, int z, int channel, int level) {
-        this.forEachDirection(x, y, z, (neighborX, neighborY, neighborZ) -> {
-
-            final BlockState blockstate = chunkCache.getBlockState(neighborX, neighborY, neighborZ);
-            final int blockOpacity = blockstate.getBlockProperties().get(BlockProperty.OPACITY);
-            final int neighborLevel = (level - Math.max(1, blockOpacity));
-
-            queue.add(new Entry(neighborX, neighborY, neighborZ, channel, neighborLevel));
-        });
-    }
-
-
     private void addIncreaseEntry(int x, int y, int z, int channel, int level) {
         if(level < 1)
             return;
-        increaseQueue.add(new Entry(x, y, z, channel, Math.min(MAX_LEVEL, level)));
+        increaseQueue.add(new BlockLightEntry(x, y, z, channel, Math.min(MAX_LEVEL, level)));
     }
 
-    private void addIncreaseEntry(int x, int y, int z, int levelR, int levelG, int levelB) {
+    private void addIncreaseEntryRGB(int x, int y, int z, int levelR, int levelG, int levelB) {
         this.addIncreaseEntry(x, y, z, 0, levelR);
         this.addIncreaseEntry(x, y, z, 1, levelG);
         this.addIncreaseEntry(x, y, z, 2, levelB);
@@ -77,10 +48,43 @@ public class BlockLightEngine<C extends Chunk> {
             return;
         chunkCache.initFor((C) chunk);
 
-        this.addIncreaseEntry(x, y, z, levelR, levelG, levelB);
+        this.addIncreaseEntryRGB(x, y, z, levelR, levelG, levelB);
         this.processIncrease();
         Events.invokeLightIncreased(chunk, x, y, z, levelR, levelG, levelB);
     }
+
+    public void processIncrease() {
+        while(!increaseQueue.isEmpty()) {
+            final BlockLightEntry entry = increaseQueue.poll();
+
+            final int x = entry.x();
+            final int y = entry.y();
+            final int z = entry.z();
+            final int channel = entry.channel();
+
+            final int prevLevel = chunkCache.getBlockLightLevel(x, y, z, channel);
+
+            final int level = entry.level();
+            if(level <= prevLevel)
+                continue;
+
+            chunkCache.setBlockLightLevel(x, y, z, channel, level);
+
+            this.addDirectionalEntries(increaseQueue, x, y, z, channel, level);
+        }
+    }
+
+    private void addDirectionalEntries(Queue<BlockLightEntry> queue, int x, int y, int z, int channel, int level) {
+        DirectionConsumer.forEach(x, y, z, (neighborX, neighborY, neighborZ) -> {
+
+            final BlockState blockstate = chunkCache.getBlockState(neighborX, neighborY, neighborZ);
+            final int blockOpacity = blockstate.getBlockProperties().get(BlockProperty.OPACITY);
+            final int neighborLevel = (level - Math.max(1, blockOpacity));
+
+            queue.add(new BlockLightEntry(neighborX, neighborY, neighborZ, channel, neighborLevel));
+        });
+    }
+
 
     public void fillGapWithNeighborMaxLight(Chunk chunk, int x, int y, int z) {
         if(chunk == null)
@@ -88,7 +92,7 @@ public class BlockLightEngine<C extends Chunk> {
         chunkCache.initFor((C) chunk);
 
         tmp_vec.zero();
-        this.forEachDirection(x, y, z, (neighborX, neighborY, neighborZ) -> {
+        DirectionConsumer.forEach(x, y, z, (neighborX, neighborY, neighborZ) -> {
             final int neighborLevelR = chunkCache.getBlockLightLevel(neighborX, neighborY, neighborZ, 0);
             final int neighborLevelG = chunkCache.getBlockLightLevel(neighborX, neighborY, neighborZ, 1);
             final int neighborLevelB = chunkCache.getBlockLightLevel(neighborX, neighborY, neighborZ, 2);
@@ -100,43 +104,24 @@ public class BlockLightEngine<C extends Chunk> {
         final BlockState blockstate = chunkCache.getBlockState(x, y, z);
         final int blockOpacity = blockstate.getBlockProperties().get(BlockProperty.OPACITY);
         tmp_vec.sub(
-            Math.max(1, blockOpacity),
-            Math.max(1, blockOpacity),
-            Math.max(1, blockOpacity)
+                Math.max(1, blockOpacity),
+                Math.max(1, blockOpacity),
+                Math.max(1, blockOpacity)
         );
 
-        this.addIncreaseEntry(x, y, z, tmp_vec.x, tmp_vec.y, tmp_vec.z);
+        this.addIncreaseEntryRGB(x, y, z, tmp_vec.x, tmp_vec.y, tmp_vec.z);
         this.processIncrease();
         Events.invokeLightIncreased(chunk, x, y, z, tmp_vec.x, tmp_vec.y, tmp_vec.z);
-    }
-
-    public void processIncrease() {
-        while(!increaseQueue.isEmpty()) {
-            final Entry entry = increaseQueue.poll();
-            final int x = entry.x;
-            final int y = entry.y;
-            final int z = entry.z;
-            final int channel = entry.channel;
-            final int level = entry.level;
-
-            final int prevLevel = chunkCache.getBlockLightLevel(x, y, z, channel);
-            if(level <= prevLevel)
-                continue;
-
-            chunkCache.setBlockLightLevel(x, y, z, channel, level);
-
-            this.addDirectionalEntries(increaseQueue, x, y, z, channel, level);
-        }
     }
 
 
     private void addDecreaseEntry(int x, int y, int z, int channel, int levelFrom) {
         if(levelFrom < 1)
             return;
-        decreaseQueue.add(new Entry(x, y, z, channel, Math.min(MAX_LEVEL, levelFrom)));
+        decreaseQueue.add(new BlockLightEntry(x, y, z, channel, Math.min(MAX_LEVEL, levelFrom)));
     }
 
-    private void addDecreaseEntry(int x, int y, int z, int levelFromR, int levelFromG, int levelFromB) {
+    private void addDecreaseEntryRGB(int x, int y, int z, int levelFromR, int levelFromG, int levelFromB) {
         this.addDecreaseEntry(x, y, z, 0, levelFromR);
         this.addDecreaseEntry(x, y, z, 1, levelFromG);
         this.addDecreaseEntry(x, y, z, 2, levelFromB);
@@ -147,22 +132,23 @@ public class BlockLightEngine<C extends Chunk> {
             return;
         chunkCache.initFor((C) chunk);
 
-        this.addDecreaseEntry(x, y, z, levelFromR, levelFromG, levelFromB);
+        this.addDecreaseEntryRGB(x, y, z, levelFromR, levelFromG, levelFromB);
         this.processDecrease();
         Events.invokeLightIncreased(chunk, x, y, z, levelFromR, levelFromG, levelFromB); //! decrease
     }
 
     public void processDecrease() {
         while(!decreaseQueue.isEmpty()) {
-            final Entry entry = decreaseQueue.poll();
-            final int x = entry.x;
-            final int y = entry.y;
-            final int z = entry.z;
-            final int channel = entry.channel;
+            final BlockLightEntry entry = decreaseQueue.poll();
 
-            final int level = entry.level;
+            final int level = entry.level();
             if(level < 0)
                 continue;
+
+            final int x = entry.x();
+            final int y = entry.y();
+            final int z = entry.z();
+            final int channel = entry.channel();
 
             final int blockLevel = chunkCache.getBlockLightLevel(x, y, z, channel);
             if(level > blockLevel)

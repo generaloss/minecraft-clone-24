@@ -8,6 +8,9 @@ import generaloss.mc24.server.chunk.ChunkStorage;
 import generaloss.mc24.server.column.ChunkColumn;
 import generaloss.mc24.server.column.ColumnPos;
 import generaloss.mc24.server.event.Events;
+import generaloss.mc24.server.light.BlockLightEngine;
+import generaloss.mc24.server.light.SkyLightEngine;
+
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
@@ -147,10 +150,9 @@ public abstract class World<C extends Chunk> {
         final int localX = (x & Chunk.SIZE_BOUND);
         final int localY = (y & Chunk.SIZE_BOUND);
         final int localZ = (z & Chunk.SIZE_BOUND);
-        final boolean success = chunk.setBlockState(localX, localY, localZ, state);
-        if(success)
-            Events.invokeBlockstateChanged(chunk, localX, localY, localZ, state);
-        return success;
+        chunk.setBlockState(localX, localY, localZ, state);
+        Events.invokeBlockstateChanged(chunk, localX, localY, localZ, state);
+        return true;
     }
 
     public byte getBlockLightLevel(int x, int y, int z, int channel) {
@@ -170,9 +172,9 @@ public abstract class World<C extends Chunk> {
         final int localX = (x & Chunk.SIZE_BOUND);
         final int localY = (y & Chunk.SIZE_BOUND);
         final int localZ = (z & Chunk.SIZE_BOUND);
-        final boolean success = chunk.setBlockLightLevel(localX, localY, localZ, channel, level);
+        chunk.setBlockLightLevel(localX, localY, localZ, channel, level);
         // callbacka ne budet
-        return success;
+        return true;
     }
 
     public boolean setBlockLightLevel(int x, int y, int z, int r, int g, int b) {
@@ -182,10 +184,9 @@ public abstract class World<C extends Chunk> {
         final int localX = (x & Chunk.SIZE_BOUND);
         final int localY = (y & Chunk.SIZE_BOUND);
         final int localZ = (z & Chunk.SIZE_BOUND);
-        final boolean success = chunk.setBlockLightLevel(localX, localY, localZ, r, g, b);
-        if(success)
-            Events.invokeBlockLightChanged(chunk, localX, localY, localZ, r, g, b);
-        return success;
+        chunk.setBlockLightLevel(localX, localY, localZ, r, g, b);
+        Events.invokeBlockLightChanged(chunk, localX, localY, localZ, r, g, b);
+        return true;
     }
 
 

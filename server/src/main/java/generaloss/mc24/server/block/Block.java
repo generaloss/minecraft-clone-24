@@ -1,6 +1,6 @@
 package generaloss.mc24.server.block;
 
-import generaloss.mc24.server.Identifiable;
+import generaloss.mc24.server.common.Identifiable;
 import generaloss.mc24.server.registry.ServerRegistries;
 import jpize.util.res.Resource;
 import org.json.JSONArray;

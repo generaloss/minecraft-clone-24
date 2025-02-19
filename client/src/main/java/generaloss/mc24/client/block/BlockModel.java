@@ -1,6 +1,6 @@
 package generaloss.mc24.client.block;
 
-import generaloss.mc24.server.Direction;
+import generaloss.mc24.server.common.Direction;
 import generaloss.mc24.server.block.BlockState;
 import jpize.util.math.geometry.Polygon;
 

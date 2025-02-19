@@ -9,6 +9,7 @@ import jpize.app.Jpize;
 import jpize.gl.Gl;
 import jpize.gl.shader.Shader;
 import jpize.gl.texture.Texture2D;
+import jpize.glfw.input.Key;
 import jpize.util.camera.PerspectiveCamera;
 import jpize.util.math.Mathc;
 import jpize.util.math.matrix.Matrix4f;
@@ -23,6 +24,7 @@ public class LevelRenderer {
     private final Texture2D blockAtlasTexture;
     private final Matrix4f matrix;
     private float time;
+    private boolean dayLightCycle = true;
 
     public LevelRenderer(Main context, WorldLevel level) {
         this.level = level;
@@ -40,7 +42,10 @@ public class LevelRenderer {
     }
 
     public void render(PerspectiveCamera camera) {
-        time += Jpize.getDeltaTime();
+        if(Key.F8.down())
+            dayLightCycle = !dayLightCycle;
+        if(dayLightCycle)
+            time += Jpize.getDeltaTime();
         final float skylightFactor = Mathc.cos(time * 0.75) * 0.5F + 0.5F;
 
         Gl.clearColor(0.4 * skylightFactor, 0.6 * skylightFactor, 0.9 * skylightFactor);
