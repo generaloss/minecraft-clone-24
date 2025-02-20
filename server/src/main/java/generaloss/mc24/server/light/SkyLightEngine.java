@@ -5,13 +5,11 @@ import generaloss.mc24.server.block.BlockState;
 import generaloss.mc24.server.chunk.Chunk;
 import generaloss.mc24.server.column.ChunkColumn;
 import generaloss.mc24.server.column.ColumnCache;
-import generaloss.mc24.server.column.ColumnHeightMap;
 import generaloss.mc24.server.common.DirectionConsumer;
 import generaloss.mc24.server.world.World;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class SkyLightEngine<C extends Chunk> extends LightEngine {
 
@@ -70,27 +68,6 @@ public class SkyLightEngine<C extends Chunk> extends LightEngine {
     }
 
 
-    public void fillGapWithNeighborMaxLight(ChunkColumn<?> column, int x, int y, int z) {
-        if(column == null)
-            return;
-        columnCache.initFor((ChunkColumn<C>) column);
-
-        final AtomicInteger maxLevel = new AtomicInteger();
-        DirectionConsumer.forEach(x, y, z, (neighborX, neighborY, neighborZ) -> {
-            final int neighborLevelR = columnCache.getSkyLightLevel(neighborX, neighborY, neighborZ);
-            maxLevel.set(Math.max(maxLevel.get(), neighborLevelR));
-        });
-
-        // minus opacity
-        final BlockState blockstate = columnCache.getBlockState(x, y, z);
-        final int blockOpacity = blockstate.getBlockProperties().get(BlockProperty.OPACITY);
-        maxLevel.addAndGet(-Math.max(1, blockOpacity));
-
-        this.addIncreaseEntry(x, y, z, maxLevel.get(), false, false);
-        this.processIncrease();
-    }
-
-
     private void addDecreaseEntry(int x, int y, int z, int levelFrom, boolean downLock, boolean upLock) {
         if(levelFrom < 1)
             return;
@@ -129,6 +106,26 @@ public class SkyLightEngine<C extends Chunk> extends LightEngine {
     }
 
 
+    public void fillGapWithNeighborMaxLight(ChunkColumn<?> column, int x, int y, int z) {
+        // if(column == null)
+        //     return;
+        // columnCache.initFor((ChunkColumn<C>) column);
+
+        // final AtomicInteger maxLevel = new AtomicInteger();
+        // DirectionConsumer.forEach(x, y, z, (neighborX, neighborY, neighborZ) -> {
+        //     final int neighborLevelR = columnCache.getSkyLightLevel(neighborX, neighborY, neighborZ);
+        //     maxLevel.set(Math.max(maxLevel.get(), neighborLevelR));
+        // });
+
+        // // minus opacity
+        // final BlockState blockstate = columnCache.getBlockState(x, y, z);
+        // final int blockOpacity = blockstate.getBlockProperties().get(BlockProperty.OPACITY);
+        // maxLevel.addAndGet(-Math.max(1, blockOpacity));
+
+        // this.addIncreaseEntry(x, y, z, maxLevel.get(), false, false);
+        // this.processIncrease();
+    }
+
 
     public void diffuseSkyLight(ChunkColumn<C> column) {
         columnCache.initFor(column);
@@ -147,44 +144,41 @@ public class SkyLightEngine<C extends Chunk> extends LightEngine {
                 }
             }
 
-            this.addIncreaseEntry(localX, height, localZ, MAX_LEVEL, false, true);
-            for(int y = (height + 1); y < maxNeighborHeight; y++)
-                this.addIncreaseEntry(localX, y, localZ, MAX_LEVEL, true, true);
-            this.addIncreaseEntry(localX, maxNeighborHeight, localZ, MAX_LEVEL, true, false);
-
+            for(int y = height; y <= maxNeighborHeight; y++)
+                this.addIncreaseEntry(localX, y, localZ, MAX_LEVEL, false, false);
             this.processIncrease();
         });
     }
 
 
     public void onHeightUpdatedUp(ChunkColumn<C> column, int localX, int localZ, int prevHeight, int newHeight) {
-        if(prevHeight == ColumnHeightMap.NO_HEIGHT)
-            return;
+        // if(prevHeight == ColumnHeightMap.NO_HEIGHT)
+        //     return;
 
-        columnCache.initFor(column);
-        for(int y = prevHeight + 1; y <= newHeight; y++) {
+        // columnCache.initFor(column);
+        // for(int y = prevHeight + 1; y <= newHeight; y++) {
 
-            for(int i = -1; i < 2; i++){
-                for(int j = -1; j < 2; j++){
-                    if(i == 0 && j == 0)
-                        continue;
-                    columnCache.setSkyLightLevel(localX + i, y, localZ + j, MAX_LEVEL);
-                }
-            }
-        }
+        //     for(int i = -1; i < 2; i++){
+        //         for(int j = -1; j < 2; j++){
+        //             if(i == 0 && j == 0)
+        //                 continue;
+        //             columnCache.setSkyLightLevel(localX + i, y, localZ + j, MAX_LEVEL);
+        //         }
+        //     }
+        // }
 
-        final int y = (newHeight + 1);
-        for(int i = -1; i < 2; i++)
-            for(int j = -1; j < 2; j++)
-                columnCache.setSkyLightLevel(localX + i, y, localZ + j, MAX_LEVEL);
+        // final int y = (newHeight + 1);
+        // for(int i = -1; i < 2; i++)
+        //     for(int j = -1; j < 2; j++)
+        //         columnCache.setSkyLightLevel(localX + i, y, localZ + j, MAX_LEVEL);
     }
 
     public void onHeightUpdatedDown(ChunkColumn<C> column, int localX, int localZ, int prevHeight, int newHeight) {
-        if(prevHeight == ColumnHeightMap.NO_HEIGHT)
-            return;
+        // if(prevHeight == ColumnHeightMap.NO_HEIGHT)
+        //     return;
 
-        for(int y = newHeight; y <= prevHeight; y++)
-            column.setSkyLightLevel(localX, y, localZ, MAX_LEVEL);
+        // for(int y = newHeight; y <= prevHeight; y++)
+        //     column.setSkyLightLevel(localX, y, localZ, MAX_LEVEL);
     }
 
 }

@@ -86,35 +86,6 @@ public class BlockLightEngine<C extends Chunk> extends LightEngine {
     }
 
 
-    public void fillGapWithNeighborMaxLight(Chunk chunk, int x, int y, int z) {
-        if(chunk == null)
-            return;
-        chunkCache.initFor((C) chunk);
-
-        tmp_vec.zero();
-        DirectionConsumer.forEach(x, y, z, (neighborX, neighborY, neighborZ) -> {
-            final int neighborLevelR = chunkCache.getBlockLightLevel(neighborX, neighborY, neighborZ, 0);
-            final int neighborLevelG = chunkCache.getBlockLightLevel(neighborX, neighborY, neighborZ, 1);
-            final int neighborLevelB = chunkCache.getBlockLightLevel(neighborX, neighborY, neighborZ, 2);
-
-            tmp_vec.setMaxComps(neighborLevelR, neighborLevelG, neighborLevelB);
-        });
-
-        // minus opacity
-        final BlockState blockstate = chunkCache.getBlockState(x, y, z);
-        final int blockOpacity = blockstate.getBlockProperties().get(BlockProperty.OPACITY);
-        tmp_vec.sub(
-                Math.max(1, blockOpacity),
-                Math.max(1, blockOpacity),
-                Math.max(1, blockOpacity)
-        );
-
-        this.addIncreaseEntryRGB(x, y, z, tmp_vec.x, tmp_vec.y, tmp_vec.z);
-        this.processIncrease();
-        Events.invokeLightIncreased(chunk, x, y, z, tmp_vec.x, tmp_vec.y, tmp_vec.z);
-    }
-
-
     private void addDecreaseEntry(int x, int y, int z, int channel, int levelFrom) {
         if(levelFrom < 1)
             return;
@@ -169,6 +140,35 @@ public class BlockLightEngine<C extends Chunk> extends LightEngine {
         }
 
         this.processIncrease();
+    }
+
+
+    public void fillGapWithNeighborMaxLight(Chunk chunk, int x, int y, int z) {
+        if(chunk == null)
+            return;
+        chunkCache.initFor((C) chunk);
+
+        tmp_vec.zero();
+        DirectionConsumer.forEach(x, y, z, (neighborX, neighborY, neighborZ) -> {
+            final int neighborLevelR = chunkCache.getBlockLightLevel(neighborX, neighborY, neighborZ, 0);
+            final int neighborLevelG = chunkCache.getBlockLightLevel(neighborX, neighborY, neighborZ, 1);
+            final int neighborLevelB = chunkCache.getBlockLightLevel(neighborX, neighborY, neighborZ, 2);
+
+            tmp_vec.setMaxComps(neighborLevelR, neighborLevelG, neighborLevelB);
+        });
+
+        // minus opacity
+        final BlockState blockstate = chunkCache.getBlockState(x, y, z);
+        final int blockOpacity = blockstate.getBlockProperties().get(BlockProperty.OPACITY);
+        tmp_vec.sub(
+                Math.max(1, blockOpacity),
+                Math.max(1, blockOpacity),
+                Math.max(1, blockOpacity)
+        );
+
+        this.addIncreaseEntryRGB(x, y, z, tmp_vec.x, tmp_vec.y, tmp_vec.z);
+        this.processIncrease();
+        Events.invokeLightIncreased(chunk, x, y, z, tmp_vec.x, tmp_vec.y, tmp_vec.z);
     }
 
 }

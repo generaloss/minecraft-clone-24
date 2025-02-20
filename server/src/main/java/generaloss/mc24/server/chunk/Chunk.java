@@ -65,7 +65,7 @@ public abstract class Chunk {
         storage.blockstates().set(x, y, z, stateID);
 
         // update heightmap
-        System.out.println("block setted at y=" + y);
+        // System.out.println("block setted at y=" + y);
         column.heightmap().updateHeight(x, position.getBlockY() + y, z, blockstate);
 
         // current & previous glowing
