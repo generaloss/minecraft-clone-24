@@ -4,7 +4,5 @@ public record SkyLightEntry(
     int x,
     int y,
     int z,
-    int level,
-    boolean downLock,
-    boolean upLock
+    int level
 ) { }

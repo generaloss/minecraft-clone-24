@@ -54,7 +54,7 @@ public class ChunkGenerator2DNoise implements IChunkGenerator {
             final BlockState blockstate = chunk.getBlockState(x, y, z);
 
             // torches
-            if((blockstate.isBlockID("air")) && Maths.randomBoolean(0.0002F))
+            if((blockstate.isBlockID("air")) && Maths.randomBoolean(0.00005F))
                 chunk.setBlockState(x, y, z, ServerRegistries.BLOCK.get("torch").resource().getDefaultState());
         });
     }

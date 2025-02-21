@@ -44,8 +44,6 @@ public class BlockLightEngine<C extends Chunk> extends LightEngine {
     }
 
     public void increase(Chunk chunk, int x, int y, int z, int levelR, int levelG, int levelB) {
-        if(chunk == null)
-            return;
         chunkCache.initFor((C) chunk);
 
         this.addIncreaseEntryRGB(x, y, z, levelR, levelG, levelB);
@@ -99,8 +97,6 @@ public class BlockLightEngine<C extends Chunk> extends LightEngine {
     }
 
     public void decrease(Chunk chunk, int x, int y, int z, int levelFromR, int levelFromG, int levelFromB) {
-        if(chunk == null)
-            return;
         chunkCache.initFor((C) chunk);
 
         this.addDecreaseEntryRGB(x, y, z, levelFromR, levelFromG, levelFromB);

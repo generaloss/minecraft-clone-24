@@ -99,8 +99,8 @@ public class MainMenuScreen extends Screen {
         // music
         music.update();
         // camera
-        yaw -= Jpize.getDeltaTime() * 3F;
-        camera.rotation().setRotation(yaw, 15F, 0F);
+        yaw += Jpize.getDeltaTime() * 3F;
+        camera.rotation().set(yaw, -15F, 0F);
         camera.update();
         // register
         if(Key.LCTRL.pressed() && Key.R.down()) {

@@ -63,7 +63,7 @@ public class ClientPlayer extends AbstractPlayer {
             context.net().sendPacket(new PlayerMovePacket2S(super.position()));
 
         // camera
-        camera.rotation().setRotation(super.rotation());
+        camera.rotation().set(super.rotation());
         camera.position().set(super.position());
         camera.update();
 

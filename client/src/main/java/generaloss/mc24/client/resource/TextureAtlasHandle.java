@@ -22,7 +22,7 @@ public class TextureAtlasHandle extends ResHandle<String, TextureAtlas<String>> 
         this.height = height;
 
         this.atlas.setPadding(4);
-        this.atlas.setFillPaddings(true);
+        this.atlas.enablePaddingFilling(true);
         this.atlas.getTexture()
             .setFilters(GlFilter.LINEAR, GlFilter.NEAREST)
             .generateMipmap(0, 1)

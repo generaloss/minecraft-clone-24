@@ -6,6 +6,8 @@ import generaloss.mc24.server.block.BlockState;
 import generaloss.mc24.server.column.ChunkColumn;
 import generaloss.mc24.server.common.XYZConsumer;
 import generaloss.mc24.server.common.XZConsumer;
+import generaloss.mc24.server.light.BlockLightEngine;
+import generaloss.mc24.server.light.SkyLightEngine;
 import generaloss.mc24.server.registry.ServerRegistries;
 import generaloss.mc24.server.world.World;
 
@@ -64,25 +66,31 @@ public abstract class Chunk {
         final int stateID = ServerRegistries.BLOCK_STATE.getID(blockstate);
         storage.blockstates().set(x, y, z, stateID);
 
-        // update heightmap
-        // System.out.println("block setted at y=" + y);
-        column.heightmap().updateHeight(x, position.getBlockY() + y, z, blockstate);
-
         // current & previous glowing
         final int[] glowing = blockstate.getBlockProperties().get(BlockProperty.GLOWING);
         final int prevLightR = this.getBlockLightLevel(x, y, z, 0);
         final int prevLightG = this.getBlockLightLevel(x, y, z, 1);
         final int prevLightB = this.getBlockLightLevel(x, y, z, 2);
 
+        // block light
+        final BlockLightEngine<?> blocklightEngine = world.getBlockLightEngine();
         // decrease light
         if(glowing[0] < prevLightR || glowing[1] < prevLightG || glowing[2] < prevLightB)
-            world.getBlockLightEngine().decrease(this, x, y, z, prevLightR, prevLightG, prevLightB);
+            blocklightEngine.decrease(this, x, y, z, prevLightR, prevLightG, prevLightB);
         // increase light
         if(glowing[0] > prevLightR || glowing[1] > prevLightG || glowing[2] > prevLightB)
-            world.getBlockLightEngine().increase(this, x, y, z, glowing[0], glowing[1], glowing[2]);
+            blocklightEngine.increase(this, x, y, z, glowing[0], glowing[1], glowing[2]);
         // fill gap with light
-        world.getBlockLightEngine().fillGapWithNeighborMaxLight(this, x, y, z);
-        world.getSkyLightEngine().fillGapWithNeighborMaxLight(column, x, y, z);
+        blocklightEngine.fillGapWithNeighborMaxLight(this, x, y, z);
+
+        // skylight
+        final SkyLightEngine<?> skylightEngine = world.getSkyLightEngine();
+        // decrease light
+        skylightEngine.decrease(column, x, y, z, this.getSkyLightLevel(x, y, z));
+        // increase light & update heightmap
+        column.heightmap().updateHeight(x, position.getBlockY() + y, z, blockstate);
+        // fill gap with light
+        skylightEngine.fillGapWithNeighborMaxLight(column, x, y, z);
     }
 
 
