@@ -15,7 +15,7 @@ public class ServerRegistries {
         BLOCK = new ResHandleMap<>(packManager, (String key, String path) -> new BlockHandle(key, path)); // don't change lambda
         BLOCK_STATE = new RegistryBlockState();
 
-        // BLOCKS
+        // Default blocks
         Block.AIR.states().create();
         Block.VOID.states().create();
         BLOCK.create(new BlockHandle(Block.AIR));
