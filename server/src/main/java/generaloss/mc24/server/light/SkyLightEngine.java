@@ -7,11 +7,11 @@ import generaloss.mc24.server.column.ChunkColumn;
 import generaloss.mc24.server.column.ColumnCache;
 import generaloss.mc24.server.column.ColumnHeightMap;
 import generaloss.mc24.server.common.DirectionConsumer;
+import generaloss.mc24.server.event.Events;
 import generaloss.mc24.server.world.World;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class SkyLightEngine<C extends Chunk> extends LightEngine {
 
@@ -42,10 +42,9 @@ public class SkyLightEngine<C extends Chunk> extends LightEngine {
             final int x = entry.x();
             final int y = entry.y();
             final int z = entry.z();
+            final int level = entry.level();
 
             final int prevLevel = columnCache.getSkyLightLevel(x, y, z);
-
-            final int level = entry.level();
             if(level <= prevLevel)
                 continue;
 
@@ -61,6 +60,8 @@ public class SkyLightEngine<C extends Chunk> extends LightEngine {
             final BlockState blockstate = columnCache.getBlockState(neighborX, neighborY, neighborZ);
             final int blockOpacity = blockstate.getBlockProperties().get(BlockProperty.OPACITY);
             final int neighborLevel = (level - Math.max(1, blockOpacity));
+            if(neighborLevel < 0)
+                return;
 
             queue.add(new SkyLightEntry(neighborX, neighborY, neighborZ, neighborLevel));
         });
@@ -77,13 +78,10 @@ public class SkyLightEngine<C extends Chunk> extends LightEngine {
         while(!decreaseQueue.isEmpty()) {
             final SkyLightEntry entry = decreaseQueue.poll();
 
-            final int level = entry.level();
-            if(level < 0)
-                continue;
-
             final int x = entry.x();
             final int y = entry.y();
             final int z = entry.z();
+            final int level = entry.level();
 
             final int blockLevel = columnCache.getSkyLightLevel(x, y, z);
             if(level > blockLevel)
@@ -108,30 +106,14 @@ public class SkyLightEngine<C extends Chunk> extends LightEngine {
         this.processDecrease();
     }
 
-    public void fillGapWithNeighborMaxLight(ChunkColumn<?> column, int x, int y, int z) {
-        columnCache.initFor((ChunkColumn<C>) column);
 
-        final AtomicInteger maxLevel = new AtomicInteger();
-        DirectionConsumer.forEach(x, y, z, (neighborX, neighborY, neighborZ) -> {
-            final int neighborLevelR = columnCache.getSkyLightLevel(neighborX, neighborY, neighborZ);
-            maxLevel.set(Math.max(maxLevel.get(), neighborLevelR));
-        });
-
-        // minus opacity
-        final BlockState blockstate = columnCache.getBlockState(x, y, z);
-        final int blockOpacity = blockstate.getBlockProperties().get(BlockProperty.OPACITY);
-        maxLevel.addAndGet(-Math.max(1, blockOpacity));
-
-        this.addIncreaseEntry(x, y, z, maxLevel.get());
-        this.processIncrease();
-    }
-
-
-    public void diffuseSkyLight(ChunkColumn<C> column) {
+    public void initChunkSkyLight(ChunkColumn<C> column) {
         columnCache.initFor(column);
 
         column.forEach((localX, localZ) -> {
             final int height = (column.getHeight(localX, localZ) + 1);
+            if(height == ColumnHeightMap.NO_HEIGHT)
+                return;
 
             int maxNeighborHeight = height;
             for(int x = (localX - 1); x < (localX + 2); x++){
@@ -140,6 +122,9 @@ public class SkyLightEngine<C extends Chunk> extends LightEngine {
                         continue;
 
                     final int neighborHeight = (columnCache.getHeight(x, z) + 1);
+                    if(neighborHeight == ColumnHeightMap.NO_HEIGHT)
+                        continue;
+
                     maxNeighborHeight = Math.max(maxNeighborHeight, neighborHeight);
                 }
             }
@@ -150,42 +135,44 @@ public class SkyLightEngine<C extends Chunk> extends LightEngine {
         });
     }
 
+    public void fillGapWithNeighborMaxLight(ChunkColumn<?> column, int localX, int y, int localZ, int blockOpacity) {
+        columnCache.initFor((ChunkColumn<C>) column);
+
+        final int[] maxLevel = new int[1];
+        DirectionConsumer.forEach(localX, y, localZ, (neighborX, neighborY, neighborZ) -> {
+            final int neighborLevel = columnCache.getSkyLightLevel(neighborX, neighborY, neighborZ);
+            System.out.println("neighborLevel: " + neighborLevel);
+            maxLevel[0] = Math.max(maxLevel[0], neighborLevel);
+        });
+
+        System.out.println("fill gap with " + (maxLevel[0] - Math.max(1, blockOpacity)) + "(max: " + maxLevel[0] + ")");
+        maxLevel[0] -= Math.max(1, blockOpacity);
+
+        this.addIncreaseEntry(localX, y, localZ, maxLevel[0]);
+        this.processIncrease();
+        Events.invokeSkyLightChanged(column, localX, localZ, y, y, maxLevel[0]);
+    }
 
     public void onHeightUpdatedUp(ChunkColumn<C> column, int localX, int localZ, int prevHeight, int newHeight) {
-        if(prevHeight == ColumnHeightMap.NO_HEIGHT)
-            return;
-
-        // decrease light under placed block
-        for(int y = (prevHeight + 1); y <= newHeight; y++) {
+        // decrease under placed block
+        final int lowHeight = (prevHeight + 1);
+        for(int y = lowHeight; y <= newHeight; y++) {
             final int levelFrom = column.getSkyLightLevel(localX, y, localZ);
             this.addDecreaseEntry(localX, y, localZ, levelFrom);
         }
+
         this.processDecrease();
-
-        // increase placed block neighbors
-        columnCache.initFor(column);
-
-        final int y = (newHeight + 1);
-        for(int x = (localX - 1); x < (localX + 2); x++){
-            for(int z = (localZ - 1); z < (localZ + 2); z++){
-                if(x == localX && z == localZ)
-                    continue;
-                final BlockState blockstate = columnCache.getBlockState(x, y, z);
-                final int opacity = blockstate.getBlockProperties().get(BlockProperty.OPACITY);
-                this.addIncreaseEntry(x, y, z, MAX_LEVEL - opacity);
-            }
-        }
-        this.processIncrease();
+        Events.invokeSkyLightChanged(column, localX, localZ, lowHeight, newHeight, 0);
     }
 
     public void onHeightUpdatedDown(ChunkColumn<C> column, int localX, int localZ, int prevHeight, int newHeight) {
-        if(prevHeight == ColumnHeightMap.NO_HEIGHT)
-            return;
-
         // increase under destroyed block
-        for(int y = (newHeight + 1); y <= prevHeight; y++)
+        final int lowHeight = (newHeight + 1);
+        for(int y = lowHeight; y <= prevHeight; y++)
             this.addIncreaseEntry(localX, y, localZ, MAX_LEVEL);
+
         this.processIncrease();
+        Events.invokeSkyLightChanged(column, localX, localZ, lowHeight, prevHeight, MAX_LEVEL);
     }
 
 }

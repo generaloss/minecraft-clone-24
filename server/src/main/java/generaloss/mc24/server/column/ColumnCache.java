@@ -13,7 +13,9 @@ import java.util.function.Consumer;
 
 public class ColumnCache<C extends Chunk> {
 
-    public static final int CENTER_COLUMN_INDEX = 5;
+    public static final int SIZE = 3;
+    public static final int AREA = (SIZE * SIZE);
+    public static final int CENTER_COLUMN_INDEX = (AREA - 1) / 2;
 
     private final World<C> world;
     private final ChunkColumn<C>[] columns;
@@ -22,7 +24,7 @@ public class ColumnCache<C extends Chunk> {
 
     public ColumnCache(World<C> world) {
         this.world = world;
-        this.columns = new ChunkColumn[3 * 3];
+        this.columns = new ChunkColumn[AREA];
         this.norBlockPos = new Vec3i();
     }
 
@@ -37,11 +39,11 @@ public class ColumnCache<C extends Chunk> {
 
 
     private int index(int i, int j) {
-        return (i * 3 + j);
+        return (i * SIZE + j);
     }
 
-    public ChunkColumn<C> get(int i, int j) {
-        return columns[this.index(i + 1, j + 1)];
+    public ChunkColumn<C> get(int relativeX, int relativeZ) {
+        return columns[this.index(relativeX + 1, relativeZ + 1)];
     }
 
 
@@ -52,8 +54,8 @@ public class ColumnCache<C extends Chunk> {
         hasNullColumns = false;
         final ColumnPos position = column.position();
 
-        for(int i = 0; i < 3; i++) {
-            for(int k = 0; k < 3; k++) {
+        for(int i = 0; i < SIZE; i++) {
+            for(int k = 0; k < SIZE; k++) {
                 final int index = this.index(i, k);
                 if(index == CENTER_COLUMN_INDEX) {
                     columns[index] = column;

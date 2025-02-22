@@ -1,6 +1,6 @@
 {
   "properties" : {
-    "opacity" : 0
+    "opacity" : 15
   },
   "variant_properties": ["facing", "half", "shape"],
   "variants": {

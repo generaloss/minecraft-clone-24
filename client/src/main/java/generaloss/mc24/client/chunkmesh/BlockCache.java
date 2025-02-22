@@ -8,19 +8,26 @@ import generaloss.mc24.server.chunk.ChunkCache;
 // for caching block area 3x3
 public class BlockCache {
 
-    public static final int CENTER_BLOCK_INDEX = 13;
+    public static final int SIZE = 3;
+    public static final int AREA = (SIZE * SIZE);
+    public static final int VOLUME = (AREA * SIZE);
+    public static final int CENTER_BLOCK_INDEX = (VOLUME - 1) / 2;
+
+    public static final int LIGHT_CHANNELS = (3 + 1); // RGB + skylight
+    public static final int LIGHT_SIZE = (LIGHT_CHANNELS * SIZE);
+    public static final int LIGHT_AREA = (LIGHT_CHANNELS * AREA);
 
     private final BlockState[] blocks;
     private final int[] lightLevels;
 
     public BlockCache() {
-        this.blocks = new BlockState[3 * 3 * 3];
-        this.lightLevels = new int[3 * 3 * 3 * 4];
+        this.blocks = new BlockState[VOLUME];
+        this.lightLevels = new int[VOLUME * LIGHT_CHANNELS];
     }
 
 
     private int blockIndex(int i, int j, int k) {
-        return (i * 9 + j * 3 + k);
+        return (i * AREA + j * SIZE + k);
     }
 
     public BlockState getBlockState(int i, int j, int k) {
@@ -33,7 +40,7 @@ public class BlockCache {
 
 
     private int lightIndex(int i, int j, int k) {
-        return (i * 36 + j * 12 + k * 4);
+        return (i * LIGHT_AREA + j * LIGHT_SIZE + k * LIGHT_CHANNELS);
     }
 
     public int getLightLevel(int i, int j, int k, int channel) {
@@ -42,9 +49,9 @@ public class BlockCache {
 
 
     public void initFor(int x, int y, int z, BlockState centerBlockstate, ChunkCache<LevelChunk> chunkCache) {
-        for(int i = 0; i < 3; i++){
-            for(int j = 0; j < 3; j++){
-                for(int k = 0; k < 3; k++){
+        for(int i = 0; i < SIZE; i++){
+            for(int j = 0; j < SIZE; j++){
+                for(int k = 0; k < SIZE; k++){
                     final int blockIndex = this.blockIndex(i, j, k);
                     final int lightIndex = this.lightIndex(i, j, k);
 
@@ -55,6 +62,7 @@ public class BlockCache {
                             lightLevels[lightIndex + channel] = chunkCache.getBlockLightLevel(x, y, z, channel);
                         lightLevels[lightIndex + 3] = chunkCache.getSkyLightLevel(x, y, z);
                     }else{
+
                         final int blockX = (x + i - 1);
                         final int blockY = (y + j - 1);
                         final int blockZ = (z + k - 1);

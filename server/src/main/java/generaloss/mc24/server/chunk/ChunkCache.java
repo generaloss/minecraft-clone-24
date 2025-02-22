@@ -12,7 +12,10 @@ import java.util.function.Consumer;
 
 public class ChunkCache<C extends Chunk> {
 
-    public static final int CENTER_CHUNK_INDEX = 13;
+    public static final int SIZE = 3;
+    public static final int AREA = (SIZE * SIZE);
+    public static final int VOLUME = (AREA * SIZE);
+    public static final int CENTER_CHUNK_INDEX = (VOLUME - 1) / 2;
 
     private final World<C> world;
     private final Chunk[] chunks;
@@ -21,7 +24,7 @@ public class ChunkCache<C extends Chunk> {
 
     public ChunkCache(World<C> world) {
         this.world = world;
-        this.chunks = new Chunk[3 * 3 * 3];
+        this.chunks = new Chunk[VOLUME];
         this.norBlockPos = new Vec3i();
     }
 
@@ -36,7 +39,7 @@ public class ChunkCache<C extends Chunk> {
 
 
     private int index(int i, int j, int k) {
-        return (i * 9 + j * 3 + k);
+        return (i * AREA + j * SIZE + k);
     }
 
     public Chunk get(int i, int j, int k) {
@@ -51,9 +54,9 @@ public class ChunkCache<C extends Chunk> {
         hasNullChunks = false;
         final ChunkPos position = chunk.position();
 
-        for(int i = 0; i < 3; i++) {
-            for(int j = 0; j < 3; j++) {
-                for(int k = 0; k < 3; k++) {
+        for(int i = 0; i < SIZE; i++) {
+            for(int j = 0; j < SIZE; j++) {
+                for(int k = 0; k < SIZE; k++) {
                     final int index = this.index(i, j, k);
                     if(index == CENTER_CHUNK_INDEX) {
                         chunks[index] = chunk;

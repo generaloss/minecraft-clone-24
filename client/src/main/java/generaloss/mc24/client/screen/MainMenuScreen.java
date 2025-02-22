@@ -38,7 +38,7 @@ public class MainMenuScreen extends Screen {
     private TextField nicknameField;
     private TextField passwordField;
     private String serverInfo = "Server Info: (press 'Ctrl + I' to ping server)";
-    private String accountStatus = "Account status: ";
+    private String accountStatus = "Account status: Not Logged In";
     private final ExecutorService executors;
 
     public MainMenuScreen(Main context) {
@@ -105,8 +105,9 @@ public class MainMenuScreen extends Screen {
         // register
         if(Key.LCTRL.pressed() && Key.R.down()) {
             executors.execute(() -> {
+                accountStatus = "Register status: Registering...";
                 final Response response = Request.sendCreateAccount(SharedConstants.ACCOUNTS_HOST, nicknameField.getText(), passwordField.getText());
-                accountStatus = "Register status: " + response.getCode() + ", " + response.readString();
+                accountStatus = "Register status: " + response.getCode() + ", " + response.readString() + " (Not Logged In)";
             });
         }
         // login
@@ -187,6 +188,7 @@ public class MainMenuScreen extends Screen {
 
         // hints
         float position = 10F;
+        font.getRenderOptions().color().setRGB(0xAAAAAA);
         font.drawText(batch, "Press 'ENTER' to join the server.", 10F, position);
         position += font.getLineAdvanceScaled();
         font.drawText(batch, "'F1', 'F2', 'F3' - changes resourcepack", 10F, position);
@@ -205,6 +207,11 @@ public class MainMenuScreen extends Screen {
         position += font.getLineAdvanceScaled();
         font.drawText(batch, "'Ctrl + ESCAPE' - quit / to main menu", 10F, position);
         position += font.getLineAdvanceScaled();
+        font.drawText(batch, "'F5'/'F6' - enable/disable Ambient Occlusion", 10F, position);
+        position += font.getLineAdvanceScaled();
+        font.drawText(batch, "'F8' - enable/disable daylight cycle", 10F, position);
+        position += font.getLineAdvanceScaled();
+        font.getRenderOptions().color().reset();
         font.drawText(batch, serverInfo, 10F, position);
         position += font.getLineAdvanceScaled();
         font.drawText(batch, accountStatus, 10F, position);

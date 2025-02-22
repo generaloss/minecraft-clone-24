@@ -48,7 +48,7 @@ public class ColumnHeightMap<C extends Chunk> {
     }
 
     public void updateHeight(int localX, int newHeight, int localZ, BlockState blockstate) {
-        final int prevHeight = max.get(localX, localZ);
+        int prevHeight = max.get(localX, localZ);
         if(prevHeight > newHeight)
             return;
 
@@ -66,29 +66,42 @@ public class ColumnHeightMap<C extends Chunk> {
                 final List<C> chunks = column.getChunksTo(topChunkY);
                 Collections.reverse(chunks);
                 final Iterator<C> chunkIterator = chunks.iterator();
-                do {
+                assert chunkIterator.hasNext();
+
+                while(true) {
                     final C chunk = chunkIterator.next();
 
                     int localY = (newHeight & Chunk.SIZE_BOUND);
-                    do {
+                    do{
                         final BlockState downBlockstate = chunk.getBlockState(localX, localY, localZ);
                         if(predicate.test(downBlockstate)) {
                             max.set(localX, localZ, newHeight);
 
-                            // update skylight
-                            world.getSkyLightEngine().onHeightUpdatedDown(column, localX, localZ, prevHeight, newHeight);
+                            // update skylight down
+                            if(newHeight != NO_HEIGHT)
+                                world.getSkyLightEngine().onHeightUpdatedDown(column, localX, localZ, prevHeight, newHeight);
                             return;
                         }
                         newHeight--;
                         localY--;
                     }while(localY >= 0);
-                }while(chunkIterator.hasNext());
+
+                    if(!chunkIterator.hasNext()) {
+                        newHeight = chunk.position().getBlockY();
+                        max.set(localX, localZ, newHeight);
+
+                        // update skylight down
+                        world.getSkyLightEngine().onHeightUpdatedDown(column, localX, localZ, prevHeight, newHeight);
+                        break;
+                    }
+                }
             }
         }else if(isOpaque){
             max.set(localX, localZ, newHeight);
 
-            // update skylight
-            world.getSkyLightEngine().onHeightUpdatedUp(column, localX, localZ, prevHeight, newHeight);
+            // update skylight up
+            if(prevHeight != NO_HEIGHT)
+                world.getSkyLightEngine().onHeightUpdatedUp(column, localX, localZ, prevHeight, newHeight);
         }
     }
 

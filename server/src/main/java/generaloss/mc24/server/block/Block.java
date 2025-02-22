@@ -1,7 +1,6 @@
 package generaloss.mc24.server.block;
 
 import generaloss.mc24.server.common.Identifiable;
-import generaloss.mc24.server.registry.ServerRegistries;
 import jpize.util.res.Resource;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -17,11 +16,11 @@ public class Block implements Identifiable<String> {
     }
 
     private String ID;
-    private final BlockPropertiesHolder properties;
+    private final BlockPropertyHolder properties;
     private final BlockStateContainer statesContainer;
 
     public Block() {
-        this.properties = new BlockPropertiesHolder();
+        this.properties = new BlockPropertyHolder();
         this.statesContainer = new BlockStateContainer(this);
     }
 
@@ -36,7 +35,7 @@ public class Block implements Identifiable<String> {
     }
 
 
-    public BlockPropertiesHolder properties() {
+    public BlockPropertyHolder properties() {
         return properties;
     }
 
@@ -72,7 +71,7 @@ public class Block implements Identifiable<String> {
             final JSONArray jsonStateProperties = jsonObject.getJSONArray("variant_properties");
             for(int i = 0; i < jsonStateProperties.length(); i++){
                 final String statePropertyName = jsonStateProperties.getString(i);
-                final StateProperty<?> stateProperty = ServerRegistries.STATE_PROPERTY.get(statePropertyName);
+                final StateProperty<?> stateProperty = StateProperty.get(statePropertyName);
                 stateProperties.add(stateProperty);
             }
         }

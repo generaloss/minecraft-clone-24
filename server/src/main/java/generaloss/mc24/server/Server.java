@@ -19,7 +19,7 @@ public class Server implements Tickable {
 
     private final ResourcePackManager resourcePackManager;
     private final NetServer net;
-    private final ServerPropertiesHolder properties;
+    private final ServerPropertyHolder properties;
     private final boolean dedicated;
     private final WorldHolder worldHolder;
     private final PlayerList players;
@@ -28,7 +28,7 @@ public class Server implements Tickable {
     public Server(ResourcePackManager resourcePackManager, boolean dedicated) {
         this.resourcePackManager = resourcePackManager;
         ServerRegistries.init(resourcePackManager);
-        this.properties = new ServerPropertiesHolder();
+        this.properties = new ServerPropertyHolder();
         this.dedicated = dedicated;
         this.net = new NetServer(this);
         this.worldHolder = new WorldHolder();
@@ -39,7 +39,7 @@ public class Server implements Tickable {
         return resourcePackManager;
     }
 
-    public ServerPropertiesHolder properties() {
+    public ServerPropertyHolder properties() {
         return properties;
     }
 

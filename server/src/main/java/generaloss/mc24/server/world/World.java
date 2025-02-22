@@ -173,7 +173,6 @@ public abstract class World<C extends Chunk> {
         final int localY = (y & Chunk.SIZE_BOUND);
         final int localZ = (z & Chunk.SIZE_BOUND);
         chunk.setBlockLightLevel(localX, localY, localZ, channel, level);
-        // callbacka ne budet
         return true;
     }
 
@@ -185,11 +184,7 @@ public abstract class World<C extends Chunk> {
         final int localY = (y & Chunk.SIZE_BOUND);
         final int localZ = (z & Chunk.SIZE_BOUND);
         chunk.setBlockLightLevel(localX, localY, localZ, r, g, b);
-        Events.invokeBlockLightChanged(chunk, localX, localY, localZ, r, g, b);
         return true;
     }
-
-
-   
 
 }

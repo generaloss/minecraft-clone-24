@@ -196,8 +196,8 @@ public class Main extends JpizeApplication {
                 for(BlockState blockstate: ServerRegistries.BLOCK_STATE.getValues()){
                     final int ID = ServerRegistries.BLOCK_STATE.getID(blockstate);
                     writer.print(blockstate.getBlockID() + "/" + ID + "/");
-                    blockstate.getStateProperties().forEach((key, value) ->
-                        writer.print(key.getName() + ":" + value.toString() + ",")
+                    blockstate.getStateProperties().forEach((entry) ->
+                        writer.print(entry.getKey().getName() + ":" + entry.getValue().toString() + ",")
                     );
                     writer.println();
                 }

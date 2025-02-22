@@ -3,6 +3,7 @@ package generaloss.mc24.server.chunk;
 import generaloss.mc24.server.block.Block;
 import generaloss.mc24.server.block.BlockProperty;
 import generaloss.mc24.server.block.BlockState;
+import generaloss.mc24.server.block.StateProperty;
 import generaloss.mc24.server.column.ChunkColumn;
 import generaloss.mc24.server.common.XYZConsumer;
 import generaloss.mc24.server.common.XZConsumer;
@@ -62,35 +63,47 @@ public abstract class Chunk {
     }
 
     public void setBlockState(int x, int y, int z, BlockState blockstate) {
-        // set stateID
+        // get previous state
+        final int prevStateID = storage.blockstates().get(x, y, z);
+        final BlockState prevBlockstate = ServerRegistries.BLOCK_STATE.get(prevStateID);
+
+        // set new state
         final int stateID = ServerRegistries.BLOCK_STATE.getID(blockstate);
         storage.blockstates().set(x, y, z, stateID);
 
-        // current & previous glowing
+        // get current properties
         final int[] glowing = blockstate.getBlockProperties().get(BlockProperty.GLOWING);
+        final boolean lit = blockstate.getStateProperties().get(StateProperty.LIT, true);
+        final int opacity = blockstate.getBlockProperties().get(BlockProperty.OPACITY);
+
+        // get previous properties
+        final int prevOpacity = prevBlockstate.getBlockProperties().get(BlockProperty.OPACITY);
         final int prevLightR = this.getBlockLightLevel(x, y, z, 0);
         final int prevLightG = this.getBlockLightLevel(x, y, z, 1);
         final int prevLightB = this.getBlockLightLevel(x, y, z, 2);
+        final int prevSkylightLevel = this.getSkyLightLevel(x, y, z);
 
-        // block light
+        // light
         final BlockLightEngine<?> blocklightEngine = world.getBlockLightEngine();
+        final SkyLightEngine<?> skylightEngine = world.getSkyLightEngine();
+        final int globalY = (y + position.getBlockY());
+        boolean lightChanged = false;
+
         // decrease light
+        skylightEngine.decrease(column, x, globalY, z, prevSkylightLevel);
         if(glowing[0] < prevLightR || glowing[1] < prevLightG || glowing[2] < prevLightB)
             blocklightEngine.decrease(this, x, y, z, prevLightR, prevLightG, prevLightB);
-        // increase light
-        if(glowing[0] > prevLightR || glowing[1] > prevLightG || glowing[2] > prevLightB)
-            blocklightEngine.increase(this, x, y, z, glowing[0], glowing[1], glowing[2]);
-        // fill gap with light
-        blocklightEngine.fillGapWithNeighborMaxLight(this, x, y, z);
 
-        // skylight
-        final SkyLightEngine<?> skylightEngine = world.getSkyLightEngine();
-        // decrease light
-        skylightEngine.decrease(column, x, y, z, this.getSkyLightLevel(x, y, z));
-        // increase light & update heightmap
-        column.heightmap().updateHeight(x, position.getBlockY() + y, z, blockstate);
+        // increase light
+        column.heightmap().updateHeight(x, globalY, z, blockstate);
+        if(lit && (glowing[0] > prevLightR || glowing[1] > prevLightG || glowing[2] > prevLightB))
+            blocklightEngine.increase(this, x, y, z, glowing[0], glowing[1], glowing[2]);
+
         // fill gap with light
-        skylightEngine.fillGapWithNeighborMaxLight(column, x, y, z);
+        if(prevOpacity > opacity){
+            blocklightEngine.fillGapWithNeighborMaxLight(this, x, y, z, opacity);
+            skylightEngine.fillGapWithNeighborMaxLight(column, x, globalY, z, opacity);
+        }
     }
 
 

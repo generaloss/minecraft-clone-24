@@ -23,10 +23,10 @@ public class BlockStateContainer implements Iterable<BlockState> {
         return blockstates.get(0);
     }
 
-    public BlockState getState(Map<StateProperty<?>, Object> properties) {
+    public BlockState getState(StatePropertyHolder properties) {
         loop:
         for(BlockState blockstate: blockstates){
-            for(Map.Entry<StateProperty<?>, Object> property: properties.entrySet())
+            for(Map.Entry<StateProperty<?>, Object> property: properties)
                 if(!property.getValue().equals(blockstate.getStatePropertyValue(property.getKey())))
                     continue loop;
             return blockstate;
@@ -52,18 +52,18 @@ public class BlockStateContainer implements Iterable<BlockState> {
         final List<List<?>> cartesianProduct = cartesianProduct(valuesList);
         for(List<?> products: cartesianProduct){
 
-            final Map<StateProperty<?>, Object> statePropertyValues = new LinkedHashMap<>();
+            final StatePropertyHolder properties = new StatePropertyHolder();
             for(int i = 0; i < products.size(); i++){
 
                 final StateProperty<?> property = propertiesList.get(i);
                 final Object value = products.get(i);
-                statePropertyValues.put(property, value);
+                properties.set(property, value);
             }
-            blockstates.add(new BlockState(block, statePropertyValues));
+            blockstates.add(new BlockState(block, properties));
         }
 
         if(propertiesList.isEmpty())
-            blockstates.add(new BlockState(block, Map.of()));
+            blockstates.add(new BlockState(block, new StatePropertyHolder()));
 
         // register all blockstates
         for(BlockState state: blockstates)

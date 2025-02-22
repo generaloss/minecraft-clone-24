@@ -3,7 +3,7 @@ package generaloss.mc24.server.network.connection;
 import generaloss.mc24.accountservice.network.Request;
 import generaloss.mc24.accountservice.network.Response;
 import generaloss.mc24.server.Server;
-import generaloss.mc24.server.ServerPropertiesHolder;
+import generaloss.mc24.server.ServerPropertyHolder;
 import generaloss.mc24.server.SharedConstants;
 import generaloss.mc24.server.network.AccountSession;
 import generaloss.mc24.server.network.packet2c.*;
@@ -28,7 +28,7 @@ public class ServerConnectionLogin extends ServerConnection implements IServerPr
 
     @Deprecated
     public void handleServerInfoRequest(ServerInfoRequestPacket2S packet) {
-        final ServerPropertiesHolder serverProperties = super.server().properties();
+        final ServerPropertyHolder serverProperties = super.server().properties();
         final String motd = serverProperties.get("motd");
         final String version = serverProperties.get("version");
         super.sendPacket(new ServerInfoResponsePacket2C(motd, version, packet.getTimestamp()));

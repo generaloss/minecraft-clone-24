@@ -49,8 +49,8 @@ public class BlockModelHandle extends ResHandle<BlockState, BlockModel> {
         final JSONObject jsonVariants = jsonObject.getJSONObject("variants");
 
         final StringJoiner variantKeyJoiner = new StringJoiner(",");
-        blockstate.getStateProperties().forEach((property, value) ->
-                variantKeyJoiner.add(property.getName() + "=" + value)
+        blockstate.getStateProperties().forEach((entry) ->
+            variantKeyJoiner.add(entry.getKey().getName() + "=" + entry.getValue())
         );
         final String variantKey = variantKeyJoiner.toString();
 

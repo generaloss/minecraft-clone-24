@@ -29,11 +29,20 @@ public class ChunkByteArray {
     }
 
     public void set(int x, int y, int z, int value) {
-        array[this.indexBy(x, y, z)] = (byte) value;
+        try{
+            array[this.indexBy(x, y, z)] = (byte) value;
+        }catch(IndexOutOfBoundsException e){
+            System.err.println("Index out of bounds on: " + x + ", " + y + ", " + z);
+        }
     }
 
     public byte get(int x, int y, int z) {
-        return array[this.indexBy(x, y, z)];
+        try{
+            return array[this.indexBy(x, y, z)];
+        }catch(IndexOutOfBoundsException e){
+            System.err.println("Index out of bounds on: " + x + ", " + y + ", " + z);
+            return 0;
+        }
     }
 
     public boolean isOutOfBounds(int x, int y, int z) {

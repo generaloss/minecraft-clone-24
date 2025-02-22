@@ -46,7 +46,7 @@ public class LevelRenderer {
             dayLightCycle = !dayLightCycle;
         if(dayLightCycle)
             time += Jpize.getDeltaTime();
-        final float skylightFactor = Mathc.cos(time * 0.75) * 0.5F + 0.5F;
+        final float skylightFactor = Mathc.cos(time * 0.25) * 0.5F + 0.5F;
 
         Gl.clearColor(0.4 * skylightFactor, 0.6 * skylightFactor, 0.9 * skylightFactor);
 

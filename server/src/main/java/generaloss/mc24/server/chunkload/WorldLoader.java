@@ -60,7 +60,7 @@ public class WorldLoader {
             }
         }
         for(ChunkColumn<ServerChunk> column: world.getColumns())
-            world.getSkyLightEngine().diffuseSkyLight(column);
+            world.getSkyLightEngine().initChunkSkyLight(column);
 
         System.out.println("[INFO]: " + world.getColumns().size() + " chunks loaded.");
     }

@@ -103,7 +103,26 @@ public class SessionScreen extends Screen {
 
         final BlockSelectRay ray = player.blockSelectRay();
         if(ray.hasSelection()){
-            if(MouseBtn.LEFT.down()){
+            if(MouseBtn.LEFT.down() && MouseBtn.RIGHT.down()) {
+                // replace
+                final Vec3i position = ray.getDestroyPosition();
+                super.context.level().setBlockState(position.x, position.y, position.z, Block.AIR.getDefaultState());
+
+                // facing
+                Facing facing = Facing.byAngle(player.camera().rotation().getYaw());
+                if(toPlaceBlockState.isBlockID("stone_stairs"))
+                    facing = facing.opposite();
+
+                // blockstate properties
+                toPlaceBlockState = toPlaceBlockState.withProperty(StateProperty.BITES, Maths.random(0, 4));
+                toPlaceBlockState = toPlaceBlockState.withProperty(StateProperty.SHAPE, "straight");
+                toPlaceBlockState = toPlaceBlockState.withProperty(StateProperty.FACING, facing);
+                toPlaceBlockState = toPlaceBlockState.withProperty(StateProperty.LIT, true);
+
+                // place
+                super.context.level().setBlockState(position.x, position.y, position.z, toPlaceBlockState);
+
+            }else if(MouseBtn.LEFT.down()){
                 // destroy
                 final Vec3i position = ray.getDestroyPosition();
                 super.context.level().setBlockState(position.x, position.y, position.z, Block.AIR.getDefaultState());
@@ -115,10 +134,10 @@ public class SessionScreen extends Screen {
                     facing = facing.opposite();
 
                 // blockstate properties
-                toPlaceBlockState = toPlaceBlockState.withProperty("bites", Maths.random(0, 4));
-                toPlaceBlockState = toPlaceBlockState.withProperty("shape", "straight");
-                toPlaceBlockState = toPlaceBlockState.withProperty("facing", facing);
-                toPlaceBlockState = toPlaceBlockState.withProperty("lit", true);
+                toPlaceBlockState = toPlaceBlockState.withProperty(StateProperty.BITES, Maths.random(0, 4));
+                toPlaceBlockState = toPlaceBlockState.withProperty(StateProperty.SHAPE, "straight");
+                toPlaceBlockState = toPlaceBlockState.withProperty(StateProperty.FACING, facing);
+                toPlaceBlockState = toPlaceBlockState.withProperty(StateProperty.LIT, true);
 
                 // place
                 final Vec3i position = ray.getPlacePosition();
@@ -183,7 +202,7 @@ public class SessionScreen extends Screen {
         final BlockSelectRay ray = super.context.player().blockSelectRay();
         if(ray.hasSelection()){
             final StateProperty<?>[] keys = ray.getBlockState().getStateProperties().keySet().toArray(new StateProperty[0]);
-            AtomicInteger i = new AtomicInteger();
+            final AtomicInteger i = new AtomicInteger();
             final String aimBlockstateText = (
                 "Blockstate: '" + ray.getBlockState().getBlockID() +
                 "' " + new StringList(ray.getBlockState().getStateProperties().values(), (v) -> keys[i.getAndIncrement()].getName() + "=" + v

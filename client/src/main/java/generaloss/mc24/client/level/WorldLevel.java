@@ -6,6 +6,7 @@ import generaloss.mc24.server.chunk.Chunk;
 import generaloss.mc24.server.chunk.ChunkPos;
 import generaloss.mc24.server.chunk.ChunkStorage;
 import generaloss.mc24.server.column.ChunkColumn;
+import generaloss.mc24.server.column.ColumnCache;
 import generaloss.mc24.server.column.ColumnPos;
 import generaloss.mc24.server.event.Events;
 import generaloss.mc24.server.network.packet2s.SetBlockStatePacket2S;
@@ -25,13 +26,7 @@ public class WorldLevel extends World<LevelChunk> implements Disposable {
         this.tesselators = new ChunkTesselatorPool(16, this);
         this.renderer = new LevelRenderer(context, this);
 
-        // light callback
-        Events.registerLightIncreased((chunk, x, y, z, r, g, b) -> {
-            // tesselate all cached chunks
-            super.getBlockLightEngine().chunkCache().forEach(tesselators::tesselate);
-        });
-
-        // blockstate callback
+        // blockstate changed event
         Events.registerBlockstateChanged((chunk, localX, localY, localZ, blockstate) -> {
             // send packet
             context.net().sendPacket(new SetBlockStatePacket2S(
@@ -66,6 +61,31 @@ public class WorldLevel extends World<LevelChunk> implements Disposable {
                     tesselators.tesselate(this.getChunk(chunk.position().getNeighbor(0, 0, chunkZ)));
                     tesselators.tesselate(this.getChunk(chunk.position().getNeighbor(0, chunkY, 0)));
                     tesselators.tesselate(this.getChunk(chunk.position().getNeighbor(chunkX, 0, 0)));
+                }
+            }
+        });
+
+        // blocklight changed event
+        Events.registerBlockLightChanged((_chunk, _x, _y, _z, _r, _g, _b) -> {
+            // tesselate all cached chunks
+            super.getBlockLightEngine().chunkCache().forEach(tesselators::tesselate);
+        });
+
+        // skylight changed event
+        Events.registerSkyLightChanged((_column, _x, _z, lowY, highY, _level) -> {
+            // tesselate all cached chunks
+            final ColumnCache<?> columnCache = super.getSkyLightEngine().columnCache();
+
+            final int lowChunkY = ChunkPos.byBlock(lowY - 1);
+            final int highChunkY = ChunkPos.byBlock(highY + 1);
+
+            for(int columnX = -1; columnX < 2; columnX++){
+                for(int columnZ = -1; columnZ < 2; columnZ++){
+                    final ChunkColumn<?> column = columnCache.get(columnX, columnZ);
+                    if(column == null)
+                        continue;
+                    for(Chunk chunk: column.getChunks(lowChunkY, highChunkY))
+                        tesselators.tesselate((LevelChunk) chunk);
                 }
             }
         });
