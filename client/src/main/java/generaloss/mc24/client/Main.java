@@ -2,6 +2,7 @@ package generaloss.mc24.client;
 
 import generaloss.mc24.client.level.WorldLevel;
 import generaloss.mc24.client.network.ClientNetwork;
+import generaloss.mc24.client.renderer.ComponentRenderer;
 import generaloss.mc24.client.resources.ClientResources;
 import generaloss.mc24.client.resources.handle.BlockModelHandle;
 import generaloss.mc24.client.screen.ScreenDisconnection;
@@ -40,6 +41,7 @@ public class Main extends JpizeApplication {
     private final EntityContainer entities;
     private final ClientPlayer player;
     private final ClientNetwork network;
+    private final ComponentRenderer componentRenderer;
     private AccountSession session;
 
     public Main() {
@@ -51,6 +53,7 @@ public class Main extends JpizeApplication {
         this.entities = new EntityContainer();
         this.player = new ClientPlayer(this);
         this.network = new ClientNetwork(this);
+        this.componentRenderer = new ComponentRenderer();
     }
 
     public ResourcePackManager resourcePackManager() {
@@ -79,6 +82,10 @@ public class Main extends JpizeApplication {
 
     public ClientNetwork network() {
         return network;
+    }
+
+    public ComponentRenderer componentRenderer() {
+        return componentRenderer;
     }
 
 
