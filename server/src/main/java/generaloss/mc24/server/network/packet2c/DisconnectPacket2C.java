@@ -33,7 +33,7 @@ public class DisconnectPacket2C extends NetPacket<IClientProtocol> {
 
     @Override
     public void handle(IClientProtocol handler) {
-        handler.handleDisconnect(this);
+        handler.handleDisconnectPacket(this);
     }
 
 }

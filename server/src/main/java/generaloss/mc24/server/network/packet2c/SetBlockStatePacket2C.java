@@ -63,7 +63,7 @@ public class SetBlockStatePacket2C extends NetPacket<IClientProtocolGame> {
 
     @Override
     public void handle(IClientProtocolGame handler) {
-        handler.handleSetBlockState(this);
+        handler.handleSetBlockStatePacket(this);
     }
 
 }

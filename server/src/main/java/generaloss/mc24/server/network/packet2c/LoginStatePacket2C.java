@@ -34,7 +34,7 @@ public class LoginStatePacket2C extends NetPacket<IClientProtocolLogin> {
 
     @Override
     public void handle(IClientProtocolLogin handler) {
-        handler.handleLoginState(this);
+        handler.handleLoginStatePacket(this);
     }
 
 }

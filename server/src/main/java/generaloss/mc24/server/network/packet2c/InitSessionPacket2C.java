@@ -17,7 +17,7 @@ public class InitSessionPacket2C extends NetPacket<IClientProtocolLogin> {
 
     @Override
     public void handle(IClientProtocolLogin handler) {
-        handler.handleInitSession(this);
+        handler.handleInitSessionPacket(this);
     }
 
 }

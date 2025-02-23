@@ -34,7 +34,7 @@ public class RemoveEntityPacket2C extends NetPacket<IClientProtocolGame> {
 
     @Override
     public void handle(IClientProtocolGame handler) {
-        handler.handleRemoveEntity(this);
+        handler.handleRemoveEntityPacket(this);
     }
 
 }

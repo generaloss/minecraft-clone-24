@@ -1,7 +1,8 @@
 package generaloss.mc24.client.level;
 
 import generaloss.mc24.client.Main;
-import generaloss.mc24.client.chunkmesh.ChunkTesselatorPool;
+import generaloss.mc24.client.meshing.chunk.ChunkTesselatorPool;
+import generaloss.mc24.client.renderer.LevelRenderer;
 import generaloss.mc24.server.chunk.Chunk;
 import generaloss.mc24.server.chunk.ChunkPos;
 import generaloss.mc24.server.chunk.ChunkStorage;
@@ -29,7 +30,7 @@ public class WorldLevel extends World<LevelChunk> implements Disposable {
         // blockstate changed event
         Events.registerBlockstateChanged((chunk, localX, localY, localZ, blockstate) -> {
             // send packet
-            context.net().sendPacket(new SetBlockStatePacket2S(
+            context.network().sendPacket(new SetBlockStatePacket2S(
                 chunk.position(), localX, localY, localZ, ServerRegistries.BLOCK_STATE.getID(blockstate)
             ));
 

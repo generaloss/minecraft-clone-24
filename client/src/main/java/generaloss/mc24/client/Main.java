@@ -1,11 +1,11 @@
 package generaloss.mc24.client;
 
 import generaloss.mc24.client.level.WorldLevel;
-import generaloss.mc24.client.network.ClientNetConnection;
-import generaloss.mc24.client.resource.ClientResources;
-import generaloss.mc24.client.resource.BlockModelHandle;
-import generaloss.mc24.client.screen.DisconnectScreen;
-import generaloss.mc24.client.screen.JoiningServerScreen;
+import generaloss.mc24.client.network.ClientNetwork;
+import generaloss.mc24.client.resources.ClientResources;
+import generaloss.mc24.client.resources.handle.BlockModelHandle;
+import generaloss.mc24.client.screen.ScreenDisconnection;
+import generaloss.mc24.client.screen.ScreenJoiningServer;
 import generaloss.mc24.server.SharedConstants;
 import generaloss.mc24.server.block.BlockState;
 import generaloss.mc24.server.chunk.ChunkPos;
@@ -13,13 +13,13 @@ import generaloss.mc24.server.entity.EntityContainer;
 import generaloss.mc24.server.network.AccountSession;
 import generaloss.mc24.server.network.packet2s.LoginRequestPacket2S;
 import generaloss.mc24.server.registry.ServerRegistries;
-import generaloss.mc24.client.screen.MainMenuScreen;
+import generaloss.mc24.client.screen.ScreenMainMenu;
 import generaloss.mc24.client.player.ClientPlayer;
-import generaloss.mc24.client.screen.SessionScreen;
+import generaloss.mc24.client.screen.ScreenGameSession;
 import generaloss.mc24.server.common.ArgsMap;
 import generaloss.mc24.server.Server;
-import generaloss.mc24.server.resourcepack.ResourcePack;
-import generaloss.mc24.server.resourcepack.ResourcePackManager;
+import generaloss.mc24.server.resources.pack.ResourcePack;
+import generaloss.mc24.server.resources.pack.ResourcePackManager;
 import jpize.app.Jpize;
 import jpize.app.JpizeApplication;
 import jpize.audio.AlDevices;
@@ -39,7 +39,7 @@ public class Main extends JpizeApplication {
     private final WorldLevel level;
     private final EntityContainer entities;
     private final ClientPlayer player;
-    private final ClientNetConnection net;
+    private final ClientNetwork network;
     private AccountSession session;
 
     public Main() {
@@ -50,7 +50,7 @@ public class Main extends JpizeApplication {
         this.level = new WorldLevel(this);
         this.entities = new EntityContainer();
         this.player = new ClientPlayer(this);
-        this.net = new ClientNetConnection(this);
+        this.network = new ClientNetwork(this);
     }
 
     public ResourcePackManager resourcePackManager() {
@@ -77,8 +77,8 @@ public class Main extends JpizeApplication {
         return player;
     }
 
-    public ClientNetConnection net() {
-        return net;
+    public ClientNetwork network() {
+        return network;
     }
 
 
@@ -110,13 +110,13 @@ public class Main extends JpizeApplication {
         localServer.init();
 
         // screens
-        screens.register(MainMenuScreen.SCREEN_ID, new MainMenuScreen(this));
-        screens.register(SessionScreen.SCREEN_ID, new SessionScreen(this));
-        screens.register(JoiningServerScreen.SCREEN_ID, new JoiningServerScreen(this));
-        screens.register(DisconnectScreen.SCREEN_ID, new DisconnectScreen(this));
+        screens.register(ScreenMainMenu.SCREEN_ID, new ScreenMainMenu(this));
+        screens.register(ScreenGameSession.SCREEN_ID, new ScreenGameSession(this));
+        screens.register(ScreenJoiningServer.SCREEN_ID, new ScreenJoiningServer(this));
+        screens.register(ScreenDisconnection.SCREEN_ID, new ScreenDisconnection(this));
 
         // set menu screen
-        screens.setCurrent(MainMenuScreen.SCREEN_ID);
+        screens.setCurrent(ScreenMainMenu.SCREEN_ID);
     }
 
 
@@ -124,15 +124,15 @@ public class Main extends JpizeApplication {
         //if(host.equals("localhost"))
         //    localServer.run(port);
         System.out.println("[INFO]: Connecting to server " + host + ":" + port);
-        screens.setCurrent(JoiningServerScreen.SCREEN_ID);
+        screens.setCurrent(ScreenJoiningServer.SCREEN_ID);
 
-        net.connect(host, port);
+        network.connect(host, port);
 
-        net.sendPacket(new LoginRequestPacket2S(SharedConstants.VERSION));
+        network.sendPacket(new LoginRequestPacket2S(SharedConstants.VERSION));
     }
 
     public void disconnectSession() {
-        net.disconnect();
+        network.disconnect();
         this.closeSession();
         // localServer.stop();
     }
@@ -141,7 +141,7 @@ public class Main extends JpizeApplication {
         player.input().disable();
         level.reset();
         entities.clear();
-        screens.setCurrent(MainMenuScreen.SCREEN_ID);
+        screens.setCurrent(ScreenMainMenu.SCREEN_ID);
         System.out.println("[INFO]: Disconnect session");
     }
 

@@ -4,16 +4,16 @@ import generaloss.mc24.server.network.packet2c.*;
 
 public interface IClientProtocolGame {
 
-    void handleChunk(ChunkPacket2C packet);
+    void handleChunkPacket(ChunkPacket2C packet);
 
-    void handleSetBlockState(SetBlockStatePacket2C packet);
+    void handleSetBlockStatePacket(SetBlockStatePacket2C packet);
 
-    void handleInitPlayer(InitPlayerPacket2C packet);
+    void handleInitPlayerPacket(InitPlayerPacket2C packet);
 
-    void handleInsertEntity(InsertEntityPacket2C packet);
+    void handleInsertEntityPacket(InsertEntityPacket2C packet);
 
-    void handleRemoveEntity(RemoveEntityPacket2C packet);
+    void handleRemoveEntityPacket(RemoveEntityPacket2C packet);
 
-    void handleMoveEntity(MoveEntityPacket2C packet);
+    void handleMoveEntityPacket(MoveEntityPacket2C packet);
 
 }

@@ -14,3 +14,4 @@
 4. [ ] structures
 5. [ ] biomes
 6. [ ] entites & entity models & entity position/rotation interpolation
+7. [ ] text formatting components

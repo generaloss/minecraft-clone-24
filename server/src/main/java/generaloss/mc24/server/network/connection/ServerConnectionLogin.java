@@ -27,7 +27,7 @@ public class ServerConnectionLogin extends ServerConnection implements IServerPr
 
 
     @Deprecated
-    public void handleServerInfoRequest(ServerInfoRequestPacket2S packet) {
+    public void handleServerInfoRequestPacket(ServerInfoRequestPacket2S packet) {
         final ServerPropertyHolder serverProperties = super.server().properties();
         final String motd = serverProperties.get("motd");
         final String version = serverProperties.get("version");
@@ -35,7 +35,7 @@ public class ServerConnectionLogin extends ServerConnection implements IServerPr
     }
 
     @Override
-    public void handleLoginRequest(LoginRequestPacket2S packet) {
+    public void handleLoginRequestPacket(LoginRequestPacket2S packet) {
         final String serverVersion = super.server().properties().get("version");
         final String clientVersion = packet.getClientVersion();
         if(!serverVersion.equals(clientVersion)){
@@ -44,20 +44,20 @@ public class ServerConnectionLogin extends ServerConnection implements IServerPr
         }
 
         super.sendPacket(new LoginStatePacket2C("Encrypt connection.."));
-        final PublicRSA publicKey = super.server().net().getEncryptionKey().getPublic();
+        final PublicRSA publicKey = super.server().network().getEncryptionKey().getPublic();
         super.sendPacket(new PublicKeyPacket2C(publicKey));
     }
 
     @Override
-    public void handleConnectionKey(EncodeKeyPacket2S packet) {
-        final PrivateRSA privateKey = super.server().net().getEncryptionKey().getPrivate();
+    public void handleConnectionKeyPacket(EncodeKeyPacket2S packet) {
+        final PrivateRSA privateKey = super.server().network().getEncryptionKey().getPrivate();
         final byte[] keyBytes = privateKey.decrypt(packet.getEncryptedKeyBytes());
         final AESKey key = new AESKey(keyBytes);
         super.encode(key);
     }
 
     @Override
-    public void handleSessionID(SessionIDPacket2S packet) {
+    public void handleSessionIDPacket(SessionIDPacket2S packet) {
         // validate session
         final Response hasSessionResponse = Request.sendHasSession(SharedConstants.ACCOUNTS_HOST, packet.getSessionID());
         if(!hasSessionResponse.getCode().noError() || !hasSessionResponse.readBoolean()){

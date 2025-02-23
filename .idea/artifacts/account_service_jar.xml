@@ -6,7 +6,7 @@
         <element id="file-copy" path="$PROJECT_DIR$/account-service/META-INF/MANIFEST.MF" />
       </element>
       <element id="module-output" name="account-service" />
-      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/io/github/generaloss/jpize-utils/25.2.5/jpize-utils-25.2.5.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/io/github/generaloss/jpize-utils/25.2.7/jpize-utils-25.2.7.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>

@@ -4,6 +4,6 @@ import generaloss.mc24.server.network.packet2c.DisconnectPacket2C;
 
 public interface IClientProtocol {
 
-    void handleDisconnect(DisconnectPacket2C packet);
+    void handleDisconnectPacket(DisconnectPacket2C packet);
 
 }

@@ -2,7 +2,7 @@ package generaloss.mc24.server;
 
 import generaloss.mc24.server.common.ArgsMap;
 import generaloss.mc24.server.common.Config;
-import generaloss.mc24.server.resourcepack.ResourcePackManager;
+import generaloss.mc24.server.resources.pack.ResourcePackManager;
 import jpize.util.io.FastReader;
 import jpize.util.res.FileResource;
 import jpize.util.res.Resource;

@@ -46,7 +46,7 @@ public class InsertEntityPacket2C extends NetPacket<IClientProtocolGame> {
 
     @Override
     public void handle(IClientProtocolGame handler) {
-        handler.handleInsertEntity(this);
+        handler.handleInsertEntityPacket(this);
     }
 
 }

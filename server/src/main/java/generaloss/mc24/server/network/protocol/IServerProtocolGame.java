@@ -6,10 +6,10 @@ import generaloss.mc24.server.network.packet2s.SetBlockStatePacket2S;
 
 public interface IServerProtocolGame {
 
-    void handleInitSession(InitSessionPacket2S packet);
+    void handleInitSessionPacket(InitSessionPacket2S packet);
 
-    void handleSetBlockState(SetBlockStatePacket2S packet);
+    void handleSetBlockStatePacket(SetBlockStatePacket2S packet);
 
-    void handlePlayerMove(PlayerMovePacket2S packet);
+    void handlePlayerMovePacket(PlayerMovePacket2S packet);
 
 }

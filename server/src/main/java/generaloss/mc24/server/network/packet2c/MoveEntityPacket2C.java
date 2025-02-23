@@ -43,7 +43,7 @@ public class MoveEntityPacket2C extends NetPacket<IClientProtocolGame> {
 
     @Override
     public void handle(IClientProtocolGame handler) {
-        handler.handleMoveEntity(this);
+        handler.handleMoveEntityPacket(this);
     }
 
 }

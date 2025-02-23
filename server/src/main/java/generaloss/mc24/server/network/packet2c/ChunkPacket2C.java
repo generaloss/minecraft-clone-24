@@ -58,7 +58,7 @@ public class ChunkPacket2C extends NetPacket<IClientProtocolGame> {
 
     @Override
     public void handle(IClientProtocolGame handler) {
-        handler.handleChunk(this);
+        handler.handleChunkPacket(this);
     }
 
 }

@@ -50,7 +50,7 @@ public class ServerInfoResponsePacket2C extends NetPacket<IClientProtocolLogin> 
 
     @Override
     public void handle(IClientProtocolLogin handler) {
-        handler.handleServerInfoResponse(this);
+        handler.handleServerInfoResponsePacket(this);
     }
 
 }

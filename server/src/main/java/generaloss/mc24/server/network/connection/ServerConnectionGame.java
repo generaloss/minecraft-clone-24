@@ -29,12 +29,12 @@ public class ServerConnectionGame extends ServerConnection implements IServerPro
     }
 
     @Override
-    public void handleInitSession(InitSessionPacket2S packet) {
+    public void handleInitSessionPacket(InitSessionPacket2S packet) {
         this.player = super.server().players().createPlayer(session, this);
     }
 
     @Override
-    public void handleSetBlockState(SetBlockStatePacket2S packet) {
+    public void handleSetBlockStatePacket(SetBlockStatePacket2S packet) {
         final Server server = super.server();
         final ServerWorld world = server.worldHolder().getWorld("overworld");
         final BlockState blockstate = ServerRegistries.BLOCK_STATE.get(packet.getBlockStateID());
@@ -44,7 +44,7 @@ public class ServerConnectionGame extends ServerConnection implements IServerPro
             packet.getLocalX(), packet.getLocalY(), packet.getLocalZ(), blockstate
         );
         // add an stack
-        super.server().net().tcpServer().broadcast(super.tcpConnection(), new SetBlockStatePacket2C(
+        super.server().network().tcpServer().broadcast(super.tcpConnection(), new SetBlockStatePacket2C(
             packet.getChunkPosition(),
             packet.getLocalX(), packet.getLocalY(), packet.getLocalZ(),
             packet.getBlockStateID()
@@ -52,7 +52,7 @@ public class ServerConnectionGame extends ServerConnection implements IServerPro
     }
 
     @Override
-    public void handlePlayerMove(PlayerMovePacket2S packet) {
+    public void handlePlayerMovePacket(PlayerMovePacket2S packet) {
         player.position().set(packet.getPosition());
         super.server().players().broadcastPacket(player,
                 new MoveEntityPacket2C(player.getUUID(), player.position()));

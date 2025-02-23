@@ -33,7 +33,7 @@ public class EncodeKeyPacket2S extends NetPacket<IServerProtocolLogin> {
 
     @Override
     public void handle(IServerProtocolLogin handler) {
-        handler.handleConnectionKey(this);
+        handler.handleConnectionKeyPacket(this);
     }
 
 }

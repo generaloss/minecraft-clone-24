@@ -34,7 +34,7 @@ public class SessionIDPacket2S extends NetPacket<IServerProtocolLogin> {
 
     @Override
     public void handle(IServerProtocolLogin handler) {
-        handler.handleSessionID(this);
+        handler.handleSessionIDPacket(this);
     }
 
 }

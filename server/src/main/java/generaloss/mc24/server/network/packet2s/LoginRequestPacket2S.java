@@ -33,7 +33,7 @@ public class LoginRequestPacket2S extends NetPacket<IServerProtocolLogin> {
 
     @Override
     public void handle(IServerProtocolLogin handler) {
-        handler.handleLoginRequest(this);
+        handler.handleLoginRequestPacket(this);
     }
 
 }

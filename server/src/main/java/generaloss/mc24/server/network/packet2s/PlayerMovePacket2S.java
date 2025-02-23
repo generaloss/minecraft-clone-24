@@ -37,7 +37,7 @@ public class PlayerMovePacket2S extends NetPacket<IServerProtocolGame> {
 
     @Override
     public void handle(IServerProtocolGame handler) {
-        handler.handlePlayerMove(this);
+        handler.handlePlayerMovePacket(this);
     }
 
 }

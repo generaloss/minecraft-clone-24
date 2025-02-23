@@ -7,12 +7,12 @@ import generaloss.mc24.server.network.packet2s.SessionIDPacket2S;
 
 public interface IServerProtocolLogin {
 
-    void handleServerInfoRequest(ServerInfoRequestPacket2S packet);
+    void handleServerInfoRequestPacket(ServerInfoRequestPacket2S packet);
 
-    void handleLoginRequest(LoginRequestPacket2S packet);
+    void handleLoginRequestPacket(LoginRequestPacket2S packet);
 
-    void handleConnectionKey(EncodeKeyPacket2S packet);
+    void handleConnectionKeyPacket(EncodeKeyPacket2S packet);
 
-    void handleSessionID(SessionIDPacket2S packet);
+    void handleSessionIDPacket(SessionIDPacket2S packet);
 
 }

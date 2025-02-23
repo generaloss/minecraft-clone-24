@@ -34,7 +34,7 @@ public class PublicKeyPacket2C extends NetPacket<IClientProtocolLogin> {
 
     @Override
     public void handle(IClientProtocolLogin handler) {
-        handler.handlePublicKey(this);
+        handler.handlePublicKeyPacket(this);
     }
 
 }

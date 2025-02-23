@@ -46,7 +46,7 @@ public class InitPlayerPacket2C extends NetPacket<IClientProtocolGame> {
 
     @Override
     public void handle(IClientProtocolGame handler) {
-        handler.handleInitPlayer(this);
+        handler.handleInitPlayerPacket(this);
     }
 
 }

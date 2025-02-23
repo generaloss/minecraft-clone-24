@@ -17,7 +17,7 @@ public class InitSessionPacket2S extends NetPacket<IServerProtocolGame> {
 
     @Override
     public void handle(IServerProtocolGame handler) {
-        handler.handleInitSession(this);
+        handler.handleInitSessionPacket(this);
     }
 
 }
