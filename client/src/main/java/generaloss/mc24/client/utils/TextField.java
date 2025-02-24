@@ -64,9 +64,9 @@ public class TextField {
         final String text = input.makeString();
         if(text.isEmpty()) {
             font.getRenderOptions().color().set(0.7F);
-            font.drawText(batch, hint, x, y);
+            font.drawText(batch, hint, x, y + height);
         }else{
-            font.drawText(batch, text, x, y);
+            font.drawText(batch, text, x, y + height);
         }
         font.getRenderOptions().color().reset();
 

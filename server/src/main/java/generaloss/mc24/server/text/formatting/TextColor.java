@@ -1,4 +1,4 @@
-package generaloss.mc24.server.text.style;
+package generaloss.mc24.server.text.formatting;
 
 import jpize.util.color.ImmutableColor;
 

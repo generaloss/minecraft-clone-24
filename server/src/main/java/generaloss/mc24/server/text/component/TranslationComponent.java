@@ -1,14 +1,16 @@
 package generaloss.mc24.server.text.component;
 
-public class TranslationComponent extends FormattedTextComponent {
+import generaloss.mc24.server.text.FormattedText;
+
+public class TranslationComponent extends ITextComponent {
 
     private String[] key;
-    private FormattedTextComponent[] arguments;
+    private FormattedText[] arguments;
 
-    public TranslationComponent(String key, FormattedTextComponent... arguments) {
+    public TranslationComponent(FormattedText textOf, String key, FormattedText... arguments) {
+        super(textOf);
         this.set(key, arguments);
     }
-
 
     public String[] getKey() {
         return key;
@@ -16,21 +18,21 @@ public class TranslationComponent extends FormattedTextComponent {
 
     public TranslationComponent setKey(String key) {
         this.key = key.split("%s");
+        super.resetTextCache();
         return this;
     }
 
-
-    public FormattedTextComponent[] getArguments() {
+    public FormattedText[] getArguments() {
         return arguments;
     }
 
-    public TranslationComponent setArguments(FormattedTextComponent... arguments) {
+    public TranslationComponent setArguments(FormattedText... arguments) {
         this.arguments = arguments;
+        super.resetTextCache();
         return this;
     }
 
-
-    public TranslationComponent set(String key, FormattedTextComponent... arguments) {
+    public TranslationComponent set(String key, FormattedText... arguments) {
         this.setKey(key);
         this.setArguments(arguments);
         return this;

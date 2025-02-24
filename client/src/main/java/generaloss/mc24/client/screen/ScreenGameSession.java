@@ -195,7 +195,7 @@ public class ScreenGameSession extends Screen {
         final String selectedBlockText = ("Selected block: " + toPlaceBlockState.getBlockID());
         final Vec2f selectedBlockTextBounds = font.getTextBounds(selectedBlockText);
         final float selectedBlockTextX = (Jpize.getWidth() - selectedBlockTextBounds.x);
-        final float selectedBlockTextY = (Jpize.getHeight() - selectedBlockTextBounds.y);
+        final float selectedBlockTextY = (Jpize.getHeight() - 10F);
         font.drawText(batch, selectedBlockText, selectedBlockTextX, selectedBlockTextY);
 
         // place block ID
@@ -209,7 +209,7 @@ public class ScreenGameSession extends Screen {
             ));
             final Vec2f aimBlockstateTextBounds = font.getTextBounds(aimBlockstateText);
             final float aimBlockstateTextX = (Jpize.getWidth() - aimBlockstateTextBounds.x);
-            final float aimBlockstateTextY = (Jpize.getHeight() - aimBlockstateTextBounds.y - font.getLineAdvanceScaled());
+            final float aimBlockstateTextY = (Jpize.getHeight() - 10F - selectedBlockTextBounds.y);
             font.drawText(batch, aimBlockstateText, aimBlockstateTextX, aimBlockstateTextY);
         }
 

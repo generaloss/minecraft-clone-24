@@ -2,7 +2,7 @@ package generaloss.mc24.client;
 
 import generaloss.mc24.client.level.WorldLevel;
 import generaloss.mc24.client.network.ClientNetwork;
-import generaloss.mc24.client.renderer.ComponentRenderer;
+import generaloss.mc24.client.renderer.FormattedTextRenderer;
 import generaloss.mc24.client.resources.ClientResources;
 import generaloss.mc24.client.resources.handle.BlockModelHandle;
 import generaloss.mc24.client.screen.ScreenDisconnection;
@@ -41,7 +41,7 @@ public class Main extends JpizeApplication {
     private final EntityContainer entities;
     private final ClientPlayer player;
     private final ClientNetwork network;
-    private final ComponentRenderer componentRenderer;
+    private final FormattedTextRenderer formattedTextRenderer;
     private AccountSession session;
 
     public Main() {
@@ -53,7 +53,7 @@ public class Main extends JpizeApplication {
         this.entities = new EntityContainer();
         this.player = new ClientPlayer(this);
         this.network = new ClientNetwork(this);
-        this.componentRenderer = new ComponentRenderer();
+        this.formattedTextRenderer = new FormattedTextRenderer();
     }
 
     public ResourcePackManager resourcePackManager() {
@@ -84,8 +84,8 @@ public class Main extends JpizeApplication {
         return network;
     }
 
-    public ComponentRenderer componentRenderer() {
-        return componentRenderer;
+    public FormattedTextRenderer formattedTextRenderer() {
+        return formattedTextRenderer;
     }
 
 
@@ -102,8 +102,6 @@ public class Main extends JpizeApplication {
     public void init() {
         // audio
         AlDevices.openDevice();
-        // font
-        ClientResources.FONTS.create("default", "fonts/default/font.fnt");
 
         // blockstate models
         ServerRegistries.BLOCK_STATE.addRegisterCallback(blockstate -> {
@@ -251,7 +249,7 @@ public class Main extends JpizeApplication {
         Gl.clearColorDepthBuffers();
         screens.render();
         final Font font = ClientResources.FONTS.get("default").resource();
-        font.drawText("FPS: " + Jpize.getFPS(), 10F, Jpize.getHeight() - 10F - font.getLineAdvanceScaled());
+        font.drawText("FPS: " + Jpize.getFPS(), 10F, Jpize.getHeight() - 10F);
     }
 
     @Override

@@ -8,6 +8,9 @@ import generaloss.mc24.client.utils.TextField;
 import generaloss.mc24.server.SharedConstants;
 import generaloss.mc24.server.network.AccountSession;
 import generaloss.mc24.server.network.packet2s.ServerInfoRequestPacket2S;
+import generaloss.mc24.server.text.FormattedText;
+import generaloss.mc24.server.text.formatting.TextColor;
+import generaloss.mc24.server.text.formatting.TextFormatting;
 import jpize.app.Jpize;
 import jpize.audio.util.AlMusic;
 import jpize.gl.Gl;
@@ -173,6 +176,13 @@ public class ScreenMainMenu extends Screen {
         serverInfo = "Server info: " + motd + ", " + version + ", " + ping + "ms.";
     }
 
+    FormattedText t = new FormattedText()
+        .text("I ")
+        .style(TextFormatting.ITALIC).text("Want ").style()
+        .text("Pizza")
+        .color(TextColor.RED).text("\n").text("What?\n").text("What.\n")
+        .style(TextFormatting.BOLD).color(TextColor.DARK_GREEN).text("Bold text");
+
     @Override
     public void render() {
         // skybox
@@ -188,40 +198,41 @@ public class ScreenMainMenu extends Screen {
         batch.setup();
 
         // hints
-        float position = 10F;
-        font.getRenderOptions().color().setRGB(0xAAAAAA);
-        font.drawText(batch, "Press 'ENTER' to join the server.", 10F, position);
-        position += font.getLineAdvanceScaled();
-        font.drawText(batch, "'F1', 'F2', 'F3' - changes resourcepack", 10F, position);
-        position += font.getLineAdvanceScaled();
-        font.drawText(batch, "'F11' - fullscreen", 10F, position);
-        position += font.getLineAdvanceScaled();
-        font.drawText(batch, "Numbers - select block (ingame)", 10F, position);
-        position += font.getLineAdvanceScaled();
-        font.drawText(batch, "'Ctrl' - sprint (ingame)", 10F, position);
-        position += font.getLineAdvanceScaled();
-        font.drawText(batch, "'Ctrl + R' - register account", 10F, position);
-        position += font.getLineAdvanceScaled();
-        font.drawText(batch, "'Ctrl + L' - login account", 10F, position);
-        position += font.getLineAdvanceScaled();
-        font.drawText(batch, "'Ctrl + S' - paste server IP", 10F, position);
-        position += font.getLineAdvanceScaled();
-        font.drawText(batch, "'Ctrl + ESCAPE' - quit / to main menu", 10F, position);
-        position += font.getLineAdvanceScaled();
-        font.drawText(batch, "'F5'/'F6' - enable/disable Ambient Occlusion", 10F, position);
-        position += font.getLineAdvanceScaled();
-        font.drawText(batch, "'F8' - enable/disable daylight cycle", 10F, position);
-        position += font.getLineAdvanceScaled();
-        font.getRenderOptions().color().reset();
-        font.drawText(batch, serverInfo, 10F, position);
-        position += font.getLineAdvanceScaled();
-        font.drawText(batch, accountStatus, 10F, position);
+        // float position = 10F;
+        // font.getRenderOptions().color().setRGB(0xAAAAAA);
+        // font.drawText(batch, "Press 'ENTER' to join the server.", 10F, position);
+        // position += font.getLineAdvanceScaled();
+        // font.drawText(batch, "'F1', 'F2', 'F3' - changes resourcepack", 10F, position);
+        // position += font.getLineAdvanceScaled();
+        // font.drawText(batch, "'F11' - fullscreen", 10F, position);
+        // position += font.getLineAdvanceScaled();
+        // font.drawText(batch, "Numbers - select block (ingame)", 10F, position);
+        // position += font.getLineAdvanceScaled();
+        // font.drawText(batch, "'Ctrl' - sprint (ingame)", 10F, position);
+        // position += font.getLineAdvanceScaled();
+        // font.drawText(batch, "'Ctrl + R' - register account", 10F, position);
+        // position += font.getLineAdvanceScaled();
+        // font.drawText(batch, "'Ctrl + L' - login account", 10F, position);
+        // position += font.getLineAdvanceScaled();
+        // font.drawText(batch, "'Ctrl + S' - paste server IP", 10F, position);
+        // position += font.getLineAdvanceScaled();
+        // font.drawText(batch, "'Ctrl + ESCAPE' - quit / to main menu", 10F, position);
+        // position += font.getLineAdvanceScaled();
+        // font.drawText(batch, "'F5'/'F6' - enable/disable Ambient Occlusion", 10F, position);
+        // position += font.getLineAdvanceScaled();
+        // font.drawText(batch, "'F8' - enable/disable daylight cycle", 10F, position);
+        // position += font.getLineAdvanceScaled();
+        // font.getRenderOptions().color().reset();
+        // font.drawText(batch, serverInfo, 10F, position);
+        // position += font.getLineAdvanceScaled();
+        // font.drawText(batch, accountStatus, 10F, position);
 
         // server address
         serverAddressField.render(batch);
         nicknameField.render(batch);
         passwordField.render(batch);
 
+        context.formattedTextRenderer().draw(batch, t, 100, 500);
         batch.render();
     }
 
