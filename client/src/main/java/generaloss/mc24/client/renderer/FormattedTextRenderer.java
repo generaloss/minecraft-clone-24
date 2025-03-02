@@ -6,17 +6,20 @@ import generaloss.mc24.server.text.component.*;
 import generaloss.mc24.server.text.formatting.TextFormatting;
 import jpize.util.color.Color;
 import jpize.util.font.*;
+import jpize.util.math.Maths;
 import jpize.util.math.vector.Vec2f;
 import jpize.util.mesh.TextureBatch;
 
 public class FormattedTextRenderer {
 
     public static final float BOLD_SCALING = (9F / 8F);
+    public static final float SHADOW_FACTOR = 0.25F;
 
     private final Font font;
     private final FontRenderOptions options;
 
     private final Color color;
+    private final Color shadowColor;
     private boolean bold;
     private boolean underline;
     private boolean strikethrough;
@@ -24,9 +27,10 @@ public class FormattedTextRenderer {
 
     public FormattedTextRenderer() {
         this.color = new Color();
+        this.shadowColor = new Color().mulRGB(SHADOW_FACTOR);
 
         this.font = ClientResources.FONTS.create("default", "fonts/default/font.fnt").resource();
-        this.options = font.getRenderOptions();
+        this.options = font.getOptions();
         this.options.setInvLineWrap(true);
     }
 
@@ -36,11 +40,8 @@ public class FormattedTextRenderer {
 
 
     public void draw(TextureBatch batch, FormattedText formattedText, float x, float y) {
-        color.reset();
-
         // cache text
-        formattedText.cacheText();
-        final String totalText = formattedText.getTextCache();
+        final String totalText = formattedText.getCachedText();
 
         // init
         batch.setTransformOrigin(0F, 0F);
@@ -52,11 +53,20 @@ public class FormattedTextRenderer {
         float cursorX = x;
         float cursorY = y;
 
+        final Vec2f scale = options.scale();
+
+        final float lineHeight = (font.getHeight() / 8F);
+        final float lineHeightScaled = (lineHeight * scale.y);
+        this.options.setNewLineGap(lineHeight);
+        this.options.setLineGap(lineHeight);
+
         for(IFormattedTextComponent component: formattedText){
             if(component instanceof IFormattingComponent iformattingCopm) {
                 // formatting
                 if(iformattingCopm instanceof ColorComponent colorComp) {
                     color.set(colorComp.color());
+                    shadowColor.set(color).mulRGB(SHADOW_FACTOR);
+
                 }else if(iformattingCopm instanceof StyleComponent styleComp) {
                     final boolean italic = styleComp.has(TextFormatting.ITALIC);
                     batch.shear(italic ? 15F : 0F, 0F);
@@ -69,24 +79,24 @@ public class FormattedTextRenderer {
 
             }else if(component instanceof ITextComponent textComp){
                 // text
-                final String text = textComp.getTextCache();
-                final Iterable<GlyphSprite> iterable = font.iterable(text);
-                final GlyphIterator iterator = (GlyphIterator) iterable.iterator();
+                String text = textComp.getTextCache();
+                if(obfuscated)
+                    text = buildObfuscated(text);
 
-                // if(text.startsWith("\n"))
-                //     cursorX = x;
+                final GlyphIterable iterable = font.iterable(text);
+                final GlyphIterator iterator = iterable.iterator();
 
                 for(GlyphSprite sprite: iterable){
                     if(options.isCullLinesEnabled()) {
-                        final float lineBottomY = (iterator.getCursorY() * options.scale().y + y);
+                        final float lineBottomY = (iterator.position().y * scale.y + y);
                         final float lineTopY = (lineBottomY + font.getLineAdvanceScaled());
                         if(lineTopY < options.getCullLinesBottomY() || lineBottomY > options.getCullLinesTopY()){
-                            iterator.skipLine();
+                            iterator.hideLine();
                             continue;
                         }
                     }
 
-                    if((char) sprite.getCode() == ' ' || !sprite.isRenderable())
+                    if(iterator.character() == ' ')
                         continue;
 
                     final Vec2f renderPos = new Vec2f(sprite.getX(), sprite.getY());
@@ -98,22 +108,64 @@ public class FormattedTextRenderer {
                         .add(cursorX, cursorY);
                     renderPos.y += font.getDescentScaled();
 
-                    batch.draw(sprite.getPage(), sprite.getRegion(), renderPos.x, renderPos.y, sprite.getWidth(), sprite.getHeight(), color);
+                    // shadow
+                    batch.draw(sprite.getPage(), sprite.getRegion(), renderPos.x + lineHeightScaled, renderPos.y - lineHeightScaled, sprite.getWidth(), sprite.getHeight(), shadowColor);
                     if(bold){
-                        final float boldX = (renderPos.x + options.scale().x);
+                        // bold shadow
+                        final float boldX = (renderPos.x + scale.x);
+                        batch.draw(sprite.getPage(), sprite.getRegion(), boldX + lineHeightScaled, renderPos.y - lineHeightScaled, sprite.getWidth(), sprite.getHeight(), shadowColor);
+                    }
+                    // normal
+                    batch.draw(sprite.getPage(), sprite.getRegion(), renderPos.x, renderPos.y, sprite.getWidth(), sprite.getHeight(), color);
+                    // formatting
+                    if(bold) {
+                        final float boldX = (renderPos.x + scale.x);
                         batch.draw(sprite.getPage(), sprite.getRegion(), boldX, renderPos.y, sprite.getWidth(), sprite.getHeight(), color);
-                        //iterator.advance(options.scale().x, 0F);
+                        iterator.cursor().x += (scale.x / 8F);
+                    }
+                    if(iterator.nextCursorX() == 0F) {
+                        if(!underline && !strikethrough)
+                            continue;
+
+                        final float lineWidth = (iterator.cursor().x + iterator.nextAdvanceX()) * scale.x;
+
+                        if(underline){
+                            final float lineY = (cursorY + iterator.position().y * scale.y - lineHeightScaled);
+                            batch.drawRect(cursorX, lineY, lineWidth, lineHeight * scale.y, color);
+                        }
+                        if(strikethrough){
+                            final float lineY = (cursorY + iterator.position().y * scale.y + font.getHeightScaled() / 8F * 3F);
+                            batch.drawRect(cursorX, lineY, lineWidth, lineHeight * scale.y, color);
+                        }
                     }
                 }
 
-                cursorX += iterator.getCursorX() * options.scale().x;
-                // if(text.endsWith("\n"))
-                //     cursorX = x;
+                cursorX += (iterator.nextCursorX() * scale.x);
+                if(iterator.nextCursorX() == 0F)
+                    cursorX = x;
 
-                final float yCorrection = 0;//(options.isInvLineWrap() ? font.getLineAdvance() * options.advanceFactor().y : 0);
-                cursorY += (iterator.getCursorY() + yCorrection) * options.scale().y;
+                cursorY += (iterator.nextCursorY() * options.getLineWrapSign() * options.scale().y);
             }
         }
+
+        // reset style
+        batch.shear(0F, 0F); // italic
+        bold          = false;
+        underline     = false;
+        strikethrough = false;
+        obfuscated    = false;
+        // reset color
+        color.reset();
+        shadowColor.reset().mulRGB(SHADOW_FACTOR);
+    }
+
+    public static String buildObfuscated(String text) {
+        final StringBuilder result = new StringBuilder();
+        for(int i = 0; i < text.length(); i++){
+            char c = text.charAt(Maths.random(text.length() - 1));
+            result.append(c);
+        }
+        return result.toString();
     }
 
 }

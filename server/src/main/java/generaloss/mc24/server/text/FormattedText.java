@@ -53,7 +53,7 @@ public class FormattedText implements Iterable<IFormattedTextComponent> {
         textCache = null;
     }
 
-    public String cacheText() {
+    public String getCachedText() {
         if(textCache != null)
             return textCache;
 

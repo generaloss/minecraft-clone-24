@@ -51,10 +51,10 @@ public class TextField {
         final float height = font.getLineAdvanceScaled();
         final float width = font.getTextWidth("W".repeat(30));
 
-        batch.drawRectBlack(x, y, width, height, 0.5F);
+        batch.drawRectBlack(x, Jpize.getHeight() - y, width, height, 0.5F);
 
         if(MouseBtn.pressedAny(MouseBtn.values())){
-            this.setFocused(Intersector.isPointOnRect(Jpize.getX(), Jpize.getY(), x, y, width, height));
+            this.setFocused(Intersector.isPointOnRect(Jpize.getX(), Jpize.getY(), x, Jpize.getHeight() - y, width, height));
             time = 0;
         }
 
@@ -63,17 +63,17 @@ public class TextField {
 
         final String text = input.makeString();
         if(text.isEmpty()) {
-            font.getRenderOptions().color().set(0.7F);
-            font.drawText(batch, hint, x, y + height);
+            font.getOptions().color().set(0.7F);
+            font.drawText(batch, hint, x, Jpize.getHeight() - y + height);
         }else{
-            font.drawText(batch, text, x, y + height);
+            font.drawText(batch, text, x, Jpize.getHeight() - y + height);
         }
-        font.getRenderOptions().color().reset();
+        font.getOptions().color().reset();
 
         time += Jpize.getDeltaTime();
         if(this.isFocused() && time * 2 % 2 < 1) {
             final float offsetX = font.getTextWidth(text.substring(0, input.getX()));
-            batch.drawRect(x + offsetX, y, 3F, font.getHeightScaled(), 1F, 1F, 1F);
+            batch.drawRect(x + offsetX, Jpize.getHeight() - y, 3F, font.getHeightScaled(), 1F, 1F, 1F);
         }
         // scissor.remove("scissor");
         // scissor.apply();

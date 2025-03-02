@@ -2,6 +2,7 @@ package generaloss.mc24.client.screen;
 
 import generaloss.mc24.client.Main;
 import generaloss.mc24.client.resources.ClientResources;
+import generaloss.mc24.server.text.FormattedText;
 import jpize.app.Jpize;
 import jpize.gl.Gl;
 import jpize.gl.texture.Texture2D;
@@ -17,7 +18,7 @@ public class ScreenDisconnection extends Screen {
 
     private final TextureBatch batch;
     private final Region regionBG;
-    private String message;
+    private FormattedText message;
 
     public ScreenDisconnection(Main context) {
         super(context, SCREEN_ID);
@@ -28,7 +29,7 @@ public class ScreenDisconnection extends Screen {
     }
 
     public void setMessage(String message) {
-        this.message = "Disconnection: '" + message + "'";
+        this.message = new FormattedText().text("Disconnection: '" + message + "'");
     }
 
     @Override
@@ -57,11 +58,11 @@ public class ScreenDisconnection extends Screen {
 
         // message
         final Font font = ClientResources.FONTS.get("default").resource();
-        final String text = message;
-        final Vec2f textBounds = font.getTextBounds(text);
+        final FormattedText text = message;
+        final Vec2f textBounds = font.getTextBounds(text.getCachedText());
         final float textX = (Jpize.getWidth() - textBounds.x) * 0.5F;
         final float textY = (Jpize.getHeight() - textBounds.y) * 0.5F;
-        font.drawText(batch, text, textX, textY);
+        context.formattedTextRenderer().draw(batch, text, textX, textY);
 
         batch.render(false);
     }

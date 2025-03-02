@@ -155,7 +155,7 @@ public class ScreenGameSession extends Screen {
     public void render() {
         // -res-
         final Font font = ClientResources.FONTS.get("default").resource();
-        final FontRenderOptions fontOptions = font.getRenderOptions();
+        final FontRenderOptions fontOptions = font.getOptions();
 
         // level
         Gl.enable(GlTarget.DEPTH_TEST);

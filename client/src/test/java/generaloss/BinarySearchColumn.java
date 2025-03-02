@@ -23,7 +23,7 @@ public class BinarySearchColumn extends JpizeApplication {
     public BinarySearchColumn() {
         this.batch = new TextureBatch();
         this.font = new Font().loadDefault();
-        this.font.getRenderOptions().color().setRGB(0x121215);
+        this.font.getOptions().color().setRGB(0x121215);
         this.offsetY = new float[2];
         this.offsetTargetY = new float[2];
         Gl.clearColor(new Color().setRGB(0x121215));

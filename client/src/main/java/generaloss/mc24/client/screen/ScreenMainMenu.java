@@ -3,6 +3,7 @@ package generaloss.mc24.client.screen;
 import generaloss.mc24.accountservice.network.Request;
 import generaloss.mc24.accountservice.network.Response;
 import generaloss.mc24.client.Main;
+import generaloss.mc24.client.renderer.FormattedTextRenderer;
 import generaloss.mc24.client.resources.ClientResources;
 import generaloss.mc24.client.utils.TextField;
 import generaloss.mc24.server.SharedConstants;
@@ -41,8 +42,8 @@ public class ScreenMainMenu extends Screen {
     private TextField serverAddressField;
     private TextField nicknameField;
     private TextField passwordField;
-    private String serverInfo = "Server Info: (press 'Ctrl + I' to ping server)";
-    private String accountStatus = "Account status: Not Logged In";
+    private FormattedText serverInfo = new FormattedText().color(TextColor.DARK_GRAY).text("Server Info: (press ").color(TextColor.WHITE).style(TextFormatting.ITALIC).text("Ctrl + I").color(TextColor.GRAY).style().text(" to ping server)");
+    private FormattedText accountStatus = new FormattedText().color(TextColor.DARK_GRAY).text("Account status: ").color(TextColor.DARK_RED).text("Not Logged In");
     private final ExecutorService executors;
 
     public ScreenMainMenu(Main context) {
@@ -73,21 +74,21 @@ public class ScreenMainMenu extends Screen {
     }
 
     public void init() {
-        this.nicknameField = new TextField(10, 650, ClientResources.FONTS.get("default").resource());
-        this.nicknameField.setHint("nickname");
-        this.nicknameField.setFocused(true);
+        nicknameField = new TextField(10, 150, ClientResources.FONTS.get("default").resource());
+        nicknameField.setHint("nickname");
 
-        this.passwordField = new TextField(10, 600, ClientResources.FONTS.get("default").resource());
-        this.passwordField.setHint("password");
+        passwordField = new TextField(10, 220, ClientResources.FONTS.get("default").resource());
+        passwordField.setHint("password");
 
-        this.serverAddressField = new TextField(10, 550, ClientResources.FONTS.get("default").resource());
-        this.serverAddressField.setHint("localhost:22854");
+        serverAddressField = new TextField(10, 290, ClientResources.FONTS.get("default").resource());
+        serverAddressField.setHint("localhost:22854");
     }
 
     @Override
     public void show() {
         Gl.clearColor(0F, 0F, 0F);
         music.play();
+        nicknameField.setFocused(true);
     }
 
     @Override
@@ -109,23 +110,23 @@ public class ScreenMainMenu extends Screen {
         // register
         if(Key.LCTRL.pressed() && Key.R.down()) {
             executors.execute(() -> {
-                accountStatus = "Register status: Registering...";
+                accountStatus = new FormattedText().color(TextColor.DARK_GRAY).text("Register status: ").color(TextColor.WHITE).text("Registering...");
                 final Response response = Request.sendCreateAccount(SharedConstants.ACCOUNTS_HOST, nicknameField.getText(), passwordField.getText());
-                accountStatus = "Register status: " + response.getCode() + ", " + response.readString() + " (Not Logged In)";
+                accountStatus = new FormattedText().color(TextColor.DARK_GRAY).text("Register status: " + response.getCode() + ", " + response.readString()).color(TextColor.DARK_RED).text(" (Not Logged In)");
             });
         }
         // login
         if(Key.LCTRL.pressed() && Key.L.down()) {
             executors.execute(() -> {
                 final String nickname = nicknameField.getText();
-                accountStatus = "Login status: Logging...";
+                accountStatus = new FormattedText().color(TextColor.DARK_GRAY).text("Login status: ").color(TextColor.WHITE).text("Logging...");
                 final Response response = Request.sendLogin(SharedConstants.ACCOUNTS_HOST, nickname, passwordField.getText());
                 if(response.getCode().noError()){
                     final AccountSession session = new AccountSession(response.readUUID(), nickname);
                     super.context.setSession(session);
                     System.out.println("[INFO]: Logged in as '" + nickname + "'");
                 }
-                accountStatus = "Login status: " + response.getCode() + ", " + response.readString();
+                accountStatus = new FormattedText().color(TextColor.DARK_GRAY).text("Login status: ").color(TextColor.WHITE).text(response.getCode() + ", " + response.readString());
             });
         }
         // join
@@ -135,7 +136,7 @@ public class ScreenMainMenu extends Screen {
                 final int port = Integer.parseInt(serverAddress[1]);
                 context.connectSession(serverAddress[0], port);
             }catch(NumberFormatException | ArrayIndexOutOfBoundsException | IllegalStateException e){
-                serverInfo = "Server Info: Invalid address (press 'Ctrl + I' to ping server)";
+                serverInfo = new FormattedText().text("Server Info: Invalid address (press 'Ctrl + I' to ping server)");
             }
         }
         // ping server
@@ -146,7 +147,7 @@ public class ScreenMainMenu extends Screen {
                 super.context.network().connect(serverAddress[0], port);
                 super.context.network().sendPacket(new ServerInfoRequestPacket2S(System.currentTimeMillis()));
             }catch(NumberFormatException | ArrayIndexOutOfBoundsException | IllegalStateException e){
-                serverInfo = "Server Info: Invalid address (press 'Ctrl + I' to ping server)";
+                serverInfo = new FormattedText().text("Server Info: Invalid address (press 'Ctrl + I' to ping server)");
             }
         }
         // server ip
@@ -173,15 +174,8 @@ public class ScreenMainMenu extends Screen {
     }
 
     public void onServerInfo(String motd, String version, long ping) {
-        serverInfo = "Server info: " + motd + ", " + version + ", " + ping + "ms.";
+        serverInfo = new FormattedText().text("Server info: " + motd + ", " + version + ", " + ping + "ms.");
     }
-
-    FormattedText t = new FormattedText()
-        .text("I ")
-        .style(TextFormatting.ITALIC).text("Want ").style()
-        .text("Pizza")
-        .color(TextColor.RED).text("\n").text("What?\n").text("What.\n")
-        .style(TextFormatting.BOLD).color(TextColor.DARK_GREEN).text("Bold text");
 
     @Override
     public void render() {
@@ -193,46 +187,46 @@ public class ScreenMainMenu extends Screen {
 
         // font init
         final Font font = ClientResources.FONTS.get("default").resource();
-        final FontRenderOptions fontOptions = font.getRenderOptions();
+        final FontRenderOptions fontOptions = font.getOptions();
+        final FormattedTextRenderer textRenderer = context.formattedTextRenderer();
 
         batch.setup();
 
         // hints
-        // float position = 10F;
-        // font.getRenderOptions().color().setRGB(0xAAAAAA);
-        // font.drawText(batch, "Press 'ENTER' to join the server.", 10F, position);
-        // position += font.getLineAdvanceScaled();
-        // font.drawText(batch, "'F1', 'F2', 'F3' - changes resourcepack", 10F, position);
-        // position += font.getLineAdvanceScaled();
-        // font.drawText(batch, "'F11' - fullscreen", 10F, position);
-        // position += font.getLineAdvanceScaled();
-        // font.drawText(batch, "Numbers - select block (ingame)", 10F, position);
-        // position += font.getLineAdvanceScaled();
-        // font.drawText(batch, "'Ctrl' - sprint (ingame)", 10F, position);
-        // position += font.getLineAdvanceScaled();
-        // font.drawText(batch, "'Ctrl + R' - register account", 10F, position);
-        // position += font.getLineAdvanceScaled();
-        // font.drawText(batch, "'Ctrl + L' - login account", 10F, position);
-        // position += font.getLineAdvanceScaled();
-        // font.drawText(batch, "'Ctrl + S' - paste server IP", 10F, position);
-        // position += font.getLineAdvanceScaled();
-        // font.drawText(batch, "'Ctrl + ESCAPE' - quit / to main menu", 10F, position);
-        // position += font.getLineAdvanceScaled();
-        // font.drawText(batch, "'F5'/'F6' - enable/disable Ambient Occlusion", 10F, position);
-        // position += font.getLineAdvanceScaled();
-        // font.drawText(batch, "'F8' - enable/disable daylight cycle", 10F, position);
-        // position += font.getLineAdvanceScaled();
-        // font.getRenderOptions().color().reset();
-        // font.drawText(batch, serverInfo, 10F, position);
-        // position += font.getLineAdvanceScaled();
-        // font.drawText(batch, accountStatus, 10F, position);
+        float position = font.getLineAdvanceScaled();
+        font.getOptions().color().setRGB(0xAAAAAA);
+        textRenderer.draw(batch, new FormattedText().color(TextColor.GRAY).text("Press ").color(TextColor.WHITE).style(TextFormatting.ITALIC).text("ENTER").color(TextColor.GRAY).style().text(" to join the server."), 10F, position);
+        position += font.getLineAdvanceScaled();
+        textRenderer.draw(batch, new FormattedText().color(TextColor.WHITE).style(TextFormatting.ITALIC).text("F1; F2; F3").color(TextColor.GRAY).style().text(" - changes resourcepack"), 10F, position);
+        position += font.getLineAdvanceScaled();
+        textRenderer.draw(batch, new FormattedText().color(TextColor.WHITE).style(TextFormatting.ITALIC).text("F11").color(TextColor.GRAY).style().text(" - fullscreen"), 10F, position);
+        position += font.getLineAdvanceScaled();
+        textRenderer.draw(batch, new FormattedText().color(TextColor.WHITE).style(TextFormatting.ITALIC).text("Numbers").color(TextColor.GRAY).style().text(" - select block (ingame)"), 10F, position);
+        position += font.getLineAdvanceScaled();
+        textRenderer.draw(batch, new FormattedText().color(TextColor.WHITE).style(TextFormatting.ITALIC).text("Ctrl").color(TextColor.GRAY).style().text(" - sprint (ingame)"), 10F, position);
+        position += font.getLineAdvanceScaled();
+        textRenderer.draw(batch, new FormattedText().color(TextColor.WHITE).style(TextFormatting.ITALIC).text("Ctrl + R").color(TextColor.GRAY).style().text(" - register account"), 10F, position);
+        position += font.getLineAdvanceScaled();
+        textRenderer.draw(batch, new FormattedText().color(TextColor.WHITE).style(TextFormatting.ITALIC).text("Ctrl + L").color(TextColor.GRAY).style().text(" - login account"), 10F, position);
+        position += font.getLineAdvanceScaled();
+        textRenderer.draw(batch, new FormattedText().color(TextColor.WHITE).style(TextFormatting.ITALIC).text("Ctrl + S").color(TextColor.GRAY).style().text(" - paste server IP"), 10F, position);
+        position += font.getLineAdvanceScaled();
+        textRenderer.draw(batch, new FormattedText().color(TextColor.WHITE).style(TextFormatting.ITALIC).text("Ctrl + ESCAPE").color(TextColor.GRAY).style().text(" - quit / to main menu"), 10F, position);
+        position += font.getLineAdvanceScaled();
+        textRenderer.draw(batch, new FormattedText().color(TextColor.WHITE).style(TextFormatting.ITALIC).text("F5 / F6").color(TextColor.GRAY).style().text(" - enable / disable Ambient Occlusion"), 10F, position);
+        position += font.getLineAdvanceScaled();
+        textRenderer.draw(batch, new FormattedText().color(TextColor.WHITE).style(TextFormatting.ITALIC).text("F8").color(TextColor.GRAY).style().text(" - enable/disable daylight cycle"), 10F, position);
+        position += font.getLineAdvanceScaled();
+        font.getOptions().color().reset();
+        textRenderer.draw(batch, serverInfo, 10F, position);
+        position += font.getLineAdvanceScaled();
+        textRenderer.draw(batch, accountStatus, 10F, position);
 
         // server address
         serverAddressField.render(batch);
         nicknameField.render(batch);
         passwordField.render(batch);
 
-        context.formattedTextRenderer().draw(batch, t, 100, 500);
         batch.render();
     }
 

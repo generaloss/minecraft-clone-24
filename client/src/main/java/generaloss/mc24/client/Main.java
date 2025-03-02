@@ -181,7 +181,7 @@ public class Main extends JpizeApplication {
 
         // font
         final Font font = ClientResources.FONTS.get("default").resource();
-        font.getRenderOptions().scale().set(Jpize.getHeight() / font.getHeight() * 0.03F);
+        font.getOptions().scale().set(Math.ceil(Jpize.getHeight() / font.getHeight() * 0.03F));
 
         this.saveChunks();
     }
