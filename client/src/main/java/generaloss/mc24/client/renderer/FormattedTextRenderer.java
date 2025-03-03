@@ -128,7 +128,6 @@ public class FormattedTextRenderer {
                             continue;
 
                         final float lineWidth = (iterator.cursor().x + iterator.nextAdvanceX()) * scale.x;
-
                         if(underline){
                             final float lineY = (cursorY + iterator.position().y * scale.y - lineHeightScaled);
                             batch.drawRect(cursorX, lineY, lineWidth, lineHeight * scale.y, color);
