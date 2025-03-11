@@ -21,6 +21,7 @@ import jpize.util.region.TextureRegion;
 import jpize.util.time.Stopwatch;
 
 import java.util.concurrent.ExecutorService;
+import java.util.function.Consumer;
 
 public class ChunkTesselator {
 
@@ -30,6 +31,11 @@ public class ChunkTesselator {
     private final FloatList verticesCache;
     private final BlockCache blockCache;
     private final float[][] vertexLightCache;
+    private Consumer<ChunkMesh> onComplete;
+
+    public LevelChunk getChunk() {
+        return chunkCache.getCenterChunk();
+    }
 
     public ChunkTesselator(WorldLevel level, ChunkMeshCache meshCache) {
         this.chunkCache = new ChunkCache<>(level);
@@ -175,7 +181,8 @@ public class ChunkTesselator {
     private final FastNoise noiseB = new FastNoise().setFrequency(1 / 64F).setSeed(3); //! temporary
     private final Stopwatch stopwatch = new Stopwatch().start(); //! debug
 
-    private void tesselate(LevelChunk chunk) {
+    private void tesselate(LevelChunk chunk, Consumer<ChunkMesh> onComplete) {
+        this.onComplete = onComplete;
         stopwatch.reset();
 
         chunkCache.initFor(chunk);
@@ -260,20 +267,23 @@ public class ChunkTesselator {
         status = ChunkTesselatorStatus.DONE;
     }
 
-    public void tesselate(LevelChunk chunk, ExecutorService executorService) {
+    public void tesselate(LevelChunk chunk, ExecutorService executorService, Consumer<ChunkMesh> onComplete) {
+        if(status != ChunkTesselatorStatus.FREE) System.err.println("not free!");
+
         status = ChunkTesselatorStatus.WORKING;
-        executorService.execute(() -> this.tesselate(chunk));
+        executorService.execute(() -> this.tesselate(chunk, onComplete));
     }
 
     public void unlock() {
         final LevelChunk chunk = chunkCache.getCenterChunk();
-        chunk.freeMesh();
 
         final float[] array = verticesCache.arrayTrimmed();
         if(array.length != 0){
             final ChunkMesh mesh = meshCache.getFreeOrCreate();
             mesh.setData(array);
-            chunk.setMesh(mesh);
+            onComplete.accept(mesh);
+        }else{
+            onComplete.accept(null);
         }
         verticesCache.clear();
         status = ChunkTesselatorStatus.FREE;

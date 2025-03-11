@@ -1,7 +1,7 @@
 package generaloss.mc24.client.resources.handle;
 
-import jpize.gl.texture.GlCubemapTarget;
-import jpize.gl.texture.Skybox;
+import jpize.opengl.texture.GlCubemapTarget;
+import jpize.opengl.texture.Skybox;
 import jpize.util.pixmap.Pixmap;
 import jpize.util.pixmap.PixmapIO;
 import jpize.util.res.Resource;

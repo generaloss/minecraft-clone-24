@@ -4,9 +4,9 @@ import generaloss.mc24.client.Main;
 import generaloss.mc24.client.resources.ClientResources;
 import generaloss.mc24.server.text.FormattedText;
 import jpize.app.Jpize;
-import jpize.gl.Gl;
-import jpize.gl.texture.Texture2D;
-import jpize.glfw.input.Key;
+import jpize.opengl.gl.Gl;
+import jpize.opengl.texture.Texture2D;
+import jpize.io.input.Key;
 import jpize.util.font.Font;
 import jpize.util.math.vector.Vec2f;
 import jpize.util.mesh.TextureBatch;
@@ -56,7 +56,7 @@ public class ScreenJoiningServer extends Screen {
 
         // background
         final int countY = 10;
-        regionBG.u2 = countY * Jpize.window().getAspectRatio();
+        regionBG.u2 = countY * Jpize.getAspectRatio();
         regionBG.v2 = countY;
         batch.draw(background, regionBG, 0, 0, Jpize.getWidth(), Jpize.getHeight(), 1F, 1F, 1F, 0.35F);
 

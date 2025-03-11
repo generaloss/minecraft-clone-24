@@ -22,7 +22,12 @@
         <dependency>
             <groupId>io.github.generaloss</groupId>
             <artifactId>jpize-core</artifactId>
-            <version>25.3.1</version>
+            <version>25.3.1-SNAPSHOT-3</version>
+        </dependency>
+        <dependency>
+            <groupId>io.github.generaloss</groupId>
+            <artifactId>jpize-core-lwjgl</artifactId>
+            <version>25.3.1-SNAPSHOT-3</version>
         </dependency>
         <dependency>
             <groupId>io.github.generaloss</groupId>

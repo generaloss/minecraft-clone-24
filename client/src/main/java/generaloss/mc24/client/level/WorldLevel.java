@@ -16,16 +16,21 @@ import generaloss.mc24.server.world.World;
 import jpize.util.Disposable;
 import jpize.util.camera.PerspectiveCamera;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class WorldLevel extends World<LevelChunk> implements Disposable {
 
     private final Main context;
     private final ChunkTesselatorPool tesselators;
     private final LevelRenderer renderer;
+    private final List<LevelChunk> chunksToTesselate;
 
     public WorldLevel(Main context) {
         this.context = context;
         this.tesselators = new ChunkTesselatorPool(16, this);
         this.renderer = new LevelRenderer(context, this);
+        this.chunksToTesselate = new ArrayList<>();
 
         // blockstate changed event
         Events.registerBlockstateChanged((chunk, localX, localY, localZ, blockstate) -> {
@@ -35,7 +40,7 @@ public class WorldLevel extends World<LevelChunk> implements Disposable {
             ));
 
             // tesselate chunk
-            tesselators.tesselate((LevelChunk) chunk);
+            chunksToTesselate.add((LevelChunk) chunk);
 
             // tesselate neighbor chunks
             final int chunkX = (localX == 0 ? -1 : (localX == Chunk.SIZE_BOUND ? 1 : 0));
@@ -43,25 +48,25 @@ public class WorldLevel extends World<LevelChunk> implements Disposable {
             final int chunkZ = (localZ == 0 ? -1 : (localZ == Chunk.SIZE_BOUND ? 1 : 0));
             final int count = (Math.abs(chunkX) + Math.abs(chunkY) + Math.abs(chunkZ));
             if(count > 0) {
-                tesselators.tesselate(this.getChunk(chunk.position().getNeighbor(chunkX, chunkY, chunkZ)));
+                chunksToTesselate.add(this.getChunk(chunk.position().getNeighbor(chunkX, chunkY, chunkZ)));
             }
             if(count > 1) {
                 if(chunkX == 0){
-                    tesselators.tesselate(this.getChunk(chunk.position().getNeighbor(0, chunkY, 0)));
-                    tesselators.tesselate(this.getChunk(chunk.position().getNeighbor(0, 0, chunkZ)));
+                    chunksToTesselate.add(this.getChunk(chunk.position().getNeighbor(0, chunkY, 0)));
+                    chunksToTesselate.add(this.getChunk(chunk.position().getNeighbor(0, 0, chunkZ)));
                 }else if(chunkY == 0){
-                    tesselators.tesselate(this.getChunk(chunk.position().getNeighbor(chunkX, 0, 0)));
-                    tesselators.tesselate(this.getChunk(chunk.position().getNeighbor(0, 0, chunkZ)));
+                    chunksToTesselate.add(this.getChunk(chunk.position().getNeighbor(chunkX, 0, 0)));
+                    chunksToTesselate.add(this.getChunk(chunk.position().getNeighbor(0, 0, chunkZ)));
                 }else if(chunkZ == 0){
-                    tesselators.tesselate(this.getChunk(chunk.position().getNeighbor(chunkX, 0, 0)));
-                    tesselators.tesselate(this.getChunk(chunk.position().getNeighbor(0, chunkY, 0)));
+                    chunksToTesselate.add(this.getChunk(chunk.position().getNeighbor(chunkX, 0, 0)));
+                    chunksToTesselate.add(this.getChunk(chunk.position().getNeighbor(0, chunkY, 0)));
                 }else{
-                    tesselators.tesselate(this.getChunk(chunk.position().getNeighbor(0, chunkY, chunkZ)));
-                    tesselators.tesselate(this.getChunk(chunk.position().getNeighbor(chunkX, 0, chunkZ)));
-                    tesselators.tesselate(this.getChunk(chunk.position().getNeighbor(chunkX, chunkY, 0)));
-                    tesselators.tesselate(this.getChunk(chunk.position().getNeighbor(0, 0, chunkZ)));
-                    tesselators.tesselate(this.getChunk(chunk.position().getNeighbor(0, chunkY, 0)));
-                    tesselators.tesselate(this.getChunk(chunk.position().getNeighbor(chunkX, 0, 0)));
+                    chunksToTesselate.add(this.getChunk(chunk.position().getNeighbor(0, chunkY, chunkZ)));
+                    chunksToTesselate.add(this.getChunk(chunk.position().getNeighbor(chunkX, 0, chunkZ)));
+                    chunksToTesselate.add(this.getChunk(chunk.position().getNeighbor(chunkX, chunkY, 0)));
+                    chunksToTesselate.add(this.getChunk(chunk.position().getNeighbor(0, 0, chunkZ)));
+                    chunksToTesselate.add(this.getChunk(chunk.position().getNeighbor(0, chunkY, 0)));
+                    chunksToTesselate.add(this.getChunk(chunk.position().getNeighbor(chunkX, 0, 0)));
                 }
             }
         });
@@ -69,7 +74,7 @@ public class WorldLevel extends World<LevelChunk> implements Disposable {
         // blocklight changed event
         Events.registerBlockLightChanged((_chunk, _x, _y, _z, _r, _g, _b) -> {
             // tesselate all cached chunks
-            super.getBlockLightEngine().chunkCache().forEach(tesselators::tesselate);
+            super.getBlockLightEngine().chunkCache().forEach(chunksToTesselate::add);
         });
 
         // skylight changed event
@@ -86,7 +91,7 @@ public class WorldLevel extends World<LevelChunk> implements Disposable {
                     if(column == null)
                         continue;
                     for(Chunk chunk: column.getChunks(lowChunkY, highChunkY))
-                        tesselators.tesselate((LevelChunk) chunk);
+                        chunksToTesselate.add((LevelChunk) chunk);
                 }
             }
         });
@@ -115,17 +120,24 @@ public class WorldLevel extends World<LevelChunk> implements Disposable {
         column.heightmap().onClientCreatedChunk(column, chunk);
 
         tesselators.tesselate(chunk);
-        tesselators.tesselate(super.getChunk(position.getNeighbor( 1,  0,  0)));
-        tesselators.tesselate(super.getChunk(position.getNeighbor( 0,  1,  0)));
-        tesselators.tesselate(super.getChunk(position.getNeighbor( 0,  0,  1)));
-        tesselators.tesselate(super.getChunk(position.getNeighbor(-1,  0,  0)));
-        tesselators.tesselate(super.getChunk(position.getNeighbor( 0, -1,  0)));
-        tesselators.tesselate(super.getChunk(position.getNeighbor( 0,  0, -1)));
+        tesselators.tesselate(List.of(
+            super.getChunk(position.getNeighbor( 1,  0,  0)),
+            super.getChunk(position.getNeighbor( 0,  1,  0)),
+            super.getChunk(position.getNeighbor( 0,  0,  1)),
+            super.getChunk(position.getNeighbor(-1,  0,  0)),
+            super.getChunk(position.getNeighbor( 0, -1,  0)),
+            super.getChunk(position.getNeighbor( 0,  0, -1))
+        ));
         return chunk;
     }
 
 
     public void update() {
+        // tesselate
+        if(!chunksToTesselate.isEmpty()) {
+            tesselators.tesselate(chunksToTesselate);
+            chunksToTesselate.clear();
+        }
         tesselators.update();
     }
 

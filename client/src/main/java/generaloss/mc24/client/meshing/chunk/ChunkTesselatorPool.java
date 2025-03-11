@@ -5,7 +5,8 @@ import generaloss.mc24.client.level.WorldLevel;
 import jpize.util.Disposable;
 
 import java.util.LinkedList;
-import java.util.Queue;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -13,11 +14,11 @@ public class ChunkTesselatorPool implements Disposable {
 
     private final ExecutorService executors;
     private final ChunkMeshCache meshCache;
-    private final Queue<LevelChunk> taskQueue;
+    private final List<TesselateGroup> groups;
     private final ChunkTesselator[] tesselators;
 
     public ChunkTesselatorPool(int nTesselators, WorldLevel level) {
-        this.taskQueue = new LinkedList<>();
+        this.groups = new CopyOnWriteArrayList<>();
         this.meshCache = new ChunkMeshCache();
         // create executors
         this.executors = Executors.newWorkStealingPool(nTesselators);
@@ -27,10 +28,20 @@ public class ChunkTesselatorPool implements Disposable {
             this.tesselators[i] = new ChunkTesselator(level, meshCache);
     }
 
+    public void tesselate(Iterable<LevelChunk> chunks) {
+        final List<LevelChunk> toTesselate = new LinkedList<>();
+        for(LevelChunk chunk: chunks) {
+            if(chunk == null && !toTesselate.contains(chunk))
+                continue;
+            toTesselate.add(chunk);
+        }
+        groups.add(new TesselateGroup(toTesselate));
+    }
+
     public void tesselate(LevelChunk chunk) {
-        if(chunk == null || taskQueue.contains(chunk))
+        if(chunk == null)
             return;
-        taskQueue.add(chunk);
+        groups.add(new TesselateGroup(chunk));
     }
 
     private ChunkTesselator getFreeTesselator() {
@@ -41,25 +52,28 @@ public class ChunkTesselatorPool implements Disposable {
     }
 
     public void update() {
-        while(!taskQueue.isEmpty()) {
-            final ChunkTesselator freeTesselator = this.getFreeTesselator();
-            if(freeTesselator == null)
-                break;
-
-            final LevelChunk chunk = taskQueue.poll();
-            if(chunk == null)
-                continue;
-
-            freeTesselator.tesselate(chunk, executors);
-        }
-
         for(ChunkTesselator tesselator: tesselators)
             if(tesselator.getStatus() == ChunkTesselatorStatus.DONE)
                 tesselator.unlock();
+
+        for(TesselateGroup group: groups) {
+            while(group.hasNext()) {
+                final ChunkTesselator freeTesselator = this.getFreeTesselator();
+                if(freeTesselator == null)
+                    return;
+
+                final LevelChunk chunk = group.next();
+                freeTesselator.tesselate(chunk, executors, mesh ->
+                    group.setMesh(chunk, mesh, () ->
+                        groups.remove(group)
+                    )
+                );
+            }
+        }
     }
 
     public void reset() {
-        taskQueue.clear();
+        groups.clear();
     }
 
     @Override

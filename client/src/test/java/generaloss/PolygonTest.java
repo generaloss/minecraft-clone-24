@@ -2,9 +2,8 @@ package generaloss;
 
 import jpize.app.Jpize;
 import jpize.app.JpizeApplication;
-import jpize.gl.Gl;
-import jpize.glfw.Glfw;
-import jpize.glfw.init.GlfwPlatform;
+import jpize.lwjgl.app.GlfwContextBuilder;
+import jpize.opengl.gl.Gl;
 import jpize.util.math.geometry.Polygon;
 import jpize.util.math.geometry.Rect;
 import jpize.util.math.vector.Vec2f;
@@ -129,8 +128,7 @@ public class PolygonTest extends JpizeApplication {
 
 
     public static void main(String[] args) {
-        Glfw.glfwInitHintPlatform(GlfwPlatform.X11);
-        Jpize.create(1280, 720, "Test").build().setApp(new PolygonTest());
+        GlfwContextBuilder.create(1280, 720, "Test").build().setApp(new PolygonTest());
         Jpize.run();
     }
 

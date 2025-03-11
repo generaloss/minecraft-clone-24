@@ -24,8 +24,9 @@ import generaloss.mc24.server.resources.pack.ResourcePackManager;
 import jpize.app.Jpize;
 import jpize.app.JpizeApplication;
 import jpize.audio.AlDevices;
-import jpize.gl.Gl;
-import jpize.glfw.input.Key;
+import jpize.io.input.Key;
+import jpize.lwjgl.app.GlfwContextBuilder;
+import jpize.opengl.gl.Gl;
 import jpize.util.font.Font;
 import jpize.util.res.FileResource;
 import jpize.util.screen.ScreenManager;
@@ -155,7 +156,7 @@ public class Main extends JpizeApplication {
     public void update() {
         // fullscreen
         if(Key.F11.down()){
-            Jpize.window().toggleFullscreen();
+            Jpize.window.toggleFullscreen();
             player.input().lockInputs();
         }
 
@@ -275,7 +276,7 @@ public class Main extends JpizeApplication {
         final int height = argsMap.getInt("height", 720);
 
         // create window
-        Jpize.create("Minecraft-24 Client", width, height)
+        GlfwContextBuilder.create("Minecraft-24 Client", width, height)
             .icon("/icon.png")
             .build()
             .setApp(INSTANCE = new Main());

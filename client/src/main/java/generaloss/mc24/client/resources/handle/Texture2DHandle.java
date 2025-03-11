@@ -1,6 +1,6 @@
 package generaloss.mc24.client.resources.handle;
 
-import jpize.gl.texture.Texture2D;
+import jpize.opengl.texture.Texture2D;
 import jpize.util.res.Resource;
 import jpize.util.res.ResourceSource;
 import jpize.util.res.handle.ResHandle;

@@ -3,8 +3,9 @@ package generaloss;
 import generaloss.mc24.server.common.IntSortedList;
 import jpize.app.Jpize;
 import jpize.app.JpizeApplication;
-import jpize.gl.Gl;
-import jpize.glfw.input.Key;
+import jpize.lwjgl.app.GlfwContextBuilder;
+import jpize.opengl.gl.Gl;
+import jpize.io.input.Key;
 import jpize.util.color.Color;
 import jpize.util.font.Font;
 import jpize.util.mesh.TextureBatch;
@@ -136,7 +137,7 @@ public class BinarySearchColumn extends JpizeApplication {
 
 
     public static void main(String[] args) {
-        Jpize.create(1280, 720, "Column Binary Search Test")
+        GlfwContextBuilder.create(1280, 720, "Column Binary Search Test")
                 .build()
                 .setApp(new BinarySearchColumn());
         Jpize.run();

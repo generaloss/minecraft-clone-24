@@ -1,6 +1,6 @@
 package generaloss.mc24.client.resources.handle;
 
-import jpize.gl.texture.GlFilter;
+import jpize.opengl.texture.GlFilter;
 import jpize.util.atlas.TextureAtlas;
 import jpize.util.res.ZipResource;
 import jpize.util.res.ResourceSource;

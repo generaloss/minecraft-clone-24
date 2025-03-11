@@ -4,7 +4,7 @@ import generaloss.mc24.client.Main;
 import generaloss.mc24.server.network.packet2s.PlayerMovePacket2S;
 import generaloss.mc24.server.player.AbstractPlayer;
 import jpize.app.Jpize;
-import jpize.glfw.input.Key;
+import jpize.io.input.Key;
 import jpize.util.camera.PerspectiveCamera;
 import jpize.util.input.MotionInput;
 import jpize.util.input.RotationInput;
@@ -63,7 +63,7 @@ public class ClientPlayer extends AbstractPlayer {
             context.network().sendPacket(new PlayerMovePacket2S(super.position()));
 
         // camera
-        super.rotation().constrain();
+        // super.rotation().constrain(); // causes bugs
         camera.rotation().set(super.rotation());
         camera.position().set(super.position());
         camera.update();
