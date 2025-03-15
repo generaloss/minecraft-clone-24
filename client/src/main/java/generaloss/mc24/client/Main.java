@@ -21,11 +21,11 @@ import generaloss.mc24.server.common.ArgsMap;
 import generaloss.mc24.server.Server;
 import generaloss.mc24.server.resources.pack.ResourcePack;
 import generaloss.mc24.server.resources.pack.ResourcePackManager;
-import jpize.app.Jpize;
-import jpize.app.JpizeApplication;
+import jpize.context.Jpize;
+import jpize.context.JpizeApplication;
 import jpize.audio.AlDevices;
-import jpize.io.input.Key;
-import jpize.lwjgl.app.GlfwContextBuilder;
+import jpize.context.input.Key;
+import jpize.lwjgl.context.GlfwContextBuilder;
 import jpize.opengl.gl.Gl;
 import jpize.util.font.Font;
 import jpize.util.res.FileResource;
@@ -144,10 +144,12 @@ public class Main extends JpizeApplication {
     }
 
     public void closeSession() {
-        player.input().disable();
-        level.reset();
-        entities.clear();
-        screens.setCurrent(ScreenMainMenu.SCREEN_ID);
+        Jpize.syncExecutor().exec(() -> {
+            player.input().disable();
+            level.reset();
+            entities.clear();
+            screens.setCurrent(ScreenMainMenu.SCREEN_ID);
+        });
         System.out.println("[INFO]: Disconnect session");
     }
 

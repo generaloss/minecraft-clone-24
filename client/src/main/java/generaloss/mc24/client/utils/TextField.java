@@ -1,7 +1,7 @@
 package generaloss.mc24.client.utils;
 
-import jpize.app.Jpize;
-import jpize.io.input.MouseBtn;
+import jpize.context.Jpize;
+import jpize.context.input.MouseBtn;
 import jpize.util.font.Font;
 import jpize.util.input.TextInput;
 import jpize.util.math.geometry.Intersector;

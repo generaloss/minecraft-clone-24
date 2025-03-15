@@ -10,7 +10,7 @@ import generaloss.mc24.server.entity.AbstractEntity;
 import generaloss.mc24.server.network.packet2c.*;
 import generaloss.mc24.server.network.protocol.IClientProtocolGame;
 import generaloss.mc24.server.registry.ServerRegistries;
-import jpize.app.Jpize;
+import jpize.context.Jpize;
 import jpize.util.net.tcp.TCPConnection;
 import jpize.util.screen.ScreenManager;
 

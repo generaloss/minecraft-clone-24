@@ -2,7 +2,7 @@ package generaloss.mc24.client.network;
 
 import generaloss.mc24.client.Main;
 import generaloss.mc24.server.network.packet2c.*;
-import jpize.app.Jpize;
+import jpize.context.Jpize;
 import jpize.util.net.tcp.TCPClient;
 import jpize.util.net.tcp.TCPConnection;
 import jpize.util.net.packet.NetPacket;

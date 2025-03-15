@@ -4,7 +4,7 @@ import generaloss.mc24.client.Main;
 import generaloss.mc24.client.screen.ScreenDisconnection;
 import generaloss.mc24.server.network.packet2c.DisconnectPacket2C;
 import generaloss.mc24.server.network.protocol.IClientProtocol;
-import jpize.app.Jpize;
+import jpize.context.Jpize;
 import jpize.util.net.tcp.TCPConnection;
 import jpize.util.net.packet.NetPacket;
 import jpize.util.security.AESKey;
