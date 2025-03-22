@@ -258,6 +258,7 @@ public class Main extends JpizeApplication {
     @Override
     public void resize(int width, int height) {
         screens.resize(width, height);
+        System.out.println("resize to " + width + "x" + height);
     }
 
     @Override

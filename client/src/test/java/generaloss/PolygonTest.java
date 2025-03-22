@@ -1,11 +1,11 @@
 package generaloss;
 
-import jpize.app.Jpize;
-import jpize.app.JpizeApplication;
-import jpize.lwjgl.app.GlfwContextBuilder;
+import jpize.context.Jpize;
+import jpize.context.JpizeApplication;
+import jpize.lwjgl.context.GlfwContextBuilder;
 import jpize.opengl.gl.Gl;
 import jpize.util.math.geometry.Polygon;
-import jpize.util.math.geometry.Rect;
+import jpize.util.math.geometry.Recti;
 import jpize.util.math.vector.Vec2f;
 import jpize.util.pixmap.Canvas;
 import jpize.util.time.Stopwatch;
@@ -54,9 +54,9 @@ public class PolygonTest extends JpizeApplication {
             poly2fTranslated[i] = poly2iTranslated[i];
 
         canvas.enableBlending();
-        final Rect poly1Bounds = new Rect().calculateFor(poly1f);
-        for(int i = (int) poly1Bounds.x - 50; i < poly1Bounds.width + poly1Bounds.x + 50; i++){
-            for(int j = (int) poly1Bounds.y - 50; j < poly1Bounds.height + poly1Bounds.y + 50; j++){
+        final Recti poly1Bounds = new Recti().calculateFor(poly1i);
+        for(int i = poly1Bounds.x - 50; i < poly1Bounds.width + poly1Bounds.x + 50; i++){
+            for(int j = poly1Bounds.y - 50; j < poly1Bounds.height + poly1Bounds.y + 50; j++){
                 if(Polygon.isPointIn(i, j, poly1f))
                     canvas.setPixelRGBA(i, j, 0x777777AA);
             }
@@ -65,9 +65,9 @@ public class PolygonTest extends JpizeApplication {
         canvas.drawLinePathRGB(0x333333, poly1i);
 
         canvas.enableBlending();
-        final Rect poly2Bounds = new Rect().calculateFor(poly2fTranslated);
-        for(int i = (int) poly2Bounds.x - 50; i < poly2Bounds.width + poly2Bounds.x + 50; i++){
-            for(int j = (int) poly2Bounds.y - 50; j < poly2Bounds.height + poly2Bounds.y + 500; j++){
+        final Recti poly2Bounds = new Recti().calculateFor(poly2iTranslated);
+        for(int i = poly2Bounds.x - 50; i < poly2Bounds.width + poly2Bounds.x + 50; i++){
+            for(int j = poly2Bounds.y - 50; j < poly2Bounds.height + poly2Bounds.y + 500; j++){
                 if(Polygon.isPointIn(i, j, poly2fTranslated))
                     canvas.setPixelRGBA(i, j, 0x777777AA);
             }
