@@ -40,7 +40,7 @@ public class PolygonTest extends JpizeApplication {
         canvas.clear();
 
         final float px = Jpize.getX();
-        final float py = Jpize.getY();
+        final float py = Jpize.getNativeY();
 
         final Vec2f poly2center = Polygon.getCenterOfGravity(new Vec2f(), poly2f);
 
