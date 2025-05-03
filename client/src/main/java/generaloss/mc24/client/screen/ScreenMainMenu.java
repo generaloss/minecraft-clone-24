@@ -14,8 +14,8 @@ import generaloss.mc24.server.text.formatting.TextColor;
 import generaloss.mc24.server.text.formatting.TextFormatting;
 import jpize.context.Jpize;
 import jpize.audio.util.AlMusic;
-import jpize.opengl.gl.Gl;
-import jpize.opengl.texture.GlFilter;
+import jpize.opengl.gl.GL;
+import jpize.opengl.texture.GLFilter;
 import jpize.opengl.texture.Skybox;
 import jpize.opengl.texture.Texture2D;
 import jpize.context.input.Key;
@@ -23,7 +23,7 @@ import jpize.util.camera.PerspectiveCamera;
 import jpize.util.font.Font;
 import jpize.util.font.FontRenderOptions;
 import jpize.util.mesh.TextureBatch;
-import jpize.util.postprocess.RenderQuad;
+import jpize.util.RenderQuad;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -55,7 +55,7 @@ public class ScreenMainMenu extends Screen {
         this.overlayTexture = ClientResources.TEXTURES
             .create("menu_panorama_overlay", "textures/gui/title/panorama_overlay.png")
             .resource()
-            .setFilters(GlFilter.LINEAR);
+            .setFilters(GLFilter.LINEAR);
 
         this.skybox = ClientResources.SKYBOXES
             .create("menu_panorama_skybox", "textures/gui/title/panorama_%s.png")
@@ -86,9 +86,15 @@ public class ScreenMainMenu extends Screen {
 
     @Override
     public void show() {
-        Gl.clearColor(0F, 0F, 0F);
+        GL.clearColor(0F, 0F, 0F);
         music.play();
         nicknameField.setFocused(true);
+
+        startLogInScript();
+    }
+
+    private void startLogInScript() {
+
     }
 
     @Override

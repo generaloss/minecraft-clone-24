@@ -2,8 +2,9 @@ package generaloss;
 
 import jpize.context.Jpize;
 import jpize.context.JpizeApplication;
+import jpize.lwjgl.context.ContextManager;
 import jpize.lwjgl.context.GlfwContextBuilder;
-import jpize.opengl.gl.Gl;
+import jpize.opengl.gl.GL;
 import jpize.util.pixmap.Canvas;
 
 public class Line extends JpizeApplication {
@@ -24,7 +25,7 @@ public class Line extends JpizeApplication {
     public void render() {
         a += Jpize.getScroll() * 0.05F;
 
-        Gl.clearColorBuffer();
+        GL.clearColorBuffer();
         canvas.clear();
         canvas.drawCircleRGB(centerX, centerY, 5, 0xFFFFFF);
 
@@ -53,7 +54,7 @@ public class Line extends JpizeApplication {
 
     public static void main(String[] args) {
         GlfwContextBuilder.create(1280, 720, "Line").build().setApp(new Line());
-        Jpize.run();
+        ContextManager.run();
     }
 
 }

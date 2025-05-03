@@ -1,6 +1,6 @@
 package generaloss.mc24.client.resources.handle;
 
-import jpize.opengl.texture.GlCubemapTarget;
+import jpize.opengl.texture.GLCubemapTarget;
 import jpize.opengl.texture.Skybox;
 import jpize.util.pixmap.Pixmap;
 import jpize.util.pixmap.PixmapIO;
@@ -26,7 +26,7 @@ public class SkyboxHandle extends ResHandle<String, Skybox> {
 
     @Override
     public void load(ResourceSource source, String path) {
-        for(GlCubemapTarget target: GlCubemapTarget.values()) {
+        for(GLCubemapTarget target: GLCubemapTarget.values()) {
             final String sidePath = path.replace("%s", POSTFIX_ARRAY[target.ordinal()]);
             final Resource resource = source.getResource(sidePath);
 

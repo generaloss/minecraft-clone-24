@@ -25,8 +25,9 @@ import jpize.context.Jpize;
 import jpize.context.JpizeApplication;
 import jpize.audio.AlDevices;
 import jpize.context.input.Key;
+import jpize.lwjgl.context.ContextManager;
 import jpize.lwjgl.context.GlfwContextBuilder;
-import jpize.opengl.gl.Gl;
+import jpize.opengl.gl.GL;
 import jpize.util.font.Font;
 import jpize.util.res.FileResource;
 import jpize.util.screen.ScreenManager;
@@ -249,7 +250,7 @@ public class Main extends JpizeApplication {
 
     @Override
     public void render() {
-        Gl.clearColorDepthBuffers();
+        GL.clearColorDepthBuffers();
         screens.render();
         final Font font = ClientResources.FONTS.get("default").resource();
         font.drawText("FPS: " + Jpize.getFPS(), 10F, Jpize.getHeight() - 10F);
@@ -285,7 +286,7 @@ public class Main extends JpizeApplication {
             .setApp(INSTANCE = new Main());
 
         // run application
-        Jpize.run();
+        ContextManager.run();
     }
 
     private static Main INSTANCE;

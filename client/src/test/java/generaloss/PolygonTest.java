@@ -2,8 +2,9 @@ package generaloss;
 
 import jpize.context.Jpize;
 import jpize.context.JpizeApplication;
+import jpize.lwjgl.context.ContextManager;
 import jpize.lwjgl.context.GlfwContextBuilder;
-import jpize.opengl.gl.Gl;
+import jpize.opengl.gl.GL;
 import jpize.util.math.geometry.Polygon;
 import jpize.util.math.geometry.Recti;
 import jpize.util.math.vector.Vec2f;
@@ -36,7 +37,7 @@ public class PolygonTest extends JpizeApplication {
 
     @Override
     public void render() {
-        Gl.clearColorBuffer();
+        GL.clearColorBuffer();
         canvas.clear();
 
         final float px = Jpize.getX();
@@ -129,7 +130,7 @@ public class PolygonTest extends JpizeApplication {
 
     public static void main(String[] args) {
         GlfwContextBuilder.create(1280, 720, "Test").build().setApp(new PolygonTest());
-        Jpize.run();
+        ContextManager.run();
     }
 
 }

@@ -7,7 +7,7 @@ import generaloss.mc24.client.resources.ClientResources;
 import generaloss.mc24.client.resources.handle.TextureAtlasHandle;
 import generaloss.mc24.server.chunk.ChunkPos;
 import jpize.context.Jpize;
-import jpize.opengl.gl.Gl;
+import jpize.opengl.gl.GL;
 import jpize.opengl.shader.Shader;
 import jpize.opengl.texture.Texture2D;
 import jpize.context.input.Key;
@@ -48,7 +48,7 @@ public class LevelRenderer {
         final float skylightFactor = Mathc.cos(time * 0.25) * 0.5F + 0.5F;
 
         // rendering
-        Gl.clearColor(0.4 * skylightFactor, 0.6 * skylightFactor, 0.9 * skylightFactor);
+        GL.clearColor(0.4 * skylightFactor, 0.6 * skylightFactor, 0.9 * skylightFactor);
 
         shader.bind();
         shader.uniform("u_texture", blockAtlasTexture);

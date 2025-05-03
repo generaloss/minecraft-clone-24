@@ -11,8 +11,8 @@ import generaloss.mc24.server.block.StateProperty;
 import generaloss.mc24.server.entity.AbstractEntity;
 import generaloss.mc24.server.registry.ServerRegistries;
 import jpize.context.Jpize;
-import jpize.opengl.gl.Gl;
-import jpize.opengl.glenum.GlTarget;
+import jpize.opengl.gl.GL;
+import jpize.opengl.glenum.GLTarget;
 import jpize.opengl.texture.Texture2D;
 import jpize.context.input.Key;
 import jpize.context.input.MouseBtn;
@@ -49,7 +49,7 @@ public class ScreenGameSession extends Screen {
 
     @Override
     public void show() {
-        Gl.clearColor(0.4F, 0.6F, 0.9F); // sky color
+        GL.clearColor(0.4F, 0.6F, 0.9F); // sky color
         final PerspectiveCamera camera = super.context.player().camera();
         camera.resize(Jpize.getWidth(), Jpize.getHeight());
         super.context.player().input().enable();
@@ -158,7 +158,7 @@ public class ScreenGameSession extends Screen {
         final FontRenderOptions fontOptions = font.getOptions();
 
         // level
-        Gl.enable(GlTarget.DEPTH_TEST);
+        GL.enable(GLTarget.DEPTH_TEST);
         final PerspectiveCamera camera = super.context.player().camera();
         super.context.level().render(camera);
 
@@ -182,7 +182,7 @@ public class ScreenGameSession extends Screen {
         fontOptions.scale().set(prevScale);
 
         // hud
-        Gl.disable(GlTarget.DEPTH_TEST);
+        GL.disable(GLTarget.DEPTH_TEST);
         batch.setup();
 
         // crosshair

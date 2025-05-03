@@ -1,6 +1,6 @@
 package generaloss.mc24.client.resources.handle;
 
-import jpize.opengl.texture.GlFilter;
+import jpize.opengl.texture.GLFilter;
 import jpize.util.atlas.TextureAtlas;
 import jpize.util.res.ZipResource;
 import jpize.util.res.ResourceSource;
@@ -24,7 +24,7 @@ public class TextureAtlasHandle extends ResHandle<String, TextureAtlas<String>> 
         this.atlas.setPadding(4);
         this.atlas.enablePaddingFilling(true);
         this.atlas.getTexture()
-            .setFilters(GlFilter.LINEAR, GlFilter.NEAREST)
+            .setFilters(GLFilter.LINEAR, GLFilter.NEAREST)
             .generateMipmap(0, 1)
             .setMaxAnisotropy(1);
 

@@ -3,8 +3,9 @@ package generaloss;
 import generaloss.mc24.server.common.IntSortedList;
 import jpize.context.Jpize;
 import jpize.context.JpizeApplication;
+import jpize.lwjgl.context.ContextManager;
 import jpize.lwjgl.context.GlfwContextBuilder;
-import jpize.opengl.gl.Gl;
+import jpize.opengl.gl.GL;
 import jpize.context.input.Key;
 import jpize.util.color.Color;
 import jpize.util.font.Font;
@@ -27,7 +28,7 @@ public class BinarySearchColumn extends JpizeApplication {
         this.font.getOptions().color().setRGB(0x121215);
         this.offsetY = new float[2];
         this.offsetTargetY = new float[2];
-        Gl.clearColor(new Color().setRGB(0x121215));
+        GL.clearColor(new Color().setRGB(0x121215));
 
         this.list = new IntSortedList<>(new ArrayList<>(), object -> object);
     }
@@ -40,7 +41,7 @@ public class BinarySearchColumn extends JpizeApplication {
 
     @Override
     public void render() {
-        Gl.clearColorBuffer();
+        GL.clearColorBuffer();
         batch.setup();
 
         // first
@@ -140,7 +141,7 @@ public class BinarySearchColumn extends JpizeApplication {
         GlfwContextBuilder.create(1280, 720, "Column Binary Search Test")
                 .build()
                 .setApp(new BinarySearchColumn());
-        Jpize.run();
+        ContextManager.run();
     }
 
 }

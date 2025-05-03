@@ -4,7 +4,7 @@ import generaloss.mc24.client.Main;
 import generaloss.mc24.client.resources.ClientResources;
 import generaloss.mc24.server.text.FormattedText;
 import jpize.context.Jpize;
-import jpize.opengl.gl.Gl;
+import jpize.opengl.gl.GL;
 import jpize.opengl.texture.Texture2D;
 import jpize.context.input.Key;
 import jpize.util.font.Font;
@@ -37,7 +37,7 @@ public class ScreenJoiningServer extends Screen {
 
     @Override
     public void show() {
-        Gl.clearColor(0, 0, 0);
+        GL.clearColor(0, 0, 0);
         this.setStatus("Connecting to the server..");
     }
 
