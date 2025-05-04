@@ -23,6 +23,7 @@ public class LevelRenderer {
     private final Matrix4f matrix;
     private float time;
     private boolean dayLightCycle = true;
+    private final LightVisualizerRenderer lightVisualizerRenderer;
 
     public LevelRenderer(Main context, WorldLevel level) {
         this.level = level;
@@ -37,6 +38,8 @@ public class LevelRenderer {
 
         // matrix
         this.matrix = new Matrix4f();
+
+        this.lightVisualizerRenderer = new LightVisualizerRenderer(level);
     }
 
     public void render(PerspectiveCamera camera) {
@@ -68,6 +71,8 @@ public class LevelRenderer {
             mesh.render();
             return true;
         });
+
+        lightVisualizerRenderer.render();
     }
 
 }

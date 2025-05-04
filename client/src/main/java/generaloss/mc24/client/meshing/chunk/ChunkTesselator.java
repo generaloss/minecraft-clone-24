@@ -50,7 +50,7 @@ public class ChunkTesselator {
         return status;
     }
 
-    private BlockModel getBlockModel(BlockState blockstate) {
+    private static BlockModel getBlockModel(BlockState blockstate) {
         final BlockModelHandle handle = ClientResources.BLOCK_STATE_MODELS.get(blockstate);
         if(handle == null)
             return null;
@@ -193,7 +193,7 @@ public class ChunkTesselator {
                 return;
 
             // model
-            final BlockModel model = this.getBlockModel(blockstate);
+            final BlockModel model = getBlockModel(blockstate);
             if(model == null)
                 return;
 
@@ -208,7 +208,7 @@ public class ChunkTesselator {
                 this.addFaces(x, y, z, model, Direction.EAST, false);
 
             }else{
-                final BlockModel modelEast = this.getBlockModel(blockstateEast);
+                final BlockModel modelEast = getBlockModel(blockstateEast);
                 this.addFaces(x, y, z, model, Direction.EAST, modelEast.isHidesOthersFace(Direction.EAST));
             }
 
@@ -218,7 +218,7 @@ public class ChunkTesselator {
                 this.addFaces(x, y, z, model, Direction.WEST, false);
 
             }else{
-                final BlockModel modelWest = this.getBlockModel(blockstateWest);
+                final BlockModel modelWest = getBlockModel(blockstateWest);
                 this.addFaces(x, y, z, model, Direction.WEST, modelWest.isHidesOthersFace(Direction.WEST));
             }
 
@@ -228,7 +228,7 @@ public class ChunkTesselator {
                 this.addFaces(x, y, z, model, Direction.UP, false);
 
             }else{
-                final BlockModel modelUp = this.getBlockModel(blockstateUp);
+                final BlockModel modelUp = getBlockModel(blockstateUp);
                 this.addFaces(x, y, z, model, Direction.UP, modelUp.isHidesOthersFace(Direction.UP));
             }
 
@@ -238,7 +238,7 @@ public class ChunkTesselator {
                 this.addFaces(x, y, z, model, Direction.DOWN, false);
 
             }else{
-                final BlockModel modelDown = this.getBlockModel(blockstateDown);
+                final BlockModel modelDown = getBlockModel(blockstateDown);
                 this.addFaces(x, y, z, model, Direction.DOWN, modelDown.isHidesOthersFace(Direction.DOWN));
             }
 
@@ -248,7 +248,7 @@ public class ChunkTesselator {
                 this.addFaces(x, y, z, model, Direction.NORTH, false);
 
             }else{
-                final BlockModel modelNorth = this.getBlockModel(blockstateNorth);
+                final BlockModel modelNorth = getBlockModel(blockstateNorth);
                 this.addFaces(x, y, z, model, Direction.NORTH, modelNorth.isHidesOthersFace(Direction.NORTH));
             }
 
@@ -258,7 +258,7 @@ public class ChunkTesselator {
                 this.addFaces(x, y, z, model, Direction.SOUTH, false);
 
             }else{
-                final BlockModel modelSouth = this.getBlockModel(blockstateSouth);
+                final BlockModel modelSouth = getBlockModel(blockstateSouth);
                 this.addFaces(x, y, z, model, Direction.SOUTH, modelSouth.isHidesOthersFace(Direction.SOUTH));
             }
         });

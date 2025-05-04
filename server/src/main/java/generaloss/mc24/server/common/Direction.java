@@ -51,7 +51,7 @@ public enum Direction {
     }
 
 
-    public Direction getRotated(Matrix4f matrix) {
+    public Direction toRotatedWith(Matrix4f matrix) {
         final Vec3i normalRotated = normal.copy().mulMat4(matrix);
         return byVector(normalRotated);
     }

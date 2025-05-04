@@ -136,7 +136,7 @@ public class BlockModelLoader {
         final Direction cullface;
         if(jsonFace.has("cullface")){
             final Direction cullfaceDir = Direction.valueOf(jsonFace.getString("cullface").toUpperCase());
-            cullface = cullfaceDir.getRotated(blockRotationMat);
+            cullface = cullfaceDir.toRotatedWith(blockRotationMat);
         }else{
             cullface = Direction.NONE;
         }
@@ -207,7 +207,7 @@ public class BlockModelLoader {
         }
 
         // shade
-        direction = direction.getRotated(blockRotationMat);
+        direction = direction.toRotatedWith(blockRotationMat);
         if(shade) {
             final float shading = direction.getBlockShade();
             v1.setColor(v1.getR() * shading, v1.getG() * shading, v1.getB() * shading);
