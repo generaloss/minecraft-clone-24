@@ -46,7 +46,7 @@ public class LightVisualizerRenderer {
         if(chunk == null)
             return;
 
-        tesselate(chunk);
+        this.tesselate(chunk);
         System.out.println(chunk.position());
     }
 
@@ -72,25 +72,25 @@ public class LightVisualizerRenderer {
             options.scale().set(1f / 16f);
 
             final Vec2f textBounds = font.getTextBounds(text);
-            X += 0.5F;
-            Y += 0.5F;
-            Z += 0.5F;
-            textMatrix.translate(-textBounds.x * 0.5F, -textBounds.y * 0.5F, 0F);
+            // X += 0.5F;
+            // Y += 0.5F;
+            // Z += 0.5F;
+            // textMatrix.setTranslate(-textBounds.x * 0.25F, textBounds.y * 0.5F, 0F);
 
-            final Vec3i normal = dir.getNormal();
-            if(normal.x != 0) {
-                textMatrix.rotateY(90 * normal.x);
-                // X += 0.51F * normal.x;
-            }else if(normal.y != 0) {
-                textMatrix.rotateX(-90 * normal.y);
-                // Y += 0.51F * normal.y;
-            }else if(normal.z != 0) {
-                if(normal.z == 1)
-                    textMatrix.rotateY(180);
-                // Z += 0.51F * normal.z;
-            }
+            // final Vec3i normal = dir.getNormal();
+            // if(normal.x != 0) {
+            //     textMatrix.rotateY(90 * normal.x);
+            //     X += 0.51F * normal.x;
+            // }else if(normal.y != 0) {
+            //     textMatrix.rotateX(-90 * normal.y);
+            //     Y += 0.51F * normal.y;
+            // }else if(normal.z != 0) {
+            //     if(normal.z == 1)
+            //         textMatrix.rotateY(180);
+            //     Z += 0.51F * normal.z;
+            // }
 
-            font.drawText(camera, text, X, Y, Z);
+            // font.drawText(camera, text, X, Y, Z);
 
             options.scale().set(scaleCopy);
             font.getOptions().matrix().identity();
