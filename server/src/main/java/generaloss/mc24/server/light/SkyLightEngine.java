@@ -112,7 +112,7 @@ public class SkyLightEngine<C extends Chunk> extends LightEngine {
 
         column.forEach((localX, localZ) -> {
             final int height = (column.getHeight(localX, localZ) + 1);
-            if(height == ColumnHeightMap.NO_HEIGHT)
+            if((height - 1) == ColumnHeightMap.NO_HEIGHT)
                 return;
 
             int maxNeighborHeight = height;
@@ -122,7 +122,7 @@ public class SkyLightEngine<C extends Chunk> extends LightEngine {
                         continue;
 
                     final int neighborHeight = (columnCache.getHeight(x, z) + 1);
-                    if(neighborHeight == ColumnHeightMap.NO_HEIGHT)
+                    if((neighborHeight - 1) == ColumnHeightMap.NO_HEIGHT)
                         continue;
 
                     maxNeighborHeight = Math.max(maxNeighborHeight, neighborHeight);

@@ -1,6 +1,7 @@
 package generaloss.mc24.server.worldgen;
 
 import generaloss.mc24.server.block.BlockState;
+import generaloss.mc24.server.chunk.Chunk;
 import generaloss.mc24.server.chunk.ServerChunk;
 import generaloss.mc24.server.registry.ServerRegistries;
 import jpize.util.math.FastNoise;
@@ -47,7 +48,7 @@ public class ChunkGenerator3DNoise implements IChunkGenerator {
                 chunk.setBlockState(x, y, z, ServerRegistries.BLOCK.get("torch").resource().getDefaultState());
 
             // grass_block
-            if(blockstate.isBlockID("stone") && chunk.getBlockState(x, y + 1, z).isBlockID("void", "air"))
+            if(blockstate.isBlockID("stone") && (y + 1) < Chunk.SIZE && chunk.getBlockState(x, y + 1, z).isBlockID("void", "air"))
                 chunk.setBlockState(x, y, z, ServerRegistries.BLOCK.get("grass_block").resource().getDefaultState());
         });
     }

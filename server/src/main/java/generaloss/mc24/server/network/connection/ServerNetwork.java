@@ -47,7 +47,7 @@ public class ServerNetwork {
         tcpConnection.attach(new ServerConnectionLogin(server, tcpConnection));
     }
 
-    public void onDisconnect(TCPConnection tcpConnection) {
+    public void onDisconnect(TCPConnection tcpConnection, String message) {
         if(tcpConnection.attachment() instanceof ServerConnectionGame gameConnection) {
             final ServerPlayer player = gameConnection.player();
             server.players().removePlayer(player);

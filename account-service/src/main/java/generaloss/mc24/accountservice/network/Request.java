@@ -68,8 +68,13 @@ public class Request {
 
 
     public static Response send(String host, RequestType requestType, DataStreamWriter dataFactory) {
-        final Request request = new Request(host, requestType, DataStreamWriter.writeBytes(dataFactory));
+        Request request = new Request(host, requestType, DataStreamWriter.writeBytes(dataFactory));
         TimeUtils.waitFor(request::isConnectionClosed, 5000);
+        if(!request.getResponse().getCode().noError()) {
+            System.out.println("try to send account-service request to localhost");
+            request = new Request("localhost", requestType, DataStreamWriter.writeBytes(dataFactory));
+            TimeUtils.waitFor(request::isConnectionClosed, 1000);
+        }
         return request.getResponse();
     }
 

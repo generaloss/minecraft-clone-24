@@ -16,13 +16,13 @@ public class ColumnHeightMap<C extends Chunk> {
 
     private final World<C> world;
     private final ChunkColumn<C> column;
-    private final Predicate<BlockState> predicate;
+    private final Predicate<BlockState> opaqueBlockTest;
     private final ColumnIntArray max;
 
-    public ColumnHeightMap(ChunkColumn<C> column, Predicate<BlockState> predicate) {
+    public ColumnHeightMap(ChunkColumn<C> column, Predicate<BlockState> opaqueBlockTest) {
         this.world = column.world();
         this.column = column;
-        this.predicate = predicate;
+        this.opaqueBlockTest = opaqueBlockTest;
         this.max = new ColumnIntArray(NO_HEIGHT);
     }
 
@@ -39,7 +39,7 @@ public class ColumnHeightMap<C extends Chunk> {
 
             for(int localY = Chunk.SIZE_BOUND; localY >= 0; localY--){
                 final BlockState blockstate = chunk.getBlockState(localX, localY, localZ);
-                if(predicate.test(blockstate)) {
+                if(opaqueBlockTest.test(blockstate)) {
                     max.set(localX, localZ, chunkBlockY + localY);
                     return;
                 }
@@ -52,7 +52,7 @@ public class ColumnHeightMap<C extends Chunk> {
         if(prevHeight > newHeight)
             return;
 
-        final boolean isOpaque = predicate.test(blockstate);
+        final boolean isOpaque = opaqueBlockTest.test(blockstate);
         if(prevHeight == NO_HEIGHT) {
             if(!isOpaque)
                 return;
@@ -74,7 +74,7 @@ public class ColumnHeightMap<C extends Chunk> {
                     int localY = (newHeight & Chunk.SIZE_BOUND);
                     do{
                         final BlockState downBlockstate = chunk.getBlockState(localX, localY, localZ);
-                        if(predicate.test(downBlockstate)) {
+                        if(opaqueBlockTest.test(downBlockstate)) {
                             max.set(localX, localZ, newHeight);
 
                             // update skylight down

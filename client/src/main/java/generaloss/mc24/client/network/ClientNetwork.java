@@ -62,7 +62,7 @@ public class ClientNetwork {
         System.out.println("[INFO]: Connected to server");
     }
 
-    private void onDisconnect(TCPConnection tcpConnection) {
+    private void onDisconnect(TCPConnection tcpConnection, String message) {
         context.closeSession();
     }
 

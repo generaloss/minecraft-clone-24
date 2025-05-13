@@ -25,8 +25,9 @@ public class TextureAtlasHandle extends ResHandle<String, TextureAtlas<String>> 
         this.atlas.enablePaddingFilling(true);
         this.atlas.getTexture()
             .setFilters(GLFilter.LINEAR, GLFilter.NEAREST)
-            .generateMipmap(0, 1)
-            .setMaxAnisotropy(1);
+            .generateMipmap(0, 4)
+            .setMaxAnisotropy(16)
+            .setLodBias(-1);
 
         this.loadedResources = new HashMap<>();
     }
