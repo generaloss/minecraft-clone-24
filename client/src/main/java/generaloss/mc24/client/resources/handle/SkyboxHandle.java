@@ -10,7 +10,7 @@ import jpize.util.res.handle.ResHandle;
 
 public class SkyboxHandle extends ResHandle<String, Skybox> {
 
-    private static final String[] POSTFIX_ARRAY = { "1", "3", "4", "5", "0", "2" };
+    private static final String[] POSTFIX_ARRAY = {"1", "3", "4", "5", "0", "2"};
 
     private final Skybox skybox;
 

@@ -18,7 +18,6 @@ import jpize.util.font.Font;
 import jpize.util.font.FontRenderOptions;
 import jpize.util.math.matrix.Matrix4f;
 import jpize.util.math.vector.Vec2f;
-import jpize.util.math.vector.Vec3i;
 
 public class LightVisualizerRenderer {
 
@@ -40,14 +39,11 @@ public class LightVisualizerRenderer {
         final int chunkY = ChunkPos.byBlock(player.camera().position().yFloor());
         final int chunkZ = ChunkPos.byBlock(player.camera().position().zFloor());
 
-        System.out.println(chunkX + " " + chunkY + " " + chunkZ);
-
         chunk = level.getChunk(chunkX, chunkY, chunkZ);
         if(chunk == null)
             return;
 
         this.tesselate(chunk);
-        System.out.println(chunk.position());
     }
 
     private void addFaces(int x, int y, int z, BlockModel model, Direction direction, boolean hide) {

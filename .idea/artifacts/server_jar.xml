@@ -7,7 +7,7 @@
       </element>
       <element id="module-output" name="server" />
       <element id="module-output" name="account-service" />
-      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/io/github/generaloss/jpize-utils/25.2.7/jpize-utils-25.2.7.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/io/github/generaloss/jpize-utils/25.5.1/jpize-utils-25.5.1.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/json/json/20240303/json-20240303.jar" path-in-jar="/" />
     </root>
   </artifact>
